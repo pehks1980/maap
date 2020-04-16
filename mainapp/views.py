@@ -26,11 +26,10 @@ Ma = mul_app.MulApp()
 def main(request):
     title = 'главная maap v 1.0'
 
-
-
-    form = AppModForm(request.POST or None)
 # last change
-    if request.method == 'POST' and form.is_valid():
+    if request.method == 'POST':
+        form = AppModForm(request.POST)
+        if form.is_valid():
             # process the data in form.cleaned_data as required
             # ...
             # redirect to a new URL:
@@ -65,6 +64,8 @@ def main(request):
             Ma.lesson_id = lesson.pk
 
             return HttpResponseRedirect(f'/mathem/')
+    else:#GET
+        form = AppModForm()
 
     #products = Product.objects.all()[:3]
     links_menu = {}#ProductCategory.objects.all()
