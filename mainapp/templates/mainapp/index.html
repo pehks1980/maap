@@ -1,0 +1,67 @@
+{% extends 'mainapp/base.html' %}
+{% load static %}
+
+{% block js %}
+<script>
+
+
+
+function tstamp1() {
+    var ts = new Date();
+    var mon = ts.getMonth()+1;
+    var date = ts.getDate()+'/'+mon+'/'+ts.getFullYear();
+    var hours = ts.getHours();
+    var mins = ts.getMinutes();
+    var secs = ts.getSeconds();
+    document.getElementById("ts").value = date+'/'+hours+'/'+mins+'/'+secs;
+
+    console.log(ts); // 23
+    console.log(hours); // 23
+
+    console.log(secs); // 23
+    return true;
+}
+
+</script>
+
+{% endblock %}
+
+{% block menu %}
+   <div class="header clearfix">
+                {% include 'mainapp/includes/inc_menu.html' %}
+    </div>
+
+{% endblock %}
+
+{% block content %}
+    <div class="slider">
+
+        <div class="text-slider">
+            <h3 class="green">Добрый день, пользователь  {{ user.first_name|default:'Пользователь' }} !</h3>
+            <h3 class="big"> Математика (Арифметика)</h3>
+            <p>Таблица умножения. Сложение и вычитание.</p>
+            <form class="form-horizontal" method="post" enctype="multipart/form-data" >
+            {% csrf_token %}
+            {{ form.as_p }}
+                <input type="hidden" name="tstamp" id="ts" value="null1"/>
+                <input class="button-order" type="submit" value="начать" onclick="tstamp1();"/>
+
+            </form>
+        </div>
+        <div class="navi">
+            <a href="#"></a><a href="#"></a><a href="#"></a>
+        </div>
+    </div>
+
+
+
+
+    <div class="featured">
+
+        <div class="clearfix">
+        </div>
+
+    </div>
+
+
+{% endblock %}

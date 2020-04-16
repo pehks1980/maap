@@ -1,0 +1,58 @@
+{% extends 'mainapp/base.html' %}
+{% load static %}
+
+
+
+{% block menu %}
+   <div class="header clearfix">
+                {% include 'mainapp/includes/inc_menu.html' %}
+    </div>
+
+{% endblock %}
+
+{% block content %}
+
+    {% if ans.list_txt %}
+
+         <p>
+             <table class="tab_cl1">
+            {% for val in ans.list_txt %}
+                <tr>
+                    <td>{{val}}</td>
+                </tr>
+            {% endfor %}
+            </table>
+
+        </p>
+    {% endif %}
+
+ {% if ans.mul_tab %}
+<div class="clr"></div>
+         <p>
+             <table class="tab_cl1">
+            {% for rowval in ans.mul_tab %}
+                <tr>
+                {% for val in rowval %}
+                    {% if val == ans.ans %}
+                        <td style="color: yellow;background-color: blue;">{{val}}</td>
+                    {% else %}
+                        <td>{{val}}</td>
+                    {% endif %}
+                {% endfor %}
+                </tr>
+            {% endfor %}
+            </table>
+
+
+
+        </p>
+    {% endif %}
+<div class="clr"></div>
+  <button class="button button5">
+ <a href="{% url 'mathem' %}" class="big-bold" style="text-decoration: none;">
+      следующий вопрос
+    </a>
+  </button>
+
+
+{% endblock %}

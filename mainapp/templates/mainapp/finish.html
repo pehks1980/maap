@@ -1,0 +1,36 @@
+{% extends 'mainapp/base.html' %}
+{% load static %}
+
+
+{% block menu %}
+   <div class="header clearfix">
+                {% include 'mainapp/includes/inc_menu.html' %}
+    </div>
+
+{% endblock %}
+
+{% block content %}
+
+    {% if ans.list_txt %}
+
+         <p>
+             <table class="tab_cl1">
+            {% for val in ans.list_txt %}
+                <tr>
+                    <td>{{val}}</td>
+                </tr>
+            {% endfor %}
+            </table>
+
+        </p>
+    {% endif %}
+
+
+  {% include 'mainapp/includes/inc_hist.html' %}
+
+  <button class="button-order">
+    <a href="{% url 'main' %}" style="text-decoration: none; color: #cc1111">
+      на главную
+    </a>
+  </button>
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends 'mainapp/base.html' %}
+{% load static %}
+
+
+{% block menu %}
+   <div class="header clearfix">
+                {% include 'mainapp/includes/inc_menu.html' %}
+    </div>
+
+{% endblock %}
+
+{% block content %}
+
+  {% include 'mainapp/includes/inc_hist.html' %}
+
+  <button class="button-order">
+    <a href="{% url 'main' %}" style="text-decoration: none; color: #cc1111">
+      на главную
+    </a>
+  </button>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% if ans.list_hist %}
+<div class="clr"></div>
+         <p>
+             <table class="tab_cl1">
+            {% for rowval in ans.list_hist %}
+                <tr>
+                {% for val in rowval %}
+
+                        <td>{{val}}</td>
+
+                {% endfor %}
+                </tr>
+            {% endfor %}
+            </table>
+
+
+
+
+        </p>
+
+<div class="clr"></div>
+    {% endif %}
+{% if ans.clr_but %}
+  <button class="button-order">
+    <a href="{% url 'clear_hist' %}" style="text-decoration: none; color: #cc1111">
+      Очистить
+    </a>
+  </button>
+<div class="clr"></div>
+    {% endif %}
