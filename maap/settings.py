@@ -12,8 +12,6 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 
 import os
 
-import mul_app
-
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -27,7 +25,7 @@ SECRET_KEY = 'e2nsv_7ja12&g=x5amt(ojd4b5o8&oi8g#3kpfk#xnnav490)4'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*','192.168.1.100']
 
 
 # Application definition
@@ -125,9 +123,10 @@ USE_TZ = True
 
 
 
-STATIC_URL = '/static/'
+STATIC_URL = '/staticfiles/'
 
 STATICFILES_DIRS = (
+    'staticfiles',
     os.path.join(BASE_DIR, 'staticfiles'),
 )
 
