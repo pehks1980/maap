@@ -4,7 +4,7 @@ from django.shortcuts import render
 
 from django.shortcuts import render, get_object_or_404
 
-import mul_app
+
 from datetime import datetime
 
 
@@ -18,11 +18,15 @@ from .forms import AppModForm
 from .models import MaapLesson
 from django.contrib.auth.decorators import login_required
 #create copy
+import mul_app
+
 Ma = mul_app.MulApp()
 
 @login_required
 def main(request):
     title = 'главная maap v 1.0'
+
+
 
     form = AppModForm(request.POST or None)
 # last change
