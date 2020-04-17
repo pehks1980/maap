@@ -22,6 +22,8 @@ import mul_app
 
 Ma = mul_app.MulApp()
 
+print(f'obect {Ma}')
+
 @login_required
 def main(request):
     title = 'главная maap v 1.0'
@@ -77,18 +79,37 @@ def main(request):
 def mathem(request):
     title = 'главная maap v 1.0'
 
-    txt0=None
-    txt00=None
+    difference=0
+    # if this is a POST request we need to process the form data
+    if request.method == 'POST':
+        form = Ans_Form(request.POST)
+        if form.is_valid():
+            #ans = request.POST.get('answer')
+            ans = form.cleaned_data.get("answer")
+            val = request.POST.get('tstamp')
+            val_li = list(val.split(" "))
 
-    list_txt = []
+            d1 = int(val_li[0])*60+int(val_li[1])
+            d2 = Ma.now[0]*60+Ma.now[1]
+            diff= d1-d2-1
+
+            print(val_li, Ma.now, diff)
+
+            if diff < 0:
+                diff = 0
+            return HttpResponseRedirect(f'/mathemk/{ans}/{diff}')
+        else:
+            # if request.method == 'POST':
+            print('clickfinish')
+            val = request.POST.get('tstamp1')
+            val_li = list(val.split("/"))
+            Ma.end_time = val_li
+            return HttpResponseRedirect(f'/finish/')
 
 
-    form = Ans_Form(request.POST or None)
-
-    code=0
-    txt2=''
-    #обработчик обрабватывает все реквесты страницы и GET и POST
+    # обработчик обрабватывает все реквесты страницы и GET и POST
     if request.method == 'GET':
+        form = Ans_Form()
         a, b, code = Ma.eval()
         t = datetime.now()
         Ma.now.clear()
@@ -96,6 +117,13 @@ def mathem(request):
         Ma.now.append(t.second)
         print('aha')
 
+    txt0 = None
+    txt00 = None
+
+    list_txt = []
+
+    #code = 0
+    txt2 = ''
 
     txt1 = f"вопрос {Ma.ans_num} правильных: {Ma.ans_corr}"
 
@@ -110,42 +138,9 @@ def mathem(request):
 
     list_txt.append(txt2)
 
-    txt3 = ''#f'a1={a}, b1={b}, c1={code}'
+    txt3 = ''  # f'a1={a}, b1={b}, c1={code}'
 
     qst = {'txt0': txt0, 'txt00': txt00, 'txt1': txt1, 'txt2': txt2, 'txt3': txt3, 'list_txt': list_txt}
-
-
-    difference=0
-    # if this is a POST request we need to process the form data
-    if request.method == 'POST' and form.is_valid():
-            # process the data in form.cleaned_data as required
-            # ...
-            # redirect to a new URL:
-        #ans=cleaned_data.get("answer")
-
-
-        #ans = request.POST.get('answer')
-        ans = form.cleaned_data.get("answer")
-        val = request.POST.get('tstamp')
-        val_li = list(val.split(" "))
-
-        d1 = int(val_li[0])*60+int(val_li[1])
-        d2 = Ma.now[0]*60+Ma.now[1]
-        diff= d1-d2-1
-
-        print(val_li, Ma.now, diff)
-
-        if diff < 0:
-            diff = 0
-        #print (ans,a,b,code)
-        return HttpResponseRedirect(f'/mathemk/{ans}/{diff}')
-
-    if request.method == 'POST':
-        print('clickfinish')
-        val = request.POST.get('tstamp1')
-        val_li = list(val.split("/"))
-        Ma.end_time = val_li
-        return HttpResponseRedirect(f'/finish/')
 
     content = {'title': title, 'form': form, 'qst': qst}
 
