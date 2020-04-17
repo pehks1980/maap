@@ -27,7 +27,7 @@ Ma = MulApp()
 @login_required
 def main(request):
     title = 'главная maap v 1.0'
-
+    global Ma
 
 # last change
     if request.method == 'POST':
@@ -78,6 +78,7 @@ def main(request):
     return render(request, 'mainapp/index.html', content)
 
 def mathem(request):
+    global Ma
     title = 'главная maap v 1.0'
 
     difference=0
@@ -149,6 +150,7 @@ def mathem(request):
     return render(request, 'mainapp/mathem.html', content)
 
 def mathemk(request, pk, diff):
+    global Ma
     title = 'главная maap v 1.0/проверка'
 
     #txt0=None
@@ -283,6 +285,7 @@ def hist(request):
     return render(request, 'mainapp/hist.html', content)
 
 def finish(request):
+    global Ma
     title = 'главная maap v 1.0/результаты'
 
     txt0=None
