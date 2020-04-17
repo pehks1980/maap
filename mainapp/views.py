@@ -22,11 +22,12 @@ from django.contrib.auth.decorators import login_required
 
 Ma = MulApp()
 
-print(f'obect {Ma}')
+
 
 @login_required
 def main(request):
     title = 'главная maap v 1.0'
+
 
 # last change
     if request.method == 'POST':
