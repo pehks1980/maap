@@ -309,6 +309,8 @@ class MulApp:
         b=self.b1
         code=self.c1
 
+        print(f'check ans= {a},{b},{code}, {self}')
+
         if code==1:
             res = a*b
         if code==2:
