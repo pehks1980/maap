@@ -15,12 +15,12 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from .forms import Ans_Form
 from .forms import AppModForm
-from .models import MaapLesson
+from .models import MaapLesson, MulApp
 from django.contrib.auth.decorators import login_required
 #create copy
-import mul_app
+#import mul_app
 
-Ma = mul_app.MulApp()
+Ma = MulApp()
 
 print(f'obect {Ma}')
 
