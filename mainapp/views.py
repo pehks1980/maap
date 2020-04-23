@@ -18,9 +18,9 @@ from .forms import AppModForm
 from .models import MaapLesson
 from django.contrib.auth.decorators import login_required
 #create copy
-import mul_app
 
-Ma = mul_app.MulApp()
+
+
 
 @login_required
 def main(request):
@@ -41,27 +41,27 @@ def main(request):
             print(ans)
 
             # reset app
-            Ma.__init__()
+            MaapLesson.Ma.__init__()
 
             #set mode for app
-            Ma.SetAppMode(ans)
-            Ma.mode = ' '.join(ans)
+            MaapLesson.Ma.SetAppMode(ans)
+            MaapLesson.Ma.mode = ' '.join(ans)
             #get time from js browser of user
             val = request.POST.get('tstamp')
             val_li = list(val.split("/"))
-            Ma.start_time=val_li
+            MaapLesson.Ma.start_time=val_li
             print(val_li)
             #make up lesson log
             lesson = MaapLesson(user=request.user)
             lesson.date= " ".join(val_li[:3])
             lesson.s_time= " ".join(val_li[3:])
-            lesson.mode = Ma.mode+'k'
+            lesson.mode = MaapLesson.Ma.mode+'k'
             print(lesson.pk)
             lesson.save()
 
             print(lesson.pk)
             #save primary key for this session lesson (id)
-            Ma.lesson_id = lesson.pk
+            MaapLesson.Ma.lesson_id = lesson.pk
 
             return HttpResponseRedirect(f'/mathem/')
     else:#GET
@@ -89,15 +89,15 @@ def mathem(request):
     txt2=''
     #обработчик обрабватывает все реквесты страницы и GET и POST
     if request.method == 'GET':
-        a, b, code = Ma.eval()
+        a, b, code = MaapLesson.Ma.eval()
         t = datetime.now()
-        Ma.now.clear()
-        Ma.now.append(t.minute)
-        Ma.now.append(t.second)
+        MaapLesson.Ma.now.clear()
+        MaapLesson.Ma.now.append(t.minute)
+        MaapLesson.Ma.now.append(t.second)
         print('aha')
 
 
-    txt1 = f"вопрос {Ma.ans_num} правильных: {Ma.ans_corr}"
+    txt1 = f"вопрос {MaapLesson.Ma.ans_num} правильных: {MaapLesson.Ma.ans_corr}"
 
     list_txt.append(txt1)
 
@@ -130,10 +130,10 @@ def mathem(request):
         val_li = list(val.split(" "))
 
         d1 = int(val_li[0])*60+int(val_li[1])
-        d2 = Ma.now[0]*60+Ma.now[1]
+        d2 = MaapLesson.Ma.now[0]*60+MaapLesson.Ma.now[1]
         diff= d1-d2-1
 
-        print(val_li, Ma.now, diff)
+        print(val_li, MaapLesson.Ma.now, diff)
 
         if diff < 0:
             diff = 0
@@ -144,7 +144,7 @@ def mathem(request):
         print('clickfinish')
         val = request.POST.get('tstamp1')
         val_li = list(val.split("/"))
-        Ma.end_time = val_li
+        MaapLesson.Ma.end_time = val_li
         return HttpResponseRedirect(f'/finish/')
 
     content = {'title': title, 'form': form, 'qst': qst}
@@ -165,7 +165,7 @@ def mathemk(request, pk, diff):
 
     #list_txt.append(txt0)
 
-    txt00, check_res = Ma.check_ans(int(pk),int(diff))
+    txt00, check_res = MaapLesson.Ma.check_ans(int(pk),int(diff))
 
     list_txt.append(txt00)
 
@@ -173,11 +173,11 @@ def mathemk(request, pk, diff):
 
     list_txt.append(txt22)
 
-    txt1 = f'a1={Ma.a1}, b1={Ma.b1}, c1={Ma.c1}, ans_num={Ma.ans_num}, ans_corr={Ma.ans_corr}'
+    txt1 = f'a1={MaapLesson.Ma.a1}, b1={MaapLesson.Ma.b1}, c1={MaapLesson.Ma.c1}, ans_num={MaapLesson.Ma.ans_num}, ans_corr={MaapLesson.Ma.ans_corr}'
 
-    if Ma.c1 == 1 and check_res==0:#if multip
-        mul_tab = Ma.printMatrix(Ma.mult_tabl,Ma.a1*Ma.b1,Ma.a1,0)
-        cor_ans = Ma.a1*Ma.b1
+    if MaapLesson.Ma.c1 == 1 and check_res==0:#if multip
+        mul_tab = MaapLesson.Ma.printMatrix(MaapLesson.Ma.mult_tabl,MaapLesson.Ma.a1*MaapLesson.Ma.b1,MaapLesson.Ma.a1,0)
+        cor_ans = MaapLesson.Ma.a1*MaapLesson.Ma.b1
         cor_ans = ">"+str(cor_ans)
     else:
         mul_tab = ''
@@ -248,7 +248,7 @@ def hist(request):
             # tab mode
             a = str(
                 i.mode)  # when only one char from db it assumes digital as int so we need to explicitly change it to str again!
-            list_hist_row.append(Ma.GetAppModeDesc(a))
+            list_hist_row.append(MaapLesson.Ma.GetAppModeDesc(a))
 
             # tab session time secs
             if (i.f_time):
@@ -293,15 +293,15 @@ def finish(request):
     txt00=None
     #call finish result
 
-    list_txt = Ma.finish(1)
+    list_txt = MaapLesson.Ma.finish(1)
     # retrieve lesson from db
-    lesson = get_object_or_404(MaapLesson, pk=Ma.lesson_id)
+    lesson = get_object_or_404(MaapLesson, pk=MaapLesson.Ma.lesson_id)
     #update record
-    lesson.ans_correct = Ma.ans_corr
+    lesson.ans_correct = MaapLesson.Ma.ans_corr
 
-    lesson.ans_amount = Ma.ans_num
+    lesson.ans_amount = MaapLesson.Ma.ans_num
 
-    lesson.f_time = ' '.join(Ma.end_time[3:])
+    lesson.f_time = ' '.join(MaapLesson.Ma.end_time[3:])
 
     #lesson.mode = Ma.mode
     #close edied db lesson record
@@ -309,7 +309,7 @@ def finish(request):
 
     print (list_txt)
 
-    txt1 = f'ans_num={Ma.ans_num}, ans_corr={Ma.ans_corr}'
+    txt1 = f'ans_num={MaapLesson.Ma.ans_num}, ans_corr={MaapLesson.Ma.ans_corr}'
 
     list_hist=[]
     list_hist_row=[]
@@ -334,7 +334,7 @@ def finish(request):
         list_hist_row.append(f'{new_date} {new_time}')
         # tab mode
         a = str(i.mode)  # when only one char from db it assumes digital as int so we need to explicitly change it to str again!
-        list_hist_row.append(Ma.GetAppModeDesc(a))
+        list_hist_row.append(MaapLesson.Ma.GetAppModeDesc(a))
 
         # tab session time secs
         if (i.f_time):
