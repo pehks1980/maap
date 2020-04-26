@@ -34,10 +34,10 @@ from django.conf.urls import include
 urlpatterns = [
     path('', mainapp.main, name='index'),
     path('', mainapp.main, name='main'),
-    path('mathem/', mainapp.mathem, name='mathem'),
+    path('mathem/<int:pk>/', mainapp.mathem, name='mathem'),#lesson_id
     #path('mathem/<int:pk>/<int:a1>/<int:b1>/<int:c1>', mainapp.mathem, name='mathem'),
-    path('mathemk/<int:pk>/<int:diff>', mainapp.mathemk, name='mathemk'),
-    path('finish/', mainapp.finish, name='finish'),
+    path('mathemk/<int:pk1>/<int:pk2>/<int:diff>/', mainapp.mathemk, name='mathemk'),
+    path('finish/<int:pk>/', mainapp.finish, name='finish'),
     path('hist/', mainapp.hist, name='hist'),
     path('clear-hist/', mainapp.clear_hist, name='clear_hist'),
 

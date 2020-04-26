@@ -40,30 +40,30 @@ def main(request):
             ans = form.cleaned_data.get('app_mode')
             print(ans)
 
-            # reset app
-            MaapLesson.Ma.__init__()
 
-            #set mode for app
-            MaapLesson.Ma.SetAppMode(ans)
-            MaapLesson.Ma.mode = ' '.join(ans)
-            #get time from js browser of user
-            val = request.POST.get('tstamp')
-            val_li = list(val.split("/"))
-            MaapLesson.Ma.start_time=val_li
-            print(val_li)
             #make up lesson log
             lesson = MaapLesson(user=request.user)
-            lesson.date= " ".join(val_li[:3])
-            lesson.s_time= " ".join(val_li[3:])
-            lesson.mode = MaapLesson.Ma.mode+'k'
+            # reset app
+            lesson.Ma.__init__()
+            lesson.Ma.SetAppMode(ans)
+            lesson.Ma.mode = ' '.join(ans)
+            lesson.mode = lesson.Ma.mode+'k'
             print(lesson.pk)
-            lesson.save()
+            # set mode for app
 
+            # get time from js browser of user
+            val = request.POST.get('tstamp')
+            val_li = list(val.split("/"))
+            lesson.Ma.start_time = val_li
+            print(val_li)
+
+            lesson.save()
+            #lesson.Ma.lesson_id = lesson.pk
             print(lesson.pk)
             #save primary key for this session lesson (id)
-            MaapLesson.Ma.lesson_id = lesson.pk
 
-            return HttpResponseRedirect(f'/mathem/')
+
+            return HttpResponseRedirect(f'/mathem/{lesson.pk}')
     else:#GET
         form = AppModForm()
 
@@ -74,8 +74,8 @@ def main(request):
 
     return render(request, 'mainapp/index.html', content)
 
-def mathem(request):
-    title = 'главная maap v 1.0'
+def mathem(request,pk):
+    title = 'Математика '
 
     txt0=None
     txt00=None
@@ -85,19 +85,21 @@ def mathem(request):
 
     form = Ans_Form(request.POST or None)
 
+    lesson = MaapLesson.objects.get(user=request.user,pk=pk)
+
     code=0
     txt2=''
     #обработчик обрабватывает все реквесты страницы и GET и POST
     if request.method == 'GET':
-        a, b, code = MaapLesson.Ma.eval()
+        a, b, code = lesson.Ma.eval()
         t = datetime.now()
-        MaapLesson.Ma.now.clear()
-        MaapLesson.Ma.now.append(t.minute)
-        MaapLesson.Ma.now.append(t.second)
+        lesson.Ma.now.clear()
+        lesson.Ma.now.append(t.minute)
+        lesson.Ma.now.append(t.second)
         print('aha')
 
 
-    txt1 = f"вопрос {MaapLesson.Ma.ans_num} правильных: {MaapLesson.Ma.ans_corr}"
+    txt1 = f"вопрос {lesson.Ma.ans_num} правильных: {lesson.Ma.ans_corr}"
 
     list_txt.append(txt1)
 
@@ -130,64 +132,73 @@ def mathem(request):
         val_li = list(val.split(" "))
 
         d1 = int(val_li[0])*60+int(val_li[1])
-        d2 = MaapLesson.Ma.now[0]*60+MaapLesson.Ma.now[1]
+        d2 = lesson.Ma.now[0]*60+lesson.Ma.now[1]
         diff= d1-d2-1
 
-        print(val_li, MaapLesson.Ma.now, diff)
+        print(val_li, lesson.Ma.now, diff)
 
         if diff < 0:
             diff = 0
         #print (ans,a,b,code)
-        return HttpResponseRedirect(f'/mathemk/{ans}/{diff}')
+        lesson.save()
+        return HttpResponseRedirect(f'/mathemk/{lesson.pk}/{ans}/{diff}')
 
     if request.method == 'POST':
         print('clickfinish')
         val = request.POST.get('tstamp1')
         val_li = list(val.split("/"))
-        MaapLesson.Ma.end_time = val_li
-        return HttpResponseRedirect(f'/finish/')
+        lesson.Ma.end_time = val_li
+
+        lesson.save()
+        return HttpResponseRedirect(f'/finish/{lesson.pk}')
 
     content = {'title': title, 'form': form, 'qst': qst}
 
-
+    lesson.save()
     return render(request, 'mainapp/mathem.html', content)
 
-def mathemk(request, pk, diff):
+def mathemk(request, pk1, pk2, diff):
     title = 'главная maap v 1.0/проверка'
 
-    #txt0=None
-    #txt00=None
-    list_txt=[]
+    if request.method == 'POST':
+        print('clicknext')
 
+        return HttpResponseRedirect(f'/mathem/{pk1}')
+    else:#GET
+        #txt0=None
+        #txt00=None
+        list_txt=[]
 
+        lesson = MaapLesson.objects.get(user=request.user, pk=pk1)
 
-   # txt0=f"ваш ответ был {pk}"
+       # txt0=f"ваш ответ был {pk}"
 
-    #list_txt.append(txt0)
+        #list_txt.append(txt0)
 
-    txt00, check_res = MaapLesson.Ma.check_ans(int(pk),int(diff))
+        txt00, check_res = lesson.Ma.check_ans(int(pk2),int(diff))
 
-    list_txt.append(txt00)
+        list_txt.append(txt00)
 
-    txt22=f"время затраченное на ответ {diff} сек"
+        txt22=f"время затраченное на ответ {diff} сек"
 
-    list_txt.append(txt22)
+        list_txt.append(txt22)
 
-    txt1 = f'a1={MaapLesson.Ma.a1}, b1={MaapLesson.Ma.b1}, c1={MaapLesson.Ma.c1}, ans_num={MaapLesson.Ma.ans_num}, ans_corr={MaapLesson.Ma.ans_corr}'
+        txt1 = f'a1={lesson.Ma.a1}, b1={lesson.Ma.b1}, c1={lesson.Ma.c1}, ans_num={lesson.Ma.ans_num}, ans_corr={lesson.Ma.ans_corr}'
 
-    if MaapLesson.Ma.c1 == 1 and check_res==0:#if multip
-        mul_tab = MaapLesson.Ma.printMatrix(MaapLesson.Ma.mult_tabl,MaapLesson.Ma.a1*MaapLesson.Ma.b1,MaapLesson.Ma.a1,0)
-        cor_ans = MaapLesson.Ma.a1*MaapLesson.Ma.b1
-        cor_ans = ">"+str(cor_ans)
-    else:
-        mul_tab = ''
-        cor_ans=''
+        if lesson.Ma.c1 == 1 and check_res==0:#if multip
+            mul_tab = lesson.Ma.printMatrix(lesson.Ma.mult_tabl,lesson.Ma.a1*lesson.Ma.b1,lesson.Ma.a1,0)
+            cor_ans = lesson.Ma.a1*lesson.Ma.b1
+            cor_ans = ">"+str(cor_ans)
+        else:
+            mul_tab = ''
+            cor_ans=''
 
-    ans = {'txt00': txt00, 'txt22':txt22, 'txt1': txt1, 'mul_tab': mul_tab, 'list_txt': list_txt, 'ans':cor_ans}
+        ans = {'txt00': txt00, 'txt22':txt22, 'txt1': txt1, 'mul_tab': mul_tab, 'list_txt': list_txt, 'ans':cor_ans}
 
-    content = {'title': title, 'ans': ans}
+        content = {'title': title, 'ans': ans}
 
-    return render(request, 'mainapp/mathemk.html', content)
+        lesson.save()
+        return render(request, 'mainapp/mathemk.html', content)
 
 def clean_str(str):
     result=""
@@ -215,7 +226,7 @@ def clear_hist(request):
     return HttpResponseRedirect(f'/')
 
 def hist(request):
-    title = 'главная maap v 1.0/история'
+    title = f'главная maap v 1.0/история уроков '
     list_hist = []
     list_hist_row = []
     lessons = MaapLesson.objects.filter(user=request.user)
@@ -246,9 +257,8 @@ def hist(request):
 
             list_hist_row.append(f'{new_date} {new_time}')
             # tab mode
-            a = str(
-                i.mode)  # when only one char from db it assumes digital as int so we need to explicitly change it to str again!
-            list_hist_row.append(MaapLesson.Ma.GetAppModeDesc(a))
+            a = str(i.mode)  # when only one char from db it assumes digital as int so we need to explicitly change it to str again!
+            list_hist_row.append(i.Ma.GetAppModeDesc(a))
 
             # tab session time secs
             if (i.f_time):
@@ -258,8 +268,11 @@ def hist(request):
                 b1 = clean_str(i.s_time)
                 b = b1.split(" ")
                 # append overall time of session
-                diff_time = (int(a[0]) - int(b[0])) * 3600 + (int(a[1]) - int(b[1])) * 60 + int(a[2]) - int(b[2])
-                list_hist_row.append(f'{int(diff_time / 60)} мин.')
+                if len(a) == 0 or len(b) == 0:
+                    diff_time = (int(a[0]) - int(b[0])) * 3600 + (int(a[1]) - int(b[1])) * 60 + int(a[2]) - int(b[2])
+                    list_hist_row.append(f'{int(diff_time / 60)} мин.')
+                else:
+                    list_hist_row.append('нет данных')
             else:
                 list_hist_row.append(f' нет данных')
 
@@ -286,33 +299,40 @@ def hist(request):
 
     return render(request, 'mainapp/hist.html', content)
 
-def finish(request):
+def finish(request,pk):
     title = 'главная maap v 1.0/результаты'
 
     txt0=None
     txt00=None
     #call finish result
 
-    list_txt = MaapLesson.Ma.finish(1)
     # retrieve lesson from db
-    lesson = get_object_or_404(MaapLesson, pk=MaapLesson.Ma.lesson_id)
+    lesson = get_object_or_404(MaapLesson, pk=pk)
     #update record
-    lesson.ans_correct = MaapLesson.Ma.ans_corr
+    list_txt = lesson.Ma.finish(1)
 
-    lesson.ans_amount = MaapLesson.Ma.ans_num
+    lesson.ans_correct = lesson.Ma.ans_corr
 
-    lesson.f_time = ' '.join(MaapLesson.Ma.end_time[3:])
+    lesson.ans_amount = lesson.Ma.ans_num
+
+    lesson.date = ' '.join(lesson.Ma.start_time[:3])
+
+    lesson.s_time = ' '.join(lesson.Ma.start_time[3:])
+
+    lesson.f_time = ' '.join(lesson.Ma.end_time[3:])
+
 
     #lesson.mode = Ma.mode
-    #close edied db lesson record
-    lesson.save()
+    #close edited db lesson record
 
-    print (list_txt)
-
-    txt1 = f'ans_num={MaapLesson.Ma.ans_num}, ans_corr={MaapLesson.Ma.ans_corr}'
+    txt1 = f'ans_num={lesson.Ma.ans_num}, ans_corr={lesson.Ma.ans_corr}'
 
     list_hist=[]
     list_hist_row=[]
+    lesson.save()
+
+    print(list_txt)
+
     lessons = MaapLesson.objects.filter(user=request.user)
 
     #make headers of the table history
@@ -334,7 +354,7 @@ def finish(request):
         list_hist_row.append(f'{new_date} {new_time}')
         # tab mode
         a = str(i.mode)  # when only one char from db it assumes digital as int so we need to explicitly change it to str again!
-        list_hist_row.append(MaapLesson.Ma.GetAppModeDesc(a))
+        list_hist_row.append(i.Ma.GetAppModeDesc(a))
 
         # tab session time secs
         if (i.f_time):
@@ -344,8 +364,11 @@ def finish(request):
             b1 = clean_str(i.s_time)
             b = b1.split(" ")
             # append overall time of session
-            diff_time = (int(a[0]) - int(b[0])) * 3600 + (int(a[1]) - int(b[1])) * 60 + int(a[2]) - int(b[2])
-            list_hist_row.append(f'{int(diff_time / 60)} мин.')
+            if len(a) > 0 and len(b) > 0 :
+                diff_time = (int(a[0]) - int(b[0])) * 3600 + (int(a[1]) - int(b[1])) * 60 + int(a[2]) - int(b[2])
+                list_hist_row.append(f'{int(diff_time / 60)} мин.')
+            else:
+                list_hist_row.append('нет данных')
         else:
             list_hist_row.append(f' нет данных')
 

@@ -144,9 +144,9 @@ function tstamp2() {
   <form class="form-horizontal" method="post" enctype="multipart/form-data" >
        {% csrf_token %}
       <input type="hidden" name="tstamp1" id="ts1" value="null1"/>
-      <input class="button button5" type="submit" value="завершить" onclick="tstamp2();"/>
+      <input class="button button5" type="submit" value="завершить!" onclick="tstamp2();"/>
   </form>
-    <a href="{% url 'finish' %}" style="text-decoration: none; color: black;">
+    <a href="{% url 'finish' 0 %}" style="text-decoration: none; color: black;">
       завершить
     </a>
 {% endblock %}

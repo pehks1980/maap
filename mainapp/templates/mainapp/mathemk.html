@@ -47,12 +47,14 @@
 
         </p>
     {% endif %}
-<div class="clr"></div>
-  <button class="button button5">
- <a href="{% url 'mathem' %}" class="big-bold" style="text-decoration: none;">
-      следующий вопрос
-    </a>
-  </button>
+    <div class="clr"></div>
+
+    <form class="form-horizontal" method="post" enctype="multipart/form-data" >
+       {% csrf_token %}
+      <input class="button button5" type="submit" value="следующий вопрос" />
+    </form>
+
+
 
 
 {% endblock %}
