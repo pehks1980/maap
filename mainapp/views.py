@@ -49,6 +49,7 @@ def main(request):
             lesson.Ma.mode = ' '.join(ans)
             lesson.mode = lesson.Ma.mode+'k'
             print(lesson.pk)
+            print(f'aha {lesson.Ma} {lesson.Ma.now}')
             # set mode for app
 
             # get time from js browser of user
@@ -56,6 +57,7 @@ def main(request):
             val_li = list(val.split("/"))
             lesson.Ma.start_time = val_li
             print(val_li)
+
 
             lesson.save()
             #lesson.Ma.lesson_id = lesson.pk
@@ -96,7 +98,7 @@ def mathem(request,pk):
         lesson.Ma.now.clear()
         lesson.Ma.now.append(t.minute)
         lesson.Ma.now.append(t.second)
-        print('aha')
+        print(f'aha {lesson.Ma} {lesson.Ma.now}')
 
 
     txt1 = f"вопрос {lesson.Ma.ans_num} правильных: {lesson.Ma.ans_corr}"
