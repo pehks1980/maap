@@ -18,9 +18,9 @@ import random
 class MaapLesson(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='lesson')
 
-    date = models.CharField(verbose_name='s_time', max_length=24, blank=True)
-    s_time = models.CharField(verbose_name='s_time', max_length=12, blank=True)
-    f_time = models.CharField(verbose_name='f_time', max_length=12, blank=True)
+    date = models.CharField(verbose_name='s_time', max_length=64, blank=True)
+    s_time = models.CharField(verbose_name='s_time', max_length=64, blank=True)
+    f_time = models.CharField(verbose_name='f_time', max_length=64, blank=True)
     # mode=models.PositiveIntegerField(verbose_name='mode', null=True)
     mode = models.CharField(verbose_name='mode', max_length=12, blank=True)
 
@@ -40,8 +40,8 @@ class MaapLesson(models.Model):
     hist_depth = models.PositiveIntegerField(verbose_name='hist_depth', default=5)
     favor_thresold_time = models.PositiveIntegerField(verbose_name='hist_depth', default=15)
 
-    hist = models.CharField(verbose_name='hist', max_length=128, blank=True)
-    favor_ans = models.CharField(verbose_name='hist', max_length=128, blank=True)
+    hist = models.CharField(verbose_name='hist', max_length=256, blank=True)
+    favor_ans = models.CharField(verbose_name='hist', max_length=256, blank=True)
 
     qst_time = models.CharField(verbose_name='mode', max_length=12, blank=True)
 

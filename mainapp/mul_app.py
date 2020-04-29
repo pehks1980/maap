@@ -12,12 +12,12 @@ def bubble_sort(source_arr):
     while zam:
         #print(source_arr,"сч-ик замен ",n)
         zam=False
-        for i in range(0,len(source_arr)-1):
-            if source_arr[i]>source_arr[i+1]:
+        for i in range(0, len(source_arr)-1):
+            if source_arr[i] > source_arr[i+1]:
                 tmp =source_arr[i+1]
-                source_arr[i+1]=source_arr[i]
-                source_arr[i]=tmp
-                zam=True
+                source_arr[i+1] = source_arr[i]
+                source_arr[i] = tmp
+                zam = True
                 n +=1
                 break
 
@@ -96,10 +96,10 @@ def eval(mult, addi, subt, nx, ny, ax, two_digit, sx, no_minus, no_dec_mul, hist
                 break
 
 
-        if code ==1:
+        if code == 1:
             a = random.randint(2, nx)
             b = random.randint(2, ny)
-        if code ==2:
+        if code == 2:
             while True:
                 a = random.randint(1, ax)
                 b = random.randint(1, ax)
@@ -110,7 +110,7 @@ def eval(mult, addi, subt, nx, ny, ax, two_digit, sx, no_minus, no_dec_mul, hist
                     else:
                         continue
 
-        if code ==3:
+        if code == 3:
             while True:
                 a = random.randint(1, sx)
                 b = random.randint(1, sx)
@@ -137,27 +137,36 @@ def eval(mult, addi, subt, nx, ny, ax, two_digit, sx, no_minus, no_dec_mul, hist
                     already_in_hist = True
                     continue
 
-        for x in hist:
-            if a == x[0] and b == x[1] and code == x[2]:
+        for id, key in hist.items():
+            ha = key['a']
+            hb = key['b']
+            hcode = key['c']
+            if a == ha and b == hb and code == hcode:
                 already_in_hist=True
 
         if already_in_hist==False:
             break
-    #add new primer to histqueue
 
-    ch1=[]#hist chunk 0 result 1 op
-    ch1.append(a)
-    ch1.append(b)
-    ch1.append(code)
-    #add to hist to do later!
-    #hist.append(ch1)
+    #add new primer to
+    elem = {'a': a,
+            'b': b,
+            'c': code}  # a,b,op,diff_time
+    # make new index
+    idx=0
+    for i in hist.keys():
+        if int(i)>idx:
+            idx = int(i)
+    #idx = int(max(hist.keys()))
+    hist[idx+1] = elem
+    # to add to favor_ans
 
-    #if len(hist) > hist_depth:
+    if idx > hist_depth:
+        del hist[f'{idx-hist_depth}']
     #     hist.popleft()
 
-    return a,b,code
+    return a,b,code,hist
 
-def check_ans(ans, diff,a1,b1,c1,favor_ans,favor_thresold_time,):
+def check_ans(ans, diff, a1, b1, c1):
     a = a1
     b = b1
     code = c1
@@ -172,20 +181,7 @@ def check_ans(ans, diff,a1,b1,c1,favor_ans,favor_thresold_time,):
     if code == 3:
         res = a - b
 
-    if diff > favor_thresold_time:
-        already_in = False
-        for x in favor_ans:
-            if a == x[0] and b == x[1]:
-                already_in = True
 
-        if already_in == False:
-            elem = []  # a,b,op,diff_time
-            elem.append(a)
-            elem.append(b)
-            elem.append(code)
-            elem.append(diff)
-            #to add to favor_ans
-            #favor_ans.append(elem)
 
     if ans != 'q':
         if ans == 'c':
@@ -221,22 +217,25 @@ def finish_lesson(f_time,ans_num, ans_corr, favor_ans, favor_thresold_time):
     reply=[]
     reply.append("пока!")
     if ans_num > 1:
-        ans_num = ans_num-1
         reply.append(f"\n вопросов было {ans_num}, число правильных {ans_corr}, процент правильных {int((ans_corr/ans_num)*100)} %")
         reply.append(f' всего прошло времени {int(f_time/60)} мин')
 
-        reply.append(f' трудные примеры: {len(favor_ans)}')
+        reply.append(f' трудные примеры: {len(favor_ans.keys())-1}')
         #sort by time,desc
-        sub_li1 = sorted(favor_ans, key=lambda x: x[2],reverse=True)
+        #sub_li1 = sorted(favor_ans, key=lambda x: x[2],reverse=True)
 
 
-        for i in sub_li1:
-            if i[2]==1:
-                reply.append(f' {i[0]} X {i[1]} (={i[0] * i[1]}) занял {i[3]} секунд (порог {favor_thresold_time}) сек')
-            if i[2]==2:
-                reply.append(f' {i[0]} + {i[1]} (={i[0] + i[1]}) занял {i[3]} секунд (порог {favor_thresold_time}) сек')
-            if i[2]==3:
-                reply.append(f' {i[0]} - {i[1]} (={i[0] - i[1]}) занял {i[3]} секунд (порог {favor_thresold_time}) сек')
+        for id,key in favor_ans.items():
+            a=key['a']
+            b=key['b']
+            c=key['c']
+            d=key['d']
+            if c == 1:
+                reply.append(f' {a} X {b} (={a * b}) занял {d} секунд (порог {favor_thresold_time}) сек')
+            if c == 2:
+                reply.append(f' {a} + {b} (={a + b}) занял {d} секунд (порог {favor_thresold_time}) сек')
+            if c == 3:
+                reply.append(f' {a} - {b} (={a - b}) занял {d} секунд (порог {favor_thresold_time}) сек')
 
     return reply
 

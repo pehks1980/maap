@@ -53,9 +53,32 @@ def main(request):
             # get time from js browser of user
             val = request.POST.get('tstamp')
             val_li = list(val.split("/"))
-            lesson.s_time = val_li
 
-            print(val_li)
+            start_date = {'day':val_li[0],
+                          'mon':val_li[1],
+                          'year':val_li[2],
+                          'hour':val_li[3],
+                          'min':val_li[4],
+                          'sec':val_li[5]}
+
+            lesson.s_time = json.dumps(start_date)
+
+            print(lesson.s_time)
+
+            # make 1 st object in favour ans queue
+            favor_ans = {1: {'a': 0,
+                             'b': 0,
+                             'c': 0,
+                             'd': 0}
+                         }
+            lesson.favor_ans = json.dumps(favor_ans)
+
+            # make 1 st object in hist  queue
+            hist = {1: {'a': 0,
+                        'b': 0,
+                        'c': 0}
+                    }
+            lesson.hist = json.dumps(hist)
 
 
             lesson.save()
@@ -74,7 +97,7 @@ def main(request):
     content = {'title': title, 'form': form, 'category': links_menu}
 
     return render(request, 'mainapp/index.html', content)
-
+import os,json
 def mathem(request,pk):
     title = 'Математика '
 
@@ -88,24 +111,35 @@ def mathem(request,pk):
 
     lesson = MaapLesson.objects.get(user=request.user,pk=pk)
 
-    hist = lesson.hist
+
+
+
     code=0
     txt2=''
     #обработчик обрабватывает все реквесты страницы и GET и POST
     if request.method == 'GET':
-        a, b, code = eval(lesson.mult,lesson.addi,lesson.subt,lesson.nx,lesson.ny,lesson.ax,lesson.two_digit,lesson.sx,\
+        hist = json.loads(lesson.hist)#load hist from db
+
+        a, b, code, hist1 = eval(lesson.mult,lesson.addi,lesson.subt,lesson.nx,lesson.ny,lesson.ax,lesson.two_digit,lesson.sx,\
                             lesson.no_minus,lesson.no_dec_mul,hist,lesson.hist_depth)
 
-        lesson.a1 = a
+        lesson.a1 = a#update db
         lesson.b1 = b
         lesson.c1 = code
+        lesson.hist = json.dumps(hist1)
 
         t = datetime.now()
-        now=[]
-        now.append(t.minute)
-        now.append(t.second)
-        #copy data to db
-        lesson.qst_time = now
+
+        #copy data to db in json format
+
+        tim = {'min':t.minute,
+               'sec':t.second}
+
+        js_tim=json.dumps(tim)
+
+        print(js_tim)
+
+        lesson.qst_time = js_tim
 
         print(f'aha {lesson.qst_time}')
 
@@ -146,11 +180,13 @@ def mathem(request,pk):
         val = request.POST.get('tstamp')
         val_li = list(val.split(" "))
 
-        d1 = int(val_li[0])*60+int(val_li[1])#current time
+        d1 = int(val_li[0])*60+int(val_li[1])#current time 0 - min 1 - sec
 
         print(f'post {lesson.qst_time} {val_li}')
+        time_dic = json.loads(lesson.qst_time)
 
-        d2 = 0 #lesson.Ma.now[0]*60+lesson.Ma.now[1]
+        d2 = time_dic['min']*60 + time_dic['sec']
+
         diff= d1-d2-1
 
 
@@ -165,7 +201,18 @@ def mathem(request,pk):
         print('clickfinish')
         val = request.POST.get('tstamp1')
         val_li = list(val.split("/"))
-        lesson.f_time = val_li
+
+        # update db with finish time
+        tim = {'hour': val_li[3],
+               'min': val_li[4],
+               'sec': val_li[5]}
+
+        lesson.f_time = json.dumps(tim)
+
+        print(f'fin time {lesson.f_time}')
+        #decrease amount of questions as quit was pressed
+
+        lesson.ans_amount -= 1
 
         lesson.save()
         return HttpResponseRedirect(f'/finish/{lesson.pk}')
@@ -189,9 +236,37 @@ def mathemk(request, pk1, pk2, diff):
        # txt0=f"ваш ответ был {pk}"
 
         #list_txt.append(txt0)
-        favor_ans = lesson.favor_ans
+        #add to dict if diff time > favor_thresold_time:
 
-        txt00, check_res = check_ans(int(pk2),int(diff),lesson.a1,lesson.b1,lesson.c1,favor_ans,lesson.favor_thresold_time)
+        favor_ans = json.loads(lesson.favor_ans)
+
+        #debug diff +=15
+        if diff > lesson.favor_thresold_time:
+            already_in = False
+            for id, key in favor_ans.items():
+                a = key['a']
+                b = key['b']
+                if lesson.a1 == a and lesson.b1 == b:
+                    already_in = True
+
+            if already_in == False:
+                elem = {'a':lesson.a1,
+                        'b':lesson.b1,
+                        'c': lesson.c1,
+                        'd': diff}  # a,b,op,diff_time
+                #make new index
+                idx = 0
+                for i in favor_ans.keys():
+                    if int(i) > idx:
+                        idx = int(i)
+
+                favor_ans[idx+1] = elem
+                # to add to favor_ans
+                #store it in db
+                lesson.favor_ans = json.dumps(favor_ans)
+                # favor_ans.append(elem)
+
+        txt00, check_res = check_ans(int(pk2),int(diff),lesson.a1,lesson.b1,lesson.c1)
 
         lesson.ans_amount += 1
         if check_res == 1:
@@ -274,28 +349,25 @@ def hist(request):
             list_hist_row = []
 
             # tab date start dATE time
-            new_date = '.'.join(i.date.split())
-            new_time = ':'.join(i.s_time.split())
+            start_date = json.loads(i.s_time)
+            new_date = start_date['day'] + '.' + start_date['mon'] + '.' + start_date['year']
+            new_time = start_date['hour'] + ':' + start_date['min'] + ':' + start_date['sec']
 
             list_hist_row.append(f'{new_date} {new_time}')
             # tab mode
-            a = str(i.mode)  # when only one char from db it assumes digital as int so we need to explicitly change it to str again!
+            a = str(
+                i.mode)  # when only one char from db it assumes digital as int so we need to explicitly change it to str again!
             list_hist_row.append(GetAppModeDesc(a))
 
-            # tab session time secs
-            if (i.f_time):
-                a1 = clean_str(i.f_time)
-                a = a1.split(" ")
+            try:
+                end_time = json.loads(i.f_time)
 
-                b1 = clean_str(i.s_time)
-                b = b1.split(" ")
-                # append overall time of session
-                if len(a) == 0 or len(b) == 0:
-                    diff_time = (int(a[0]) - int(b[0])) * 3600 + (int(a[1]) - int(b[1])) * 60 + int(a[2]) - int(b[2])
-                    list_hist_row.append(f'{int(diff_time / 60)} мин.')
-                else:
-                    list_hist_row.append('нет данных')
-            else:
+                diff_time = int(end_time['sec']) - int(start_date['sec']) + \
+                            (int(end_time['min']) - int(start_date['min'])) * 60 + \
+                            (int(end_time['hour']) - int(start_date['hour'])) * 3600
+
+                list_hist_row.append(f'{int(diff_time / 60)} мин.')
+            except:
                 list_hist_row.append(f' нет данных')
 
             # tab amount
@@ -330,29 +402,19 @@ def finish(request,pk):
 
     # retrieve lesson from db
     lesson = get_object_or_404(MaapLesson, pk=pk)
-    #update record
-    list_txt = finish_lesson(1,lesson.ans_amount,lesson.ans_correct,lesson.favor_ans,lesson.favor_thresold_time)
 
-    # lesson.ans_correct = lesson.Ma.ans_corr
-    #
-    # lesson.ans_amount = lesson.Ma.ans_num
-    #
-    # lesson.date = ' '.join(lesson.Ma.start_time[:3])
-    #
-    # lesson.s_time = ' '.join(lesson.Ma.start_time[3:])
-    #
-    # lesson.f_time = ' '.join(lesson.Ma.end_time[3:])
+    favor_ans = json.loads(lesson.favor_ans)
 
-
-    #lesson.mode = Ma.mode
-    #close edited db lesson record
+    list_txt = finish_lesson(1,lesson.ans_amount,lesson.ans_correct,favor_ans,lesson.favor_thresold_time)
 
     txt1 = f'ans_num={lesson.ans_amount}, ans_corr={lesson.ans_correct}'
+
+    lesson.save()
 
     list_hist=[]
     list_hist_row=[]
 
-    lesson.save()
+
 
     print(list_txt)
 
@@ -371,28 +433,24 @@ def finish(request,pk):
         list_hist_row = []
 
         #tab date start dATE time
-        new_date = '.'.join(i.date.split())
-        new_time = ':'.join(i.s_time.split())
+        start_date = json.loads(i.s_time)
+        new_date = start_date['day'] +'.'+ start_date['mon']+ '.' + start_date['year']
+        new_time = start_date['hour'] +':'+ start_date['min']+ ':' + start_date['sec']
 
         list_hist_row.append(f'{new_date} {new_time}')
         # tab mode
         a = str(i.mode)  # when only one char from db it assumes digital as int so we need to explicitly change it to str again!
         list_hist_row.append(GetAppModeDesc(a))
 
-        # tab session time secs
-        if (i.f_time):
-            a1 = clean_str(i.f_time)
-            a = a1.split(" ")
+        try:
+            end_time = json.loads(i.f_time)
 
-            b1 = clean_str(i.s_time)
-            b = b1.split(" ")
-            # append overall time of session
-            if len(a) > 0 and len(b) > 0 :
-                diff_time = (int(a[0]) - int(b[0])) * 3600 + (int(a[1]) - int(b[1])) * 60 + int(a[2]) - int(b[2])
-                list_hist_row.append(f'{int(diff_time / 60)} мин.')
-            else:
-                list_hist_row.append('нет данных')
-        else:
+            diff_time =   int(end_time['sec']) - int(start_date['sec']) + \
+                        ( int(end_time['min']) - int(start_date['min']) ) * 60 +\
+                        ( int(end_time['hour']) - int(start_date['hour']) ) * 3600
+
+            list_hist_row.append(f'{int(diff_time / 60)} мин.')
+        except:
             list_hist_row.append(f' нет данных')
 
         #tab amount
