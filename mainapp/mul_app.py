@@ -218,7 +218,7 @@ def finish_lesson(f_time,ans_num, ans_corr, favor_ans, favor_thresold_time):
     reply.append("пока!")
     if ans_num > 1:
         reply.append(f"\n вопросов было {ans_num}, число правильных {ans_corr}, процент правильных {int((ans_corr/ans_num)*100)} %")
-        reply.append(f' всего прошло времени {int(f_time/60)} мин')
+        reply.append(f' всего прошло времени {f_time} мин')
 
         reply.append(f' трудные примеры: {len(favor_ans.keys())-1}')
         #sort by time,desc
@@ -287,7 +287,7 @@ def finish_lesson(f_time,ans_num, ans_corr, favor_ans, favor_thresold_time):
         # self.lesson_id=0
         # self.end_time=[]
         # self.mode=[]
-        #
+        #self.mult_tabl = []
         # for i in range(1, self.ny + 1):
         #     row = []
         #     for j in range(1, self.nx + 1):

@@ -16,7 +16,9 @@ from .models import MaapLesson
 
 #create copy
 
-from .mul_app import SetAppMode, eval, check_ans, GetAppModeDesc, finish_lesson
+from .mul_app import SetAppMode, eval, check_ans, GetAppModeDesc, finish_lesson, printMatrix
+
+
 #from .mainapp import mul_app
 
 @login_required
@@ -82,7 +84,7 @@ def main(request):
 
 
             lesson.save()
-            #lesson.Ma.lesson_id = lesson.pk
+
             print(lesson.pk)
             #save primary key for this session lesson (id)
 
@@ -110,9 +112,6 @@ def mathem(request,pk):
     form = Ans_Form(request.POST or None)
 
     lesson = MaapLesson.objects.get(user=request.user,pk=pk)
-
-
-
 
     code=0
     txt2=''
@@ -281,14 +280,24 @@ def mathemk(request, pk1, pk2, diff):
         list_txt.append(txt22)
 
         txt1 = f'a1={lesson.a1}, b1={lesson.b1}, c1={lesson.c1}, ans_num={lesson.ans_amount}, ans_corr={lesson.ans_correct}'
+        #add mult table
+        if lesson.c1 == 1 and check_res == 0:#if multip
+            mult_tabl = []
+            ny = lesson.ny
+            nx = lesson.nx
+            for i in range(1, ny + 1):
+                row = []
+                for j in range(1, nx + 1):
+                    row.append(i * j)
+                mult_tabl.append(row)
 
-        # if lesson.Ma.c1 == 1 and check_res==0:#if multip
-        #     mul_tab = lesson.Ma.printMatrix(lesson.Ma.mult_tabl,lesson.Ma.a1*lesson.Ma.b1,lesson.Ma.a1,0)
-        #     cor_ans = lesson.Ma.a1*lesson.Ma.b1
-        #     cor_ans = ">"+str(cor_ans)
-        # else:
-        mul_tab = ''
-        cor_ans=''
+            # self.printMatrix(self.mult_tabl,0,0,0)
+            mul_tab = printMatrix(mult_tabl, lesson.a1*lesson.b1, lesson.a1,0)
+            cor_ans = lesson.a1*lesson.b1
+            cor_ans = ">"+str(cor_ans)
+        else:
+            mul_tab = ''
+            cor_ans=''
 
         ans = {'txt00': txt00, 'txt22':txt22, 'txt1': txt1, 'mul_tab': mul_tab, 'list_txt': list_txt, 'ans':cor_ans}
 
@@ -404,8 +413,17 @@ def finish(request,pk):
     lesson = get_object_or_404(MaapLesson, pk=pk)
 
     favor_ans = json.loads(lesson.favor_ans)
+    #get time for this session
+    start_date = json.loads(lesson.s_time)
+    end_time = json.loads(lesson.f_time)
 
-    list_txt = finish_lesson(1,lesson.ans_amount,lesson.ans_correct,favor_ans,lesson.favor_thresold_time)
+    diff_time = int(end_time['sec']) - int(start_date['sec']) + \
+                (int(end_time['min']) - int(start_date['min'])) * 60 + \
+                (int(end_time['hour']) - int(start_date['hour'])) * 3600
+
+    f_time = int (diff_time / 60)
+
+    list_txt = finish_lesson(f_time, lesson.ans_amount, lesson.ans_correct, favor_ans, lesson.favor_thresold_time)
 
     txt1 = f'ans_num={lesson.ans_amount}, ans_corr={lesson.ans_correct}'
 
