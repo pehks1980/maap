@@ -13,10 +13,26 @@ from datetime import datetime
 
 import random
 
+class Report(models.Model):
+    bytes = models.TextField()
+    filename = models.CharField(max_length=255)
+    mimetype = models.CharField(max_length=50)
+
+class MaapReport(models.Model):
+   # report_pk = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=100)
+    file_rep = models.FileField(
+        upload_to='mainapp.Report/bytes/filename/mimetype',
+        blank=True, null=True
+    )
+
+    def __str__(self):
+        return self.name
 
 
 class MaapLesson(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='lesson')
+    report = models.ForeignKey(MaapReport, on_delete=models.CASCADE)
 
     date = models.CharField(verbose_name='s_time', max_length=64, blank=True)
     s_time = models.CharField(verbose_name='s_time', max_length=64, blank=True)

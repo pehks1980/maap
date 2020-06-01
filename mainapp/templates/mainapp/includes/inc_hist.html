@@ -6,10 +6,25 @@
                 <tr>
                 {% for val in rowval %}
 
+                    {% if forloop.counter != 1 %}
                         <td>{{val}}</td>
+                    {% endif %}
 
                 {% endfor %}
                 </tr>
+                {% for rp_row in ans.rep_hist %}
+                    {% if rowval.0 == rp_row.0 %}
+                     <tr>
+                         {% for rp in rp_row %}
+                            {% if forloop.counter != 1 %}
+                                <td colspan="5">{{rp}}</td>
+                            {% endif %}
+                         {% endfor %}
+                     </tr>
+                    {% endif %}
+                {% endfor %}
+
+                <tr><td colspan="5">&nbsp;</td></tr>
             {% endfor %}
             </table>
 

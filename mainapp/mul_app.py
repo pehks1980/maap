@@ -1,59 +1,62 @@
-import random,collections, time, threading
+import random, collections, time, threading
 
 from datetime import datetime
 import random
 
 
-#улучшение - используем флаг замены. если была хоть 1 замена вылетаем из цикла.
+# улучшение - используем флаг замены. если была хоть 1 замена вылетаем из цикла.
 # в итоге время сортировки зависит от количества замен
 def bubble_sort(source_arr):
-    zam=True
-    n=0
+    zam = True
+    n = 0
     while zam:
-        #print(source_arr,"сч-ик замен ",n)
-        zam=False
-        for i in range(0, len(source_arr)-1):
-            if source_arr[i] > source_arr[i+1]:
-                tmp =source_arr[i+1]
-                source_arr[i+1] = source_arr[i]
+        # print(source_arr,"сч-ик замен ",n)
+        zam = False
+        for i in range(0, len(source_arr) - 1):
+            if source_arr[i] > source_arr[i + 1]:
+                tmp = source_arr[i + 1]
+                source_arr[i + 1] = source_arr[i]
                 source_arr[i] = tmp
                 zam = True
-                n +=1
+                n += 1
                 break
 
-        if zam==False:
+        if zam == False:
             break
 
-    return source_arr,n
+    return source_arr, n
+
 
 def SetAppMode(list):
-    mult=0
-    addi=0
-    subt=0
+    mult = 0
+    addi = 0
+    subt = 0
     for i in list:
-        if int(i)==1:
-            mult=1
-        if int(i)==2:
-            addi=1
-        if int(i)==3:
-            subt=1
+        if int(i) == 1:
+            mult = 1
+        if int(i) == 2:
+            addi = 1
+        if int(i) == 3:
+            subt = 1
 
-    return (mult,addi,subt)
+    return (mult, addi, subt)
+
 
 def GetAppModeDesc(list):
-    #result=[]
-    a=''
-    b=''
-    c=''
+    # result=[]
+    a = ''
+    b = ''
+    c = ''
     for i in list:
-        if i=='1':
-            a='*,'
-        if i=='2':
-            b='+,'
-        if i=='3':
-            c='-'
+        if i == '1':
+            a = '*,'
+        if i == '2':
+            b = '+,'
+        if i == '3':
+            c = '-'
 
     return f'{a}{b}{c}'
+
 
 def printMatrix(s, hl, a, b):
     # Do heading
@@ -67,34 +70,34 @@ def printMatrix(s, hl, a, b):
 
     # Matrix contents
     for i in range(len(s)):
-        row=[]
+        row = []
         row.append(i + 1)  # Row nums
         for j in range(len(s[0])):
             if hl == s[i][j]:
                 if j == (a - 1):
-                    row.append(">"+str(s[i][j]))
+                    row.append(">" + str(s[i][j]))
                 else:
                     row.append(s[i][j])
             else:
                 row.append(s[i][j])
         result.append(row)
 
-    #print(result)
+    # print(result)
     return result
+
 
 def eval(mult, addi, subt, nx, ny, ax, two_digit, sx, no_minus, no_dec_mul, hist, hist_depth):
     while True:
         already_in_hist = False
 
         while True:
-            code = random.randint(1,3)
-            if (mult==1) and (code == 1):
+            code = random.randint(1, 3)
+            if (mult == 1) and (code == 1):
                 break
-            if (addi==1) and (code == 2):
+            if (addi == 1) and (code == 2):
                 break
-            if (subt==1) and (code == 3):
+            if (subt == 1) and (code == 3):
                 break
-
 
         if code == 1:
             a = random.randint(2, nx)
@@ -116,7 +119,7 @@ def eval(mult, addi, subt, nx, ny, ax, two_digit, sx, no_minus, no_dec_mul, hist
                 b = random.randint(1, sx)
 
                 if two_digit:
-                    if a>10 or b>10:
+                    if a > 10 or b > 10:
                         break
                     else:
                         continue
@@ -124,15 +127,15 @@ def eval(mult, addi, subt, nx, ny, ax, two_digit, sx, no_minus, no_dec_mul, hist
                 if a != b:
                     break
 
-#        print(a,b)
+            #        print(a,b)
 
             if no_minus:
-                if a<b:
-                    tmp=a#swap it so there is no minus
+                if a < b:
+                    tmp = a  # swap it so there is no minus
                     a = b
-                    b=tmp
+                    b = tmp
 
-            if no_dec_mul:#no 10s in multiplication
+            if no_dec_mul:  # no 10s in multiplication
                 if (a == 10) or (b == 10):
                     already_in_hist = True
                     continue
@@ -142,29 +145,30 @@ def eval(mult, addi, subt, nx, ny, ax, two_digit, sx, no_minus, no_dec_mul, hist
             hb = key['b']
             hcode = key['c']
             if a == ha and b == hb and code == hcode:
-                already_in_hist=True
+                already_in_hist = True
 
-        if already_in_hist==False:
+        if already_in_hist == False:
             break
 
-    #add new primer to
+    # add new primer to
     elem = {'a': a,
             'b': b,
             'c': code}  # a,b,op,diff_time
     # make new index
-    idx=0
+    idx = 0
     for i in hist.keys():
-        if int(i)>idx:
+        if int(i) > idx:
             idx = int(i)
-    #idx = int(max(hist.keys()))
-    hist[idx+1] = elem
+    # idx = int(max(hist.keys()))
+    hist[idx + 1] = elem
     # to add to favor_ans
 
     if idx > hist_depth:
-        del hist[f'{idx-hist_depth}']
+        del hist[f'{idx - hist_depth}']
     #     hist.popleft()
 
-    return a,b,code,hist
+    return a, b, code, hist
+
 
 def check_ans(ans, diff, a1, b1, c1):
     a = a1
@@ -181,13 +185,11 @@ def check_ans(ans, diff, a1, b1, c1):
     if code == 3:
         res = a - b
 
-
-
     if ans != 'q':
         if ans == 'c':
             if code == 1:
                 # printMatrix(mult_tabl, res, a, b)
-                return (f" подсказка : ответ - правильный {a} X {b} = {res}", 0)
+                return f" подсказка : ответ - правильный {a} X {b} = {res}", 0
             if code == 2:
                 return (f" подсказка : ответ - правильный {a} + {b} = {res}", 0)
             if code == 3:
@@ -213,23 +215,24 @@ def check_ans(ans, diff, a1, b1, c1):
                 if code == 3:
                     return (f" ответ - не верный  {a} - {b} = {res}", 0)
 
-def finish_lesson(f_time,ans_num, ans_corr, favor_ans, favor_thresold_time):
-    reply=[]
+
+def finish_lesson(f_time, ans_num, ans_corr, favor_ans, favor_thresold_time):
+    reply = []
     reply.append("пока!")
     if ans_num > 1:
-        reply.append(f"\n вопросов было {ans_num}, число правильных {ans_corr}, процент правильных {int((ans_corr/ans_num)*100)} %")
+        reply.append(
+            f"\n вопросов было {ans_num}, число правильных {ans_corr}, процент правильных {int((ans_corr / ans_num) * 100)} %")
         reply.append(f' всего прошло времени {f_time} мин')
 
-        reply.append(f' трудные примеры: {len(favor_ans.keys())-1}')
-        #sort by time,desc
-        #sub_li1 = sorted(favor_ans, key=lambda x: x[2],reverse=True)
+        reply.append(f' трудные примеры: {len(favor_ans.keys()) - 1}')
+        # sort by time,desc
+        # sub_li1 = sorted(favor_ans, key=lambda x: x[2],reverse=True)
 
-
-        for id,key in favor_ans.items():
-            a=key['a']
-            b=key['b']
-            c=key['c']
-            d=key['d']
+        for id, key in favor_ans.items():
+            a = key['a']
+            b = key['b']
+            c = key['c']
+            d = key['d']
             if c == 1:
                 reply.append(f' {a} X {b} (={a * b}) занял {d} секунд (порог {favor_thresold_time}) сек')
             if c == 2:
@@ -250,67 +253,63 @@ def finish_lesson(f_time,ans_num, ans_corr, favor_ans, favor_thresold_time):
     #     # mult=1#1-yes 0 -no
     #     self.nx = 12  # range
     #     self.ny = 10
-        # add
-        # addi=1
-        # self.ax = 50  # range
-        # # subc
-        # # subt=1
-        # self.sx = 50
-        # # no minus in answer substract
-        # self.no_minus = 1
-        # # no dec in multip
-        # self.no_dec_mul = 1
-        # # two_digit nuber a or b in +-
-        # self.two_digit = 1
-        #
-        # self.favor_ans_depth = 10
-        # self.favor_ans_depth_min = 4  # if more it starts to take questions from favor_ans_queue
-        #
-        # self.favor_thresold_time = 14
-        #
-        # self.start_time = 0
-        #
-        # self.ans_num = 1
-        # self.ans_corr = 0
-        #
-        # self.mult_tabl = []
-        #
-        # self.hist = collections.deque()
-        #
-        # self.favor_ans = collections.deque()
-        #
-        # #code op storage
-        # self.a1 = 0
-        # self.b1 = 0
-        # self.c1 = 0
-        # self.now=[]
-        # self.lesson_id=0
-        # self.end_time=[]
-        # self.mode=[]
-        #self.mult_tabl = []
-        # for i in range(1, self.ny + 1):
-        #     row = []
-        #     for j in range(1, self.nx + 1):
-        #         row.append(i * j)
-        #     self.mult_tabl.append(row)
-        #
-        # self.printMatrix(self.mult_tabl,0,0,0)
+    # add
+    # addi=1
+    # self.ax = 50  # range
+    # # subc
+    # # subt=1
+    # self.sx = 50
+    # # no minus in answer substract
+    # self.no_minus = 1
+    # # no dec in multip
+    # self.no_dec_mul = 1
+    # # two_digit nuber a or b in +-
+    # self.two_digit = 1
+    #
+    # self.favor_ans_depth = 10
+    # self.favor_ans_depth_min = 4  # if more it starts to take questions from favor_ans_queue
+    #
+    # self.favor_thresold_time = 14
+    #
+    # self.start_time = 0
+    #
+    # self.ans_num = 1
+    # self.ans_corr = 0
+    #
+    # self.mult_tabl = []
+    #
+    # self.hist = collections.deque()
+    #
+    # self.favor_ans = collections.deque()
+    #
+    # #code op storage
+    # self.a1 = 0
+    # self.b1 = 0
+    # self.c1 = 0
+    # self.now=[]
+    # self.lesson_id=0
+    # self.end_time=[]
+    # self.mode=[]
+    # self.mult_tabl = []
+    # for i in range(1, self.ny + 1):
+    #     row = []
+    #     for j in range(1, self.nx + 1):
+    #         row.append(i * j)
+    #     self.mult_tabl.append(row)
+    #
+    # self.printMatrix(self.mult_tabl,0,0,0)
 
-        # self.size = 13
-        # self.array = [i for i in range(self.size)]
-        # random.shuffle(self.array)
-        #
-        # print(self.array)
-        #
-        # self.new_array, self.k = self.bubble_sort(self.array)
-        #
-        # print(self.new_array, self.k)
-        #
-        # random.seed(self.k)
-
-
-
-
+    # self.size = 13
+    # self.array = [i for i in range(self.size)]
+    # random.shuffle(self.array)
+    #
+    # print(self.array)
+    #
+    # self.new_array, self.k = self.bubble_sort(self.array)
+    #
+    # print(self.new_array, self.k)
+    #
+    # random.seed(self.k)
 
     #
     #
@@ -380,11 +379,8 @@ def finish_lesson(f_time,ans_num, ans_corr, favor_ans, favor_thresold_time):
     #
     # #print(time.ctime())
 
-
-    
-            # difference = 4
-            # self.f_time +=difference
-            # print(f' время затраченное на ответ {difference} сек')
+    # difference = 4
+    # self.f_time +=difference
+    # print(f' время затраченное на ответ {difference} сек')
     #
     # else:
-
