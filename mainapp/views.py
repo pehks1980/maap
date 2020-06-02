@@ -345,8 +345,11 @@ def clear_hist(request):
 
 def hist(request):
     title = f'главная maap v 1.0/история уроков '
+
+
     list_hist = []
-    list_hist_row = []
+    rep_hist = []
+    #try to find if its empty
     lessons = MaapLesson.objects.filter(user=request.user)
 
     list_hist_row = []
@@ -354,61 +357,15 @@ def hist(request):
     if not lessons:
         print('no lessons')
         list_hist_row.append(f' пусто! ')
+        list_hist_row.append(f' пусто! ')
         list_hist.append(list_hist_row)
         clr_but = False
     else:
-        # make headers of the table history
-        list_hist_row = []
-        list_hist_row.append(f' Дата занятия')
-        list_hist_row.append(f' Режим упр.')
-        list_hist_row.append(f' Общее время')
-        list_hist_row.append(f' Кол-во вопросов')
-        list_hist_row.append(f' % Правильных')
-        list_hist.append(list_hist_row)
-
-        for i in lessons:
-            list_hist_row = []
-
-            # tab date start dATE time
-            start_date = json.loads(i.s_time)
-            new_date = start_date['day'] + '.' + start_date['mon'] + '.' + start_date['year']
-            new_time = start_date['hour'] + ':' + start_date['min'] + ':' + start_date['sec']
-
-            list_hist_row.append(f'{new_date} {new_time}')
-            # tab mode
-            a = str(
-                i.mode)  # when only one char from db it assumes digital as int so we need to explicitly change it to str again!
-            list_hist_row.append(GetAppModeDesc(a))
-
-            try:
-                end_time = json.loads(i.f_time)
-
-                diff_time = int(end_time['sec']) - int(start_date['sec']) + \
-                            (int(end_time['min']) - int(start_date['min'])) * 60 + \
-                            (int(end_time['hour']) - int(start_date['hour'])) * 3600
-
-                list_hist_row.append(f'{int(diff_time / 60)} мин.')
-            except:
-                list_hist_row.append(f' нет данных')
-
-            # tab amount
-            if (i.ans_amount):
-                list_hist_row.append(i.ans_amount)
-            else:
-                list_hist_row.append(f' нет данных')
-            # tab percent correct
-            if (i.ans_amount and i.ans_correct):
-                corr_percent = int((i.ans_correct / i.ans_amount) * 100)
-                list_hist_row.append(f' {corr_percent} %')
-            else:
-                list_hist_row.append(f' нет данных')
-
-            # next row
-            list_hist.append(list_hist_row)
-
+        # fillup lists with data
+        make_report(list_hist, rep_hist, request)
         clr_but = True
 
-    ans = {'list_hist': list_hist, 'clr_but': clr_but}
+    ans = {'list_hist': list_hist, 'rep_hist': rep_hist, 'clr_but': clr_but}
 
     content = {'title': title, 'ans': ans}
 
@@ -462,52 +419,9 @@ def compare_reports(pk, favor_ans):
         return favor_ans
 
 
-def finish(request, pk):
-    title = 'главная maap v 1.0/результаты'
+def make_report(list_hist, rep_hist, request):
 
-    txt0 = None
-    txt00 = None
-    # call finish result
-
-    # retrieve lesson from db
-    lesson = get_object_or_404(MaapLesson, pk=pk)
-
-    favor_ans = json.loads(lesson.favor_ans)
-    # get time for this session
-    start_date = json.loads(lesson.s_time)
-    end_time = json.loads(lesson.f_time)
-
-    diff_time = int(end_time['sec']) - int(start_date['sec']) + \
-                (int(end_time['min']) - int(start_date['min'])) * 60 + \
-                (int(end_time['hour']) - int(start_date['hour'])) * 3600
-
-    f_time = int(diff_time / 60)
-
-    list_txt = finish_lesson(f_time, lesson.ans_amount, lesson.ans_correct, favor_ans, lesson.favor_thresold_time)
-
-    txt1 = f'ans_num={lesson.ans_amount}, ans_corr={lesson.ans_correct}'
-
-    favor_ans_cmp = compare_reports(pk - 1, favor_ans)  # func is to compare and update last lesson with previous - pk-1
-
-    # make a report with favor_ans for now
-    file_name = 'lesson_data.json'
-    file_content_string = json.dumps(favor_ans_cmp)
-    content_file = ContentFile(file_content_string.encode())
-    # generacte filefield
-    report = lesson.report
-
-    report.file_rep.save(file_name, content_file)
-    report.file_rep.close()
-
-    report.save()
-
-    lesson.save()
-
-    list_hist = []
-    list_hist_row = []
-    rep_hist = []
-
-    print(list_txt)
+   # print(list_txt)
 
     lessons = MaapLesson.objects.filter(user=request.user)
 
@@ -606,6 +520,54 @@ def finish(request, pk):
             rep_hist_row.append(f'{i.id}')
             rep_hist_row.append(f' report - нет данных')
             rep_hist.append(rep_hist_row)
+
+
+
+def finish(request, pk):
+    title = 'главная maap v 1.0/результаты'
+
+    txt0 = None
+    txt00 = None
+    # call finish result
+
+    # retrieve lesson from db
+    lesson = get_object_or_404(MaapLesson, pk=pk)
+
+    favor_ans = json.loads(lesson.favor_ans)
+    # get time for this session
+    start_date = json.loads(lesson.s_time)
+    end_time = json.loads(lesson.f_time)
+
+    diff_time = int(end_time['sec']) - int(start_date['sec']) + \
+                (int(end_time['min']) - int(start_date['min'])) * 60 + \
+                (int(end_time['hour']) - int(start_date['hour'])) * 3600
+
+    f_time = int(diff_time / 60)
+
+    list_txt = finish_lesson(f_time, lesson.ans_amount, lesson.ans_correct, favor_ans, lesson.favor_thresold_time)
+
+    txt1 = f'ans_num={lesson.ans_amount}, ans_corr={lesson.ans_correct}'
+
+    favor_ans_cmp = compare_reports(pk - 1, favor_ans)  # func is to compare and update last lesson with previous - pk-1
+
+    # make a report with favor_ans for now
+    file_name = 'lesson_data.json'
+    file_content_string = json.dumps(favor_ans_cmp)
+    content_file = ContentFile(file_content_string.encode())
+    # generacte filefield
+    report = lesson.report
+
+    report.file_rep.save(file_name, content_file)
+    report.file_rep.close()
+
+    report.save()
+
+    lesson.save()
+
+    list_hist = []
+    rep_hist = []
+    #fillup lists with data
+    make_report(list_hist, rep_hist, request)
 
     ans = {'txt0': txt0, 'txt00': txt00, 'txt1': txt1, 'list_txt': list_txt, 'list_hist': list_hist,
            'rep_hist': rep_hist}

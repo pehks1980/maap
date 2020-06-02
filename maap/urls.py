@@ -17,7 +17,7 @@ from django.contrib import admin
 from django.urls import path
 
 
-from django.urls import path
+from django.urls import path, re_path
 from django.contrib import admin
 
 import mainapp.views as mainapp
@@ -29,7 +29,7 @@ import mainapp.views as mainapp
 #     path('admin/', admin.site.urls),
 # ]
 
-from django.conf.urls import include
+from django.conf.urls import include, url
 
 urlpatterns = [
     path('', mainapp.main, name='index'),
@@ -42,6 +42,7 @@ urlpatterns = [
     path('clear-hist/', mainapp.clear_hist, name='clear_hist'),
 
     path('auth/', include('authapp.urls', namespace='auth')),
+    url(r'^files/', include('db_file_storage.urls')),
 ]
 
 from django.conf import settings
