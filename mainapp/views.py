@@ -120,7 +120,8 @@ def main(request):
 
 def checkCron(request):
     #call cron method to check & debug
-    cron_notify(dont_wait=True)
+    jobs = MaapUserProfile.objects.filter(user=request.user)
+    cron_notify(jobs, dont_wait=True)
     title = 'check cron'
     content = {'title': title,}
     return render(request, 'mainapp/lala.html', content)
@@ -128,7 +129,7 @@ def checkCron(request):
 def uncheckEmail(request,email,id):
     #call cron method to check & debug
     try:
-        user_prof = MaapUserProfile.objects.get(email_addr=email)#only new accounts
+        user_prof = MaapUserProfile.objects.get(id=int(id))#only new accounts
         if user_prof.enabled == True:
             user_prof.enabled = False
             user_prof.save()

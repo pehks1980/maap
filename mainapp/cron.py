@@ -9,9 +9,8 @@ from _mailsend import mail_notify
 from authapp.models import MaapUserProfile
 
 
-def cron_notify(dont_wait=False):
+def cron_notify(jobs,dont_wait=False):
     print(f' {datetime.now()}: Hello from cron')
-    jobs = MaapUserProfile.objects.all()
 
     for job in jobs:
         if job.enabled == True:
@@ -59,4 +58,5 @@ class MyCronJob(CronJobBase):
 
     def do(self):
         print('cron_notify executed..')
-        cron_notify()
+        jobs = MaapUserProfile.objects.all()
+        cron_notify(jobs)
