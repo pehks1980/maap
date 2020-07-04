@@ -2,8 +2,7 @@ import smtplib, ssl
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
-HOST_URL ='http://127.0.0.1:8000'
-SENDER_MAIL = 'maap.acct.kuz@gmail.com'
+from cred_maap import *
 
 def send_my_mail(sender_email, receiver_email, user):
     # Send email here
@@ -44,8 +43,8 @@ def send_my_mail(sender_email, receiver_email, user):
     port = 465  # For SSL
     #password = input("Type your password and press enter: ")
 
-    mygmail_acct = 'maap.acct.kuz@gmail.com'
-    mygmail_password =  'thspider254770!A'
+    mygmail_acct = GMAIL_ACCT
+    mygmail_password = GMAIL_PASSWD
     # Create a secure SSL context
     context = ssl.create_default_context()
 

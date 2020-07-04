@@ -175,3 +175,711 @@ cron_notify executed..
  2020-07-04 13:13:02.387929: Hello from cron
 sending mail to {'first_name': 'val', 'last_name': ''}, addr pehks@inbox.ru
  2020-07-04 13:13:06.504331: Bye from cron
+Traceback (most recent call last):
+  File "/home/user/django/maap/manage.py", line 22, in <module>
+    main()
+  File "/home/user/django/maap/manage.py", line 18, in main
+    execute_from_command_line(sys.argv)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/__init__.py", line 401, in execute_from_command_line
+    utility.execute()
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/__init__.py", line 395, in execute
+    self.fetch_command(subcommand).run_from_argv(self.argv)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/base.py", line 328, in run_from_argv
+    self.execute(*args, **cmd_options)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/base.py", line 366, in execute
+    self.check()
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/base.py", line 392, in check
+    all_issues = self._run_checks(
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/base.py", line 382, in _run_checks
+    return checks.run_checks(**kwargs)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/checks/registry.py", line 72, in run_checks
+    new_errors = check(app_configs=app_configs)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/checks/urls.py", line 13, in check_url_config
+    return check_resolver(resolver)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/checks/urls.py", line 23, in check_resolver
+    return check_method()
+  File "/home/user/django/env/lib/python3.8/site-packages/django/urls/resolvers.py", line 407, in check
+    for pattern in self.url_patterns:
+  File "/home/user/django/env/lib/python3.8/site-packages/django/utils/functional.py", line 48, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/urls/resolvers.py", line 588, in url_patterns
+    patterns = getattr(self.urlconf_module, "urlpatterns", self.urlconf_module)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/utils/functional.py", line 48, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/urls/resolvers.py", line 581, in urlconf_module
+    return import_module(self.urlconf_name)
+  File "/home/user/django/env/lib/python3.8/importlib/__init__.py", line 127, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1014, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 991, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 975, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 671, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 783, in exec_module
+  File "<frozen importlib._bootstrap>", line 219, in _call_with_frames_removed
+  File "/home/user/django/maap/maap/urls.py", line 23, in <module>
+    import mainapp.views as mainapp
+  File "/home/user/django/maap/mainapp/views.py", line 17, in <module>
+    from cron import cron_notify
+  File "/home/user/django/maap/mainapp/cron.py", line 7, in <module>
+    from _mailsend import mail_notify
+  File "/home/user/django/maap/mainapp/_mailsend.py", line 5
+    import 
+          ^
+SyntaxError: invalid syntax
+Traceback (most recent call last):
+  File "/home/user/django/maap/manage.py", line 22, in <module>
+    main()
+  File "/home/user/django/maap/manage.py", line 18, in main
+    execute_from_command_line(sys.argv)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/__init__.py", line 401, in execute_from_command_line
+    utility.execute()
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/__init__.py", line 395, in execute
+    self.fetch_command(subcommand).run_from_argv(self.argv)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/base.py", line 328, in run_from_argv
+    self.execute(*args, **cmd_options)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/base.py", line 366, in execute
+    self.check()
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/base.py", line 392, in check
+    all_issues = self._run_checks(
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/base.py", line 382, in _run_checks
+    return checks.run_checks(**kwargs)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/checks/registry.py", line 72, in run_checks
+    new_errors = check(app_configs=app_configs)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/checks/urls.py", line 13, in check_url_config
+    return check_resolver(resolver)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/checks/urls.py", line 23, in check_resolver
+    return check_method()
+  File "/home/user/django/env/lib/python3.8/site-packages/django/urls/resolvers.py", line 407, in check
+    for pattern in self.url_patterns:
+  File "/home/user/django/env/lib/python3.8/site-packages/django/utils/functional.py", line 48, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/urls/resolvers.py", line 588, in url_patterns
+    patterns = getattr(self.urlconf_module, "urlpatterns", self.urlconf_module)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/utils/functional.py", line 48, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/urls/resolvers.py", line 581, in urlconf_module
+    return import_module(self.urlconf_name)
+  File "/home/user/django/env/lib/python3.8/importlib/__init__.py", line 127, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1014, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 991, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 975, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 671, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 783, in exec_module
+  File "<frozen importlib._bootstrap>", line 219, in _call_with_frames_removed
+  File "/home/user/django/maap/maap/urls.py", line 23, in <module>
+    import mainapp.views as mainapp
+  File "/home/user/django/maap/mainapp/views.py", line 17, in <module>
+    from cron import cron_notify
+  File "/home/user/django/maap/mainapp/cron.py", line 7, in <module>
+    from _mailsend import mail_notify
+  File "/home/user/django/maap/mainapp/_mailsend.py", line 5
+    import 
+          ^
+SyntaxError: invalid syntax
+Traceback (most recent call last):
+  File "/home/user/django/maap/manage.py", line 22, in <module>
+    main()
+  File "/home/user/django/maap/manage.py", line 18, in main
+    execute_from_command_line(sys.argv)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/__init__.py", line 401, in execute_from_command_line
+    utility.execute()
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/__init__.py", line 395, in execute
+    self.fetch_command(subcommand).run_from_argv(self.argv)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/base.py", line 328, in run_from_argv
+    self.execute(*args, **cmd_options)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/base.py", line 366, in execute
+    self.check()
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/base.py", line 392, in check
+    all_issues = self._run_checks(
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/base.py", line 382, in _run_checks
+    return checks.run_checks(**kwargs)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/checks/registry.py", line 72, in run_checks
+    new_errors = check(app_configs=app_configs)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/checks/urls.py", line 13, in check_url_config
+    return check_resolver(resolver)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/checks/urls.py", line 23, in check_resolver
+    return check_method()
+  File "/home/user/django/env/lib/python3.8/site-packages/django/urls/resolvers.py", line 407, in check
+    for pattern in self.url_patterns:
+  File "/home/user/django/env/lib/python3.8/site-packages/django/utils/functional.py", line 48, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/urls/resolvers.py", line 588, in url_patterns
+    patterns = getattr(self.urlconf_module, "urlpatterns", self.urlconf_module)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/utils/functional.py", line 48, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/urls/resolvers.py", line 581, in urlconf_module
+    return import_module(self.urlconf_name)
+  File "/home/user/django/env/lib/python3.8/importlib/__init__.py", line 127, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1014, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 991, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 975, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 671, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 783, in exec_module
+  File "<frozen importlib._bootstrap>", line 219, in _call_with_frames_removed
+  File "/home/user/django/maap/maap/urls.py", line 23, in <module>
+    import mainapp.views as mainapp
+  File "/home/user/django/maap/mainapp/views.py", line 17, in <module>
+    from cron import cron_notify
+  File "/home/user/django/maap/mainapp/cron.py", line 7, in <module>
+    from _mailsend import mail_notify
+  File "/home/user/django/maap/mainapp/_mailsend.py", line 5
+    import
+         ^
+SyntaxError: invalid syntax
+Traceback (most recent call last):
+  File "/home/user/django/maap/manage.py", line 22, in <module>
+    main()
+  File "/home/user/django/maap/manage.py", line 18, in main
+    execute_from_command_line(sys.argv)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/__init__.py", line 401, in execute_from_command_line
+    utility.execute()
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/__init__.py", line 395, in execute
+    self.fetch_command(subcommand).run_from_argv(self.argv)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/base.py", line 328, in run_from_argv
+    self.execute(*args, **cmd_options)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/base.py", line 366, in execute
+    self.check()
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/base.py", line 392, in check
+    all_issues = self._run_checks(
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/base.py", line 382, in _run_checks
+    return checks.run_checks(**kwargs)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/checks/registry.py", line 72, in run_checks
+    new_errors = check(app_configs=app_configs)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/checks/urls.py", line 13, in check_url_config
+    return check_resolver(resolver)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/checks/urls.py", line 23, in check_resolver
+    return check_method()
+  File "/home/user/django/env/lib/python3.8/site-packages/django/urls/resolvers.py", line 407, in check
+    for pattern in self.url_patterns:
+  File "/home/user/django/env/lib/python3.8/site-packages/django/utils/functional.py", line 48, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/urls/resolvers.py", line 588, in url_patterns
+    patterns = getattr(self.urlconf_module, "urlpatterns", self.urlconf_module)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/utils/functional.py", line 48, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/urls/resolvers.py", line 581, in urlconf_module
+    return import_module(self.urlconf_name)
+  File "/home/user/django/env/lib/python3.8/importlib/__init__.py", line 127, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1014, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 991, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 975, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 671, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 783, in exec_module
+  File "<frozen importlib._bootstrap>", line 219, in _call_with_frames_removed
+  File "/home/user/django/maap/maap/urls.py", line 23, in <module>
+    import mainapp.views as mainapp
+  File "/home/user/django/maap/mainapp/views.py", line 17, in <module>
+    from cron import cron_notify
+  File "/home/user/django/maap/mainapp/cron.py", line 7, in <module>
+    from _mailsend import mail_notify
+  File "/home/user/django/maap/mainapp/_mailsend.py", line 5
+    import
+         ^
+SyntaxError: invalid syntax
+Traceback (most recent call last):
+  File "/home/user/django/maap/manage.py", line 22, in <module>
+    main()
+  File "/home/user/django/maap/manage.py", line 18, in main
+    execute_from_command_line(sys.argv)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/__init__.py", line 401, in execute_from_command_line
+    utility.execute()
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/__init__.py", line 395, in execute
+    self.fetch_command(subcommand).run_from_argv(self.argv)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/base.py", line 328, in run_from_argv
+    self.execute(*args, **cmd_options)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/base.py", line 366, in execute
+    self.check()
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/base.py", line 392, in check
+    all_issues = self._run_checks(
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/base.py", line 382, in _run_checks
+    return checks.run_checks(**kwargs)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/checks/registry.py", line 72, in run_checks
+    new_errors = check(app_configs=app_configs)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/checks/urls.py", line 13, in check_url_config
+    return check_resolver(resolver)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/checks/urls.py", line 23, in check_resolver
+    return check_method()
+  File "/home/user/django/env/lib/python3.8/site-packages/django/urls/resolvers.py", line 407, in check
+    for pattern in self.url_patterns:
+  File "/home/user/django/env/lib/python3.8/site-packages/django/utils/functional.py", line 48, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/urls/resolvers.py", line 588, in url_patterns
+    patterns = getattr(self.urlconf_module, "urlpatterns", self.urlconf_module)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/utils/functional.py", line 48, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/urls/resolvers.py", line 581, in urlconf_module
+    return import_module(self.urlconf_name)
+  File "/home/user/django/env/lib/python3.8/importlib/__init__.py", line 127, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1014, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 991, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 975, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 671, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 783, in exec_module
+  File "<frozen importlib._bootstrap>", line 219, in _call_with_frames_removed
+  File "/home/user/django/maap/maap/urls.py", line 23, in <module>
+    import mainapp.views as mainapp
+  File "/home/user/django/maap/mainapp/views.py", line 17, in <module>
+    from cron import cron_notify
+  File "/home/user/django/maap/mainapp/cron.py", line 7, in <module>
+    from _mailsend import mail_notify
+  File "/home/user/django/maap/mainapp/_mailsend.py", line 5
+    import
+         ^
+SyntaxError: invalid syntax
+Traceback (most recent call last):
+  File "/home/user/django/maap/manage.py", line 22, in <module>
+    main()
+  File "/home/user/django/maap/manage.py", line 18, in main
+    execute_from_command_line(sys.argv)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/__init__.py", line 401, in execute_from_command_line
+    utility.execute()
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/__init__.py", line 395, in execute
+    self.fetch_command(subcommand).run_from_argv(self.argv)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/base.py", line 328, in run_from_argv
+    self.execute(*args, **cmd_options)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/base.py", line 366, in execute
+    self.check()
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/base.py", line 392, in check
+    all_issues = self._run_checks(
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/base.py", line 382, in _run_checks
+    return checks.run_checks(**kwargs)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/checks/registry.py", line 72, in run_checks
+    new_errors = check(app_configs=app_configs)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/checks/urls.py", line 13, in check_url_config
+    return check_resolver(resolver)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/checks/urls.py", line 23, in check_resolver
+    return check_method()
+  File "/home/user/django/env/lib/python3.8/site-packages/django/urls/resolvers.py", line 407, in check
+    for pattern in self.url_patterns:
+  File "/home/user/django/env/lib/python3.8/site-packages/django/utils/functional.py", line 48, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/urls/resolvers.py", line 588, in url_patterns
+    patterns = getattr(self.urlconf_module, "urlpatterns", self.urlconf_module)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/utils/functional.py", line 48, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/urls/resolvers.py", line 581, in urlconf_module
+    return import_module(self.urlconf_name)
+  File "/home/user/django/env/lib/python3.8/importlib/__init__.py", line 127, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1014, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 991, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 975, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 671, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 783, in exec_module
+  File "<frozen importlib._bootstrap>", line 219, in _call_with_frames_removed
+  File "/home/user/django/maap/maap/urls.py", line 23, in <module>
+    import mainapp.views as mainapp
+  File "/home/user/django/maap/mainapp/views.py", line 17, in <module>
+    from cron import cron_notify
+  File "/home/user/django/maap/mainapp/cron.py", line 7, in <module>
+    from _mailsend import mail_notify
+  File "/home/user/django/maap/mainapp/_mailsend.py", line 5
+    import
+         ^
+SyntaxError: invalid syntax
+Traceback (most recent call last):
+  File "/home/user/django/maap/manage.py", line 22, in <module>
+    main()
+  File "/home/user/django/maap/manage.py", line 18, in main
+    execute_from_command_line(sys.argv)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/__init__.py", line 401, in execute_from_command_line
+    utility.execute()
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/__init__.py", line 395, in execute
+    self.fetch_command(subcommand).run_from_argv(self.argv)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/base.py", line 328, in run_from_argv
+    self.execute(*args, **cmd_options)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/base.py", line 366, in execute
+    self.check()
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/base.py", line 392, in check
+    all_issues = self._run_checks(
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/base.py", line 382, in _run_checks
+    return checks.run_checks(**kwargs)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/checks/registry.py", line 72, in run_checks
+    new_errors = check(app_configs=app_configs)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/checks/urls.py", line 13, in check_url_config
+    return check_resolver(resolver)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/checks/urls.py", line 23, in check_resolver
+    return check_method()
+  File "/home/user/django/env/lib/python3.8/site-packages/django/urls/resolvers.py", line 407, in check
+    for pattern in self.url_patterns:
+  File "/home/user/django/env/lib/python3.8/site-packages/django/utils/functional.py", line 48, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/urls/resolvers.py", line 588, in url_patterns
+    patterns = getattr(self.urlconf_module, "urlpatterns", self.urlconf_module)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/utils/functional.py", line 48, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/urls/resolvers.py", line 581, in urlconf_module
+    return import_module(self.urlconf_name)
+  File "/home/user/django/env/lib/python3.8/importlib/__init__.py", line 127, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1014, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 991, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 975, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 671, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 783, in exec_module
+  File "<frozen importlib._bootstrap>", line 219, in _call_with_frames_removed
+  File "/home/user/django/maap/maap/urls.py", line 23, in <module>
+    import mainapp.views as mainapp
+  File "/home/user/django/maap/mainapp/views.py", line 17, in <module>
+    from cron import cron_notify
+  File "/home/user/django/maap/mainapp/cron.py", line 7, in <module>
+    from _mailsend import mail_notify
+  File "/home/user/django/maap/mainapp/_mailsend.py", line 5
+    import
+         ^
+SyntaxError: invalid syntax
+Traceback (most recent call last):
+  File "/home/user/django/maap/manage.py", line 22, in <module>
+    main()
+  File "/home/user/django/maap/manage.py", line 18, in main
+    execute_from_command_line(sys.argv)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/__init__.py", line 401, in execute_from_command_line
+    utility.execute()
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/__init__.py", line 395, in execute
+    self.fetch_command(subcommand).run_from_argv(self.argv)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/base.py", line 328, in run_from_argv
+    self.execute(*args, **cmd_options)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/base.py", line 366, in execute
+    self.check()
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/base.py", line 392, in check
+    all_issues = self._run_checks(
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/base.py", line 382, in _run_checks
+    return checks.run_checks(**kwargs)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/checks/registry.py", line 72, in run_checks
+    new_errors = check(app_configs=app_configs)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/checks/urls.py", line 13, in check_url_config
+    return check_resolver(resolver)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/checks/urls.py", line 23, in check_resolver
+    return check_method()
+  File "/home/user/django/env/lib/python3.8/site-packages/django/urls/resolvers.py", line 407, in check
+    for pattern in self.url_patterns:
+  File "/home/user/django/env/lib/python3.8/site-packages/django/utils/functional.py", line 48, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/urls/resolvers.py", line 588, in url_patterns
+    patterns = getattr(self.urlconf_module, "urlpatterns", self.urlconf_module)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/utils/functional.py", line 48, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/urls/resolvers.py", line 581, in urlconf_module
+    return import_module(self.urlconf_name)
+  File "/home/user/django/env/lib/python3.8/importlib/__init__.py", line 127, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1014, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 991, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 975, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 671, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 783, in exec_module
+  File "<frozen importlib._bootstrap>", line 219, in _call_with_frames_removed
+  File "/home/user/django/maap/maap/urls.py", line 23, in <module>
+    import mainapp.views as mainapp
+  File "/home/user/django/maap/mainapp/views.py", line 17, in <module>
+    from cron import cron_notify
+  File "/home/user/django/maap/mainapp/cron.py", line 7, in <module>
+    from _mailsend import mail_notify
+  File "/home/user/django/maap/mainapp/_mailsend.py", line 5
+    import
+         ^
+SyntaxError: invalid syntax
+Traceback (most recent call last):
+  File "/home/user/django/maap/manage.py", line 22, in <module>
+    main()
+  File "/home/user/django/maap/manage.py", line 18, in main
+    execute_from_command_line(sys.argv)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/__init__.py", line 401, in execute_from_command_line
+    utility.execute()
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/__init__.py", line 395, in execute
+    self.fetch_command(subcommand).run_from_argv(self.argv)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/base.py", line 328, in run_from_argv
+    self.execute(*args, **cmd_options)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/base.py", line 366, in execute
+    self.check()
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/base.py", line 392, in check
+    all_issues = self._run_checks(
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/base.py", line 382, in _run_checks
+    return checks.run_checks(**kwargs)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/checks/registry.py", line 72, in run_checks
+    new_errors = check(app_configs=app_configs)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/checks/urls.py", line 13, in check_url_config
+    return check_resolver(resolver)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/checks/urls.py", line 23, in check_resolver
+    return check_method()
+  File "/home/user/django/env/lib/python3.8/site-packages/django/urls/resolvers.py", line 407, in check
+    for pattern in self.url_patterns:
+  File "/home/user/django/env/lib/python3.8/site-packages/django/utils/functional.py", line 48, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/urls/resolvers.py", line 588, in url_patterns
+    patterns = getattr(self.urlconf_module, "urlpatterns", self.urlconf_module)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/utils/functional.py", line 48, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/urls/resolvers.py", line 581, in urlconf_module
+    return import_module(self.urlconf_name)
+  File "/home/user/django/env/lib/python3.8/importlib/__init__.py", line 127, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1014, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 991, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 975, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 671, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 783, in exec_module
+  File "<frozen importlib._bootstrap>", line 219, in _call_with_frames_removed
+  File "/home/user/django/maap/maap/urls.py", line 23, in <module>
+    import mainapp.views as mainapp
+  File "/home/user/django/maap/mainapp/views.py", line 17, in <module>
+    from cron import cron_notify
+  File "/home/user/django/maap/mainapp/cron.py", line 7, in <module>
+    from _mailsend import mail_notify
+  File "/home/user/django/maap/mainapp/_mailsend.py", line 5, in <module>
+    from cred_maap import *
+ModuleNotFoundError: No module named 'cred_maap'
+Traceback (most recent call last):
+  File "/home/user/django/maap/manage.py", line 22, in <module>
+    main()
+  File "/home/user/django/maap/manage.py", line 18, in main
+    execute_from_command_line(sys.argv)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/__init__.py", line 401, in execute_from_command_line
+    utility.execute()
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/__init__.py", line 395, in execute
+    self.fetch_command(subcommand).run_from_argv(self.argv)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/base.py", line 328, in run_from_argv
+    self.execute(*args, **cmd_options)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/base.py", line 366, in execute
+    self.check()
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/base.py", line 392, in check
+    all_issues = self._run_checks(
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/base.py", line 382, in _run_checks
+    return checks.run_checks(**kwargs)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/checks/registry.py", line 72, in run_checks
+    new_errors = check(app_configs=app_configs)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/checks/urls.py", line 13, in check_url_config
+    return check_resolver(resolver)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/checks/urls.py", line 23, in check_resolver
+    return check_method()
+  File "/home/user/django/env/lib/python3.8/site-packages/django/urls/resolvers.py", line 407, in check
+    for pattern in self.url_patterns:
+  File "/home/user/django/env/lib/python3.8/site-packages/django/utils/functional.py", line 48, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/urls/resolvers.py", line 588, in url_patterns
+    patterns = getattr(self.urlconf_module, "urlpatterns", self.urlconf_module)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/utils/functional.py", line 48, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/urls/resolvers.py", line 581, in urlconf_module
+    return import_module(self.urlconf_name)
+  File "/home/user/django/env/lib/python3.8/importlib/__init__.py", line 127, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1014, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 991, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 975, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 671, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 783, in exec_module
+  File "<frozen importlib._bootstrap>", line 219, in _call_with_frames_removed
+  File "/home/user/django/maap/maap/urls.py", line 23, in <module>
+    import mainapp.views as mainapp
+  File "/home/user/django/maap/mainapp/views.py", line 17, in <module>
+    from cron import cron_notify
+  File "/home/user/django/maap/mainapp/cron.py", line 7, in <module>
+    from _mailsend import mail_notify
+  File "/home/user/django/maap/mainapp/_mailsend.py", line 5, in <module>
+    from cred_maap import *
+ModuleNotFoundError: No module named 'cred_maap'
+Traceback (most recent call last):
+  File "/home/user/django/maap/manage.py", line 22, in <module>
+    main()
+  File "/home/user/django/maap/manage.py", line 18, in main
+    execute_from_command_line(sys.argv)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/__init__.py", line 401, in execute_from_command_line
+    utility.execute()
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/__init__.py", line 395, in execute
+    self.fetch_command(subcommand).run_from_argv(self.argv)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/base.py", line 328, in run_from_argv
+    self.execute(*args, **cmd_options)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/base.py", line 366, in execute
+    self.check()
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/base.py", line 392, in check
+    all_issues = self._run_checks(
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/base.py", line 382, in _run_checks
+    return checks.run_checks(**kwargs)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/checks/registry.py", line 72, in run_checks
+    new_errors = check(app_configs=app_configs)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/checks/urls.py", line 13, in check_url_config
+    return check_resolver(resolver)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/checks/urls.py", line 23, in check_resolver
+    return check_method()
+  File "/home/user/django/env/lib/python3.8/site-packages/django/urls/resolvers.py", line 407, in check
+    for pattern in self.url_patterns:
+  File "/home/user/django/env/lib/python3.8/site-packages/django/utils/functional.py", line 48, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/urls/resolvers.py", line 588, in url_patterns
+    patterns = getattr(self.urlconf_module, "urlpatterns", self.urlconf_module)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/utils/functional.py", line 48, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/urls/resolvers.py", line 581, in urlconf_module
+    return import_module(self.urlconf_name)
+  File "/home/user/django/env/lib/python3.8/importlib/__init__.py", line 127, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1014, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 991, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 975, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 671, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 783, in exec_module
+  File "<frozen importlib._bootstrap>", line 219, in _call_with_frames_removed
+  File "/home/user/django/maap/maap/urls.py", line 23, in <module>
+    import mainapp.views as mainapp
+  File "/home/user/django/maap/mainapp/views.py", line 17, in <module>
+    from cron import cron_notify
+  File "/home/user/django/maap/mainapp/cron.py", line 7, in <module>
+    from _mailsend import mail_notify
+  File "/home/user/django/maap/mainapp/_mailsend.py", line 5, in <module>
+    from cred_maap import *
+ModuleNotFoundError: No module named 'cred_maap'
+Traceback (most recent call last):
+  File "/home/user/django/maap/manage.py", line 22, in <module>
+    main()
+  File "/home/user/django/maap/manage.py", line 18, in main
+    execute_from_command_line(sys.argv)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/__init__.py", line 401, in execute_from_command_line
+    utility.execute()
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/__init__.py", line 395, in execute
+    self.fetch_command(subcommand).run_from_argv(self.argv)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/base.py", line 328, in run_from_argv
+    self.execute(*args, **cmd_options)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/base.py", line 366, in execute
+    self.check()
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/base.py", line 392, in check
+    all_issues = self._run_checks(
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/base.py", line 382, in _run_checks
+    return checks.run_checks(**kwargs)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/checks/registry.py", line 72, in run_checks
+    new_errors = check(app_configs=app_configs)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/checks/urls.py", line 13, in check_url_config
+    return check_resolver(resolver)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/checks/urls.py", line 23, in check_resolver
+    return check_method()
+  File "/home/user/django/env/lib/python3.8/site-packages/django/urls/resolvers.py", line 407, in check
+    for pattern in self.url_patterns:
+  File "/home/user/django/env/lib/python3.8/site-packages/django/utils/functional.py", line 48, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/urls/resolvers.py", line 588, in url_patterns
+    patterns = getattr(self.urlconf_module, "urlpatterns", self.urlconf_module)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/utils/functional.py", line 48, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/urls/resolvers.py", line 581, in urlconf_module
+    return import_module(self.urlconf_name)
+  File "/home/user/django/env/lib/python3.8/importlib/__init__.py", line 127, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1014, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 991, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 975, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 671, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 783, in exec_module
+  File "<frozen importlib._bootstrap>", line 219, in _call_with_frames_removed
+  File "/home/user/django/maap/maap/urls.py", line 23, in <module>
+    import mainapp.views as mainapp
+  File "/home/user/django/maap/mainapp/views.py", line 17, in <module>
+    from cron import cron_notify
+  File "/home/user/django/maap/mainapp/cron.py", line 7, in <module>
+    from _mailsend import mail_notify
+  File "/home/user/django/maap/mainapp/_mailsend.py", line 5, in <module>
+    from cred_maap import *
+ModuleNotFoundError: No module named 'cred_maap'
+Traceback (most recent call last):
+  File "/home/user/django/maap/manage.py", line 22, in <module>
+    main()
+  File "/home/user/django/maap/manage.py", line 18, in main
+    execute_from_command_line(sys.argv)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/__init__.py", line 401, in execute_from_command_line
+    utility.execute()
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/__init__.py", line 395, in execute
+    self.fetch_command(subcommand).run_from_argv(self.argv)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/base.py", line 328, in run_from_argv
+    self.execute(*args, **cmd_options)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/base.py", line 366, in execute
+    self.check()
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/base.py", line 392, in check
+    all_issues = self._run_checks(
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/base.py", line 382, in _run_checks
+    return checks.run_checks(**kwargs)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/checks/registry.py", line 72, in run_checks
+    new_errors = check(app_configs=app_configs)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/checks/urls.py", line 13, in check_url_config
+    return check_resolver(resolver)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/checks/urls.py", line 23, in check_resolver
+    return check_method()
+  File "/home/user/django/env/lib/python3.8/site-packages/django/urls/resolvers.py", line 407, in check
+    for pattern in self.url_patterns:
+  File "/home/user/django/env/lib/python3.8/site-packages/django/utils/functional.py", line 48, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/urls/resolvers.py", line 588, in url_patterns
+    patterns = getattr(self.urlconf_module, "urlpatterns", self.urlconf_module)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/utils/functional.py", line 48, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/urls/resolvers.py", line 581, in urlconf_module
+    return import_module(self.urlconf_name)
+  File "/home/user/django/env/lib/python3.8/importlib/__init__.py", line 127, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1014, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 991, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 975, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 671, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 783, in exec_module
+  File "<frozen importlib._bootstrap>", line 219, in _call_with_frames_removed
+  File "/home/user/django/maap/maap/urls.py", line 23, in <module>
+    import mainapp.views as mainapp
+  File "/home/user/django/maap/mainapp/views.py", line 17, in <module>
+    from cron import cron_notify
+  File "/home/user/django/maap/mainapp/cron.py", line 7, in <module>
+    from _mailsend import mail_notify
+  File "/home/user/django/maap/mainapp/_mailsend.py", line 5, in <module>
+    from cred_maap import *
+ModuleNotFoundError: No module named 'cred_maap'
+Traceback (most recent call last):
+  File "/home/user/django/maap/manage.py", line 22, in <module>
+    main()
+  File "/home/user/django/maap/manage.py", line 18, in main
+    execute_from_command_line(sys.argv)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/__init__.py", line 401, in execute_from_command_line
+    utility.execute()
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/__init__.py", line 395, in execute
+    self.fetch_command(subcommand).run_from_argv(self.argv)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/base.py", line 328, in run_from_argv
+    self.execute(*args, **cmd_options)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/base.py", line 366, in execute
+    self.check()
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/base.py", line 392, in check
+    all_issues = self._run_checks(
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/base.py", line 382, in _run_checks
+    return checks.run_checks(**kwargs)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/checks/registry.py", line 72, in run_checks
+    new_errors = check(app_configs=app_configs)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/checks/urls.py", line 13, in check_url_config
+    return check_resolver(resolver)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/checks/urls.py", line 23, in check_resolver
+    return check_method()
+  File "/home/user/django/env/lib/python3.8/site-packages/django/urls/resolvers.py", line 407, in check
+    for pattern in self.url_patterns:
+  File "/home/user/django/env/lib/python3.8/site-packages/django/utils/functional.py", line 48, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/urls/resolvers.py", line 588, in url_patterns
+    patterns = getattr(self.urlconf_module, "urlpatterns", self.urlconf_module)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/utils/functional.py", line 48, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/urls/resolvers.py", line 581, in urlconf_module
+    return import_module(self.urlconf_name)
+  File "/home/user/django/env/lib/python3.8/importlib/__init__.py", line 127, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1014, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 991, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 975, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 671, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 783, in exec_module
+  File "<frozen importlib._bootstrap>", line 219, in _call_with_frames_removed
+  File "/home/user/django/maap/maap/urls.py", line 23, in <module>
+    import mainapp.views as mainapp
+  File "/home/user/django/maap/mainapp/views.py", line 17, in <module>
+    from cron import cron_notify
+  File "/home/user/django/maap/mainapp/cron.py", line 7, in <module>
+    from _mailsend import mail_notify
+  File "/home/user/django/maap/mainapp/_mailsend.py", line 5, in <module>
+    from cred_maap import *
+ModuleNotFoundError: No module named 'cred_maap'
