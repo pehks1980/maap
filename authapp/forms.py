@@ -58,3 +58,20 @@ class MaapUserEditForm(UserChangeForm):
             pass#raise forms.ValidationError("Вы слишком молоды!")
 
         return data
+
+from .models import MaapUserProfile
+
+#profile e-mail scheduler field
+class MaapUserProfileEditForm(forms.ModelForm):
+    class Meta:
+        model = MaapUserProfile
+        fields = ('email_addr','email_shed','enabled')# _all_
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            field.widget.attrs['class'] = 'form-control'
+
+
+
+

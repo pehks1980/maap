@@ -1,10 +1,9 @@
 {% extends 'mainapp/base.html' %}
+
 {% load static %}
 
-{% block js %}
+{% block script %}
 <script>
-
-
 
 function tstamp1() {
     var ts = new Date();
@@ -22,8 +21,14 @@ function tstamp1() {
     return true;
 }
 
-</script>
+            {% if messages %}
+                {% for message in messages %}
+                    alert(message);
+                {% endfor %}
+            {% endif %}
 
+
+</script>
 {% endblock %}
 
 {% block menu %}
@@ -40,17 +45,17 @@ function tstamp1() {
             <h3 class="green">Добрый день, пользователь  {{ user.first_name|default:'Пользователь' }} !</h3>
             <h3 class="big"> Математика (Арифметика)</h3>
             <p>Таблица умножения. Сложение и вычитание.</p>
+
             <form class="form-horizontal" method="post" enctype="multipart/form-data" >
             {% csrf_token %}
-            {{ form.as_p }}
+            {{ form.as_p}}
+                {{ form.error_messages }}
                 <input type="hidden" name="tstamp" id="ts" value="null1"/>
                 <input class="button-order" type="submit" value="начать" onclick="tstamp1();"/>
 
             </form>
         </div>
-        <div class="navi">
-            <a href="#"></a><a href="#"></a><a href="#"></a>
-        </div>
+
     </div>
 
 

@@ -1,38 +1,45 @@
 # Create your views here.
 
 from datetime import datetime
+import pytz
 
 from django.contrib.auth.decorators import login_required
 # from mainapp.models import ProductCategory, Product
 # from basketapp.models import Basket
 from django.core.files.base import ContentFile
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render
 
 from django.core.files.storage import default_storage
+from django.urls import reverse
+
+from cron import cron_notify
 
 from .forms import Ans_Form
 from .forms import AppModForm
 from .models import MaapLesson, MaapReport
 
+from authapp.models import MaapUserProfile
+
 # create copy
 
 from .mul_app import SetAppMode, eval, check_ans, GetAppModeDesc, finish_lesson, printMatrix
-
+import os, json
 
 # from .mainapp import mul_app
 
 @login_required
 def main(request):
+
     title = 'главная maap v 1.0'
 
     # a = MaapReport()
 
     # last change
     if request.method == 'POST':
-        form = AppModForm(request.POST)
-        if form.is_valid():
+        form_app = AppModForm(request.POST)
+        if form_app.is_valid():
             # process the data in form.cleaned_data as required
             # ...
             # redirect to a new URL:
@@ -40,7 +47,7 @@ def main(request):
             # do something with your results
 
             # ans=cleaned_data.get("answer")
-            ans = form.cleaned_data.get('app_mode')
+            ans = form_app.cleaned_data.get('app_mode')
             print(ans)
 
             # make up lesson log
@@ -102,17 +109,43 @@ def main(request):
 
             return HttpResponseRedirect(f'/mathem/{lesson.pk}')
     else:  # GET
-        form = AppModForm()
+        form_app = AppModForm()
 
     # products = Product.objects.all()[:3]
-    links_menu = {}  # ProductCategory.objects.all()
+    #links_menu = {}  # ProductCategory.objects.all()
 
-    content = {'title': title, 'form': form, 'category': links_menu}
+    content = {'title': title, 'form': form_app}
 
     return render(request, 'mainapp/index.html', content)
 
+def checkCron(request):
+    #call cron method to check & debug
+    cron_notify(dont_wait=True)
+    title = 'check cron'
+    content = {'title': title,}
+    return render(request, 'mainapp/lala.html', content)
 
-import os, json
+def uncheckEmail(request,email,id):
+    #call cron method to check & debug
+    try:
+        user_prof = MaapUserProfile.objects.get(email_addr=email)#only new accounts
+        if user_prof.enabled == True:
+            user_prof.enabled = False
+            user_prof.save()
+            result = 'successful'
+            print(f'uncheck ok')
+            return render(request, 'authapp/email_uncheck.html')
+            #return JsonResponse({'result': result})
+        else:
+            result = 'unsuccessful'
+            print(f'error uncheck')
+            return render(request, 'authapp/email_uncheck.html')
+            #return JsonResponse({'result': result})
+
+    except Exception as e:
+        print(f'error uncheck user : {e.args}')
+        return HttpResponseRedirect(reverse('main'))
+
 
 
 def mathem(request, pk):
@@ -123,7 +156,7 @@ def mathem(request, pk):
 
     list_txt = []
 
-    form = Ans_Form(request.POST or None)
+
 
     lesson = MaapLesson.objects.get(user=request.user, pk=pk)
 
@@ -131,6 +164,8 @@ def mathem(request, pk):
     txt2 = ''
     # обработчик обрабватывает все реквесты страницы и GET и POST
     if request.method == 'GET':
+        form = Ans_Form()
+
         hist = json.loads(lesson.hist)  # load hist from db
 
         a, b, code, hist1 = eval(lesson.mult, lesson.addi, lesson.subt, lesson.nx, lesson.ny, lesson.ax,
@@ -182,31 +217,33 @@ def mathem(request, pk):
 
     difference = 0
     # if this is a POST request we need to process the form data
-    if request.method == 'POST' and form.is_valid():
+    if request.method == 'POST':
         # process the data in form.cleaned_data as required
         # ...
         # redirect to a new URL:
         # ans=cleaned_data.get("answer")
+        form = Ans_Form(request.POST)
 
-        # ans = request.POST.get('answer')
-        ans = form.cleaned_data.get("answer")
-        val = request.POST.get('tstamp')
-        val_li = list(val.split(" "))
+        if form.is_valid():
+            # ans = request.POST.get('answer')
+            ans = form.cleaned_data.get("answer")
+            val = request.POST.get('tstamp')
+            val_li = list(val.split(" "))
 
-        d1 = int(val_li[0]) * 60 + int(val_li[1])  # current time 0 - min 1 - sec
+            d1 = int(val_li[0]) * 60 + int(val_li[1])  # current time 0 - min 1 - sec
 
-        print(f'post {lesson.qst_time} {val_li}')
-        time_dic = json.loads(lesson.qst_time)
+            print(f'post {lesson.qst_time} {val_li}')
+            time_dic = json.loads(lesson.qst_time)
 
-        d2 = time_dic['min'] * 60 + time_dic['sec']
+            d2 = time_dic['min'] * 60 + time_dic['sec']
 
-        diff = d1 - d2 - 1
+            diff = d1 - d2 - 1
 
-        if diff < 0:
-            diff = 0
-        # print (ans,a,b,code)
+            if diff < 0:
+                diff = 0
+            # print (ans,a,b,code)
 
-        return HttpResponseRedirect(f'/mathemk/{lesson.pk}/{ans}/{diff}')
+            return HttpResponseRedirect(f'/mathemk/{lesson.pk}/{ans}/{diff}')
 
     if request.method == 'POST':
         print('clickfinish')

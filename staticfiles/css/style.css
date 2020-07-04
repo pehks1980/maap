@@ -17,11 +17,24 @@ html, body {
 }
 
 .tab_cl1{
-    height: 25%;
-    width: 1169px;
+
     font-family: arial, sans-serif;
     border-collapse: collapse;
 }
+
+.dropdown-menu {
+position: absolute;
+top: 100%;
+left: 0;
+min-width: 10rem;
+padding: .5rem 0;
+color: #212529;
+background-color: #fff;
+border-radius: .25rem;
+min-width: 200px;
+color: black;
+}
+
 table {
   font-family: arial, sans-serif;
   border-collapse: collapse;
@@ -46,7 +59,7 @@ tr:nth-child(even) {
 	overflow:hidden;
 }
 .container {
-	width: 1366px;
+	width: auto;
 	margin: 0 auto;
 	min-height: 100%;
 	overflow:hidden;
@@ -55,7 +68,7 @@ tr:nth-child(even) {
 
 
 .content {
-	width: 1366px;
+	width: auto;
 	height: auto;
 	margin: 0 auto;
 	min-height: 100%;
@@ -64,9 +77,9 @@ tr:nth-child(even) {
 
 
 .slider {
-	height: 400px;
+	height: 580px;
 	background-image: url(img/slider.jpg); 
-	padding-left: 98px;
+	padding-left: 90px;
 	padding-right: 211px;
 	padding-bottom: 100px;
 	position: relative;
@@ -114,6 +127,33 @@ tr:nth-child(even) {
 	font-weight: 700;
 	border-bottom: 3px solid #212121;
 }
+
+.form-control1 {
+  /*! display: block; */
+  width: auto;
+  padding: 10px;
+  font-size: 20px;
+  line-height: $input-line-height;
+  color: blue;
+  background-color: $input-bg;
+  /*! background-clip: padding-box; */
+  /*! border: 1px; */
+ }
+
+
+ .form-control2 {
+    padding: 8px;
+    font-size: 25px;
+    color: black;
+    background-color: white;
+    background-clip: padding-box;
+    border: 1px;
+    font-weight: bold;
+}
+
+ .lab1{
+
+ }
 
 .search {
 	display: block;

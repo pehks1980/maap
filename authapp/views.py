@@ -7,7 +7,7 @@ from django.shortcuts import render, HttpResponseRedirect
 
 from authapp.forms import MaapUserLoginForm
 from authapp.forms import MaapUserRegisterForm
-from authapp.forms import MaapUserEditForm
+from authapp.forms import MaapUserEditForm, MaapUserProfileEditForm
 
 from django.contrib import auth
 from django.urls import reverse
@@ -94,3 +94,18 @@ def edit(request):
     content = {'title': title, 'edit_form': edit_form}
 
     return render(request, 'authapp/edit.html', content)
+
+def email_sched(request):
+    title = 'редактирование режима оповещения'
+
+    if request.method == 'POST':
+        edit_form = MaapUserProfileEditForm(request.POST, request.FILES, instance=request.user.maapuserprofile)
+        if edit_form.is_valid():
+            edit_form.save()
+            return HttpResponseRedirect(reverse('auth:email_sched'))
+    else:
+        edit_form = MaapUserProfileEditForm(instance=request.user.maapuserprofile)
+
+    content = {'title': title, 'edit_form': edit_form}
+
+    return render(request, 'authapp/email_sched.html', content)

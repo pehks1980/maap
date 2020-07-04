@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 
 import os
 
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -38,6 +39,7 @@ INSTALLED_APPS = [
     'db_file_storage',
     'mainapp',
     'authapp',
+    'django_cron',
 ]
 
 MIDDLEWARE = [
@@ -50,6 +52,10 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+CRON_CLASSES = [
+    'cron.MyCronJob',
+    # ...
+]
 ROOT_URLCONF = 'maap.urls'
 
 TEMPLATE_DIR = os.path.join(BASE_DIR, "templates")
@@ -132,3 +138,4 @@ AUTH_USER_MODEL = 'authapp.MaapUser'  # our auth instaed of USER model
 LOGIN_URL = '/auth/login/'
 
 DEFAULT_FILE_STORAGE = 'db_file_storage.storage.DatabaseFileStorage'
+

@@ -29,7 +29,7 @@ import mainapp.views as mainapp
 #     path('admin/', admin.site.urls),
 # ]
 
-from django.conf.urls import include, url
+from django.conf.urls import include, url, re_path
 
 urlpatterns = [
     path('', mainapp.main, name='index'),
@@ -40,6 +40,8 @@ urlpatterns = [
     path('finish/<int:pk>/', mainapp.finish, name='finish'),
     path('hist/', mainapp.hist, name='hist'),
     path('clear-hist/', mainapp.clear_hist, name='clear_hist'),
+    path('checkcron/', mainapp.checkCron, name='checkcron'),
+    re_path(r'^uncheck/(?P<email>.+)/(?P<id>.+)/$', mainapp.uncheckEmail, name='uncheck'),
 
     path('auth/', include('authapp.urls', namespace='auth')),
     url(r'^files/', include('db_file_storage.urls')),

@@ -8,15 +8,36 @@
         </a>
     </li>
     <li>
-        <a href="{% url 'main' %}" class="{% if request.resolver_match.namespace == 'main' %}active{% endif %}">
+        <a href="{% url 'main' %}" class="{% if request.resolver_match.namespace == 'checkcron' %}active{% endif %}">
             продукты
         </a>
     </li>
     {% if user.is_authenticated %}
         <li>
-            <a href="{% url 'auth:edit' %}">Пользователь:
-                {{ user.first_name|default:'Пользователь' }}
-            </a>
+
+            <div class="dropdown">
+
+               <a class="dropdown-toggle" data-toggle="dropdown">
+                   {{ user.first_name|default:'Пользователь' }}
+                   <span class="caret"></span>
+               </a>
+
+               <ul class="dropdown-menu">
+                   <li>
+                       <a href="{% url 'auth:edit' %}">
+                           Профиль
+                       </a>
+                   </li>
+
+                   <li>
+                       <a href="{% url 'auth:email_sched' %}">
+                           Уведомление e-mail
+                       </a>
+                   </li>
+               </ul>
+
+           </div>
+
         </li>
     {% endif %}
     <li>

@@ -1,0 +1,177 @@
+Traceback (most recent call last):
+  File "/home/user/django/maap/manage.py", line 22, in <module>
+    main()
+  File "/home/user/django/maap/manage.py", line 18, in main
+    execute_from_command_line(sys.argv)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/__init__.py", line 401, in execute_from_command_line
+    utility.execute()
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/__init__.py", line 377, in execute
+    django.setup()
+  File "/home/user/django/env/lib/python3.8/site-packages/django/__init__.py", line 24, in setup
+    apps.populate(settings.INSTALLED_APPS)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/apps/registry.py", line 114, in populate
+    app_config.import_models()
+  File "/home/user/django/env/lib/python3.8/site-packages/django/apps/config.py", line 211, in import_models
+    self.models_module = import_module(models_module_name)
+  File "/home/user/django/env/lib/python3.8/importlib/__init__.py", line 127, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1014, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 991, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 975, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 671, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 779, in exec_module
+  File "<frozen importlib._bootstrap_external>", line 916, in get_code
+  File "<frozen importlib._bootstrap_external>", line 846, in source_to_code
+  File "<frozen importlib._bootstrap>", line 219, in _call_with_frames_removed
+  File "/home/user/django/maap/authapp/models.py", line 31
+    last_fired_at = models.DateTimeField(default=, blank=True)
+                                                 ^
+SyntaxError: invalid syntax
+Traceback (most recent call last):
+  File "/home/user/django/maap/manage.py", line 22, in <module>
+    main()
+  File "/home/user/django/maap/manage.py", line 18, in main
+    execute_from_command_line(sys.argv)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/__init__.py", line 401, in execute_from_command_line
+    utility.execute()
+  File "/home/user/django/env/lib/python3.8/site-packages/django/core/management/__init__.py", line 377, in execute
+    django.setup()
+  File "/home/user/django/env/lib/python3.8/site-packages/django/__init__.py", line 24, in setup
+    apps.populate(settings.INSTALLED_APPS)
+  File "/home/user/django/env/lib/python3.8/site-packages/django/apps/registry.py", line 114, in populate
+    app_config.import_models()
+  File "/home/user/django/env/lib/python3.8/site-packages/django/apps/config.py", line 211, in import_models
+    self.models_module = import_module(models_module_name)
+  File "/home/user/django/env/lib/python3.8/importlib/__init__.py", line 127, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1014, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 991, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 975, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 671, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 779, in exec_module
+  File "<frozen importlib._bootstrap_external>", line 916, in get_code
+  File "<frozen importlib._bootstrap_external>", line 846, in source_to_code
+  File "<frozen importlib._bootstrap>", line 219, in _call_with_frames_removed
+  File "/home/user/django/maap/authapp/models.py", line 31
+    last_fired_at = models.DateTimeField(default=, blank=True)
+                                                 ^
+SyntaxError: invalid syntax
+Error saving cronjob log message: no such table: django_cron_cronjoblog
+ 2020-07-03 03:45:02.028418: Hello from cron
+ 2020-07-03 03:49:02.427666: Hello from cron
+ 2020-07-03 03:53:01.792695: Hello from cron
+ 2020-07-03 03:57:02.224134: Hello from cron
+ 2020-07-03 04:01:01.862686: Hello from cron
+ 2020-07-03 04:05:02.397014: Hello from cron
+ 2020-07-03 04:09:01.659373: Hello from cron
+/home/user/django/env/lib/python3.8/site-packages/django/db/models/fields/__init__.py:1365: RuntimeWarning: DateTimeField MaapUserProfile.last_fired_at received a naive datetime (2020-07-03 04:11:01.849557) while time zone support is active.
+  warnings.warn("DateTimeField %s received a naive datetime (%s)"
+cron_notify executed..
+ 2020-07-03 04:11:01.849039: Hello from cron
+sending mail to {'', 'val'}, addr pehks@inbox.ru
+ 2020-07-03 04:11:05.045213: Bye from cron
+cron_notify executed..
+ 2020-07-03 04:13:02.155423: Hello from cron
+ 2020-07-03 04:13:02.155987: Bye from cron
+/home/user/django/env/lib/python3.8/site-packages/django/db/models/fields/__init__.py:1365: RuntimeWarning: DateTimeField MaapUserProfile.last_fired_at received a naive datetime (2020-07-03 04:15:02.375274) while time zone support is active.
+  warnings.warn("DateTimeField %s received a naive datetime (%s)"
+cron_notify executed..
+ 2020-07-03 04:15:02.373442: Hello from cron
+sending mail to {'', 'val'}, addr pehks@inbox.ru
+ 2020-07-03 04:15:06.320632: Bye from cron
+cron_notify executed..
+ 2020-07-03 04:18:02.005213: Hello from cron
+ 2020-07-03 04:18:02.005807: Bye from cron
+/home/user/django/env/lib/python3.8/site-packages/django/db/models/fields/__init__.py:1365: RuntimeWarning: DateTimeField MaapUserProfile.last_fired_at received a naive datetime (2020-07-03 04:20:02.042858) while time zone support is active.
+  warnings.warn("DateTimeField %s received a naive datetime (%s)"
+cron_notify executed..
+ 2020-07-03 04:20:02.042231: Hello from cron
+sending mail to {'', 'val'}, addr pehks@inbox.ru
+ 2020-07-03 04:20:05.140207: Bye from cron
+cron_notify executed..
+ 2020-07-03 04:22:02.117735: Hello from cron
+ 2020-07-03 04:22:02.118366: Bye from cron
+cron_notify executed..
+ 2020-07-03 04:28:02.103004: Hello from cron
+ 2020-07-03 04:28:02.103499: Bye from cron
+cron_notify executed..
+ 2020-07-03 04:33:02.241398: Hello from cron
+ 2020-07-03 04:33:02.242010: Bye from cron
+/home/user/django/env/lib/python3.8/site-packages/django/db/models/fields/__init__.py:1365: RuntimeWarning: DateTimeField MaapUserProfile.last_fired_at received a naive datetime (2020-07-03 04:39:01.911592) while time zone support is active.
+  warnings.warn("DateTimeField %s received a naive datetime (%s)"
+cron_notify executed..
+ 2020-07-03 04:39:01.911075: Hello from cron
+sending mail to {'', 'val'}, addr pehks@inbox.ru
+ 2020-07-03 04:39:05.222070: Bye from cron
+cron_notify executed..
+ 2020-07-03 04:45:02.168351: Hello from cron
+ 2020-07-03 04:45:02.169213: Bye from cron
+cron_notify executed..
+ 2020-07-03 04:51:02.245994: Hello from cron
+ 2020-07-03 04:51:02.246522: Bye from cron
+/home/user/django/env/lib/python3.8/site-packages/django/db/models/fields/__init__.py:1365: RuntimeWarning: DateTimeField MaapUserProfile.last_fired_at received a naive datetime (2020-07-03 04:57:02.153369) while time zone support is active.
+  warnings.warn("DateTimeField %s received a naive datetime (%s)"
+cron_notify executed..
+ 2020-07-03 04:57:02.152873: Hello from cron
+sending mail to {'val', ''}, addr pehks@inbox.ru
+ 2020-07-03 04:57:05.374803: Bye from cron
+cron_notify executed..
+ 2020-07-03 05:03:02.015011: Hello from cron
+ 2020-07-03 05:03:02.015561: Bye from cron
+cron_notify executed..
+ 2020-07-03 05:08:02.145594: Hello from cron
+ 2020-07-03 05:08:02.146155: Bye from cron
+/home/user/django/env/lib/python3.8/site-packages/django/db/models/fields/__init__.py:1365: RuntimeWarning: DateTimeField MaapUserProfile.last_fired_at received a naive datetime (2020-07-03 05:13:02.274563) while time zone support is active.
+  warnings.warn("DateTimeField %s received a naive datetime (%s)"
+cron_notify executed..
+ 2020-07-03 05:13:02.274043: Hello from cron
+sending mail to {'', 'val'}, addr pehks@inbox.ru
+ 2020-07-03 05:13:15.305470: Bye from cron
+cron_notify executed..
+ 2020-07-03 05:19:01.448573: Hello from cron
+ 2020-07-03 05:19:01.449079: Bye from cron
+cron_notify executed..
+ 2020-07-03 05:24:02.024053: Hello from cron
+ 2020-07-03 05:24:02.024903: Bye from cron
+/home/user/django/env/lib/python3.8/site-packages/django/db/models/fields/__init__.py:1365: RuntimeWarning: DateTimeField MaapUserProfile.last_fired_at received a naive datetime (2020-07-03 05:30:02.082090) while time zone support is active.
+  warnings.warn("DateTimeField %s received a naive datetime (%s)"
+cron_notify executed..
+ 2020-07-03 05:30:02.081444: Hello from cron
+sending mail to {'', 'val'}, addr pehks@inbox.ru
+ 2020-07-03 05:30:05.886000: Bye from cron
+cron_notify executed..
+ 2020-07-03 05:36:02.220695: Hello from cron
+ 2020-07-03 05:36:02.221421: Bye from cron
+cron_notify executed..
+ 2020-07-03 05:42:01.605809: Hello from cron
+ 2020-07-03 05:42:01.606351: Bye from cron
+/home/user/django/env/lib/python3.8/site-packages/django/db/models/fields/__init__.py:1365: RuntimeWarning: DateTimeField MaapUserProfile.last_fired_at received a naive datetime (2020-07-03 05:47:02.254961) while time zone support is active.
+  warnings.warn("DateTimeField %s received a naive datetime (%s)"
+cron_notify executed..
+ 2020-07-03 05:47:02.254463: Hello from cron
+sending mail to {'val', ''}, addr pehks@inbox.ru
+ 2020-07-03 05:47:06.178024: Bye from cron
+cron_notify executed..
+ 2020-07-03 05:53:01.476143: Hello from cron
+ 2020-07-03 05:53:01.476654: Bye from cron
+cron_notify executed..
+ 2020-07-03 05:58:01.619846: Hello from cron
+ 2020-07-03 05:58:01.620486: Bye from cron
+cron_notify executed..
+ 2020-07-03 06:03:01.721866: Hello from cron
+ 2020-07-03 06:03:01.722383: Bye from cron
+cron_notify executed..
+ 2020-07-03 06:08:02.133633: Hello from cron
+ 2020-07-03 06:08:02.135455: Bye from cron
+cron_notify executed..
+ 2020-07-03 06:13:02.304615: Hello from cron
+ 2020-07-03 06:13:02.305191: Bye from cron
+cron_notify executed..
+ 2020-07-03 06:19:01.802507: Hello from cron
+ 2020-07-03 06:19:01.803012: Bye from cron
+/home/user/django/env/lib/python3.8/site-packages/django/db/models/fields/__init__.py:1365: RuntimeWarning: DateTimeField MaapUserProfile.last_fired_at received a naive datetime (2020-07-04 13:13:02.389168) while time zone support is active.
+  warnings.warn("DateTimeField %s received a naive datetime (%s)"
+cron_notify executed..
+ 2020-07-04 13:13:02.387929: Hello from cron
+sending mail to {'first_name': 'val', 'last_name': ''}, addr pehks@inbox.ru
+ 2020-07-04 13:13:06.504331: Bye from cron
