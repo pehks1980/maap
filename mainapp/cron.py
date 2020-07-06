@@ -43,6 +43,7 @@ def cron_notify(jobs,dont_wait=False):
                 user = {'first_name' : job.user.first_name,
                         'last_name' : job.user.last_name,
                         'id' : job.user.id,
+                        'rem_period' : job.email_shed,
                         }
 
                 mail_notify(job.email_addr, user=user)

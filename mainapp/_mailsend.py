@@ -7,7 +7,7 @@ from cred_maap import *
 def send_my_mail(sender_email, receiver_email, user):
     # Send email here
     message = MIMEMultipart("alternative")
-    message["Subject"] = "MAAP e-mail notify test"
+    message["Subject"] = "MAAP Оповещение E-mail notify"
     message["From"] = sender_email
     message["To"] = receiver_email
 
@@ -15,17 +15,22 @@ def send_my_mail(sender_email, receiver_email, user):
     user_name = user.get('first_name')
     user_id = user.get('id')
     host_url = HOST_URL
+    rem_period = user.get('rem_period')
     text = """\
-    Hi, THIS IS MAAP TEST e-mail notification!
-    How are you? Костя Костя """
+    Hi, THIS IS MAAP e-mail notification!
+    How are you? We need to start again! Костя """
+
+    #print(f"Shut the door{'s' if num_doors > 1 else ''}.")
+
     html = f"""\
     <html>
       <body>
-        <p>Hi,{user_name}<br> THIS IS MAAP TEST e-mail notification! <br>
-           Костя Костя<br>
+        <p>Hi,{str(user_name).capitalize()}<br> Пора начинать занятие! <br>
+           
            <a href="{host_url}">MAAP LESSON</a> 
-           <br>
-           <a href="{host_url}/uncheck/{receiver_email}/{user_id}/">stop receiving notifications for MAAP LESSON</a> 
+           <br>текущий режим оповещений - {'раз в 3 дня' if rem_period == 3 else 'раз в неделю'} <br>
+            чтобы отключить рассылку нажмите на ссылку: <a href="{host_url}/uncheck/{receiver_email}/{user_id}/">Остановить</a> <br>
+            c уважением MAAP Костя
         </p>
       </body>
     </html>
