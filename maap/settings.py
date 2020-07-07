@@ -139,3 +139,9 @@ LOGIN_URL = '/auth/login/'
 
 DEFAULT_FILE_STORAGE = 'db_file_storage.storage.DatabaseFileStorage'
 
+#additional path settings for gunicorn when deployment
+import sys
+sys.path.append('/home/user/django/maap/mainapp')
+sys.path.append('/home/user/django')
+#print (sys.path)
+

@@ -484,3 +484,77 @@ cron_notify executed..
 cron_notify executed..
  2020-07-06 23:52:01.518372: Hello from cron
  2020-07-06 23:52:01.519012: Bye from cron
+cron_notify executed..
+ 2020-07-06 23:57:02.137009: Hello from cron
+ 2020-07-06 23:57:02.137606: Bye from cron
+cron_notify executed..
+ 2020-07-07 00:03:02.063358: Hello from cron
+ 2020-07-07 00:03:02.064488: Bye from cron
+cron_notify executed..
+ 2020-07-07 00:09:02.239448: Hello from cron
+ 2020-07-07 00:09:02.240857: Bye from cron
+cron_notify executed..
+ 2020-07-07 00:14:02.448732: Hello from cron
+ 2020-07-07 00:14:02.449297: Bye from cron
+cron_notify executed..
+ 2020-07-07 00:20:02.351343: Hello from cron
+ 2020-07-07 00:20:02.352250: Bye from cron
+cron_notify executed..
+ 2020-07-07 00:25:02.379526: Hello from cron
+ 2020-07-07 00:25:02.380201: Bye from cron
+cron_notify executed..
+ 2020-07-07 00:31:02.978047: Hello from cron
+ 2020-07-07 00:31:02.978735: Bye from cron
+cron_notify executed..
+ 2020-07-07 00:37:02.804153: Hello from cron
+ 2020-07-07 00:37:02.806610: Bye from cron
+cron_notify executed..
+ 2020-07-07 00:43:02.210440: Hello from cron
+ 2020-07-07 00:43:02.211003: Bye from cron
+cron_notify executed..
+ 2020-07-07 00:49:02.185064: Hello from cron
+ 2020-07-07 00:49:02.185786: Bye from cron
+cron_notify executed..
+ 2020-07-07 00:55:01.428702: Hello from cron
+ 2020-07-07 00:55:01.429344: Bye from cron
+cron_notify executed..
+ 2020-07-07 01:00:02.089251: Hello from cron
+ 2020-07-07 01:00:02.090006: Bye from cron
+['/home/user/django/maap', '/home/user', '/home/user/django/maap/mainapp', '/home/user/django', '/home/user/django/env/lib/python38.zip', '/home/user/django/env/lib/python3.8', '/home/user/django/env/lib/python3.8/lib-dynload', '/opt/python/3.8.0/lib/python3.8', '/home/user/django/env/lib/python3.8/site-packages', '/home/user/django/maap/mainapp', '/home/user/django']
+['/home/user/django/maap', '/home/user', '/home/user/django/maap/mainapp', '/home/user/django', '/home/user/django/env/lib/python38.zip', '/home/user/django/env/lib/python3.8', '/home/user/django/env/lib/python3.8/lib-dynload', '/opt/python/3.8.0/lib/python3.8', '/home/user/django/env/lib/python3.8/site-packages', '/home/user/django/maap/mainapp', '/home/user/django']
+['/home/user/django/maap', '/home/user', '/home/user/django/maap/mainapp', '/home/user/django', '/home/user/django/env/lib/python38.zip', '/home/user/django/env/lib/python3.8', '/home/user/django/env/lib/python3.8/lib-dynload', '/opt/python/3.8.0/lib/python3.8', '/home/user/django/env/lib/python3.8/site-packages', '/home/user/django/maap/mainapp', '/home/user/django']
+cron_notify executed..
+ 2020-07-07 01:05:02.589028: Hello from cron
+ 2020-07-07 01:05:02.589581: Bye from cron
+['/home/user/django/maap', '/home/user', '/home/user/django/maap/mainapp', '/home/user/django', '/home/user/django/env/lib/python38.zip', '/home/user/django/env/lib/python3.8', '/home/user/django/env/lib/python3.8/lib-dynload', '/opt/python/3.8.0/lib/python3.8', '/home/user/django/env/lib/python3.8/site-packages', '/home/user/django/maap/mainapp', '/home/user/django']
+['/home/user/django/maap', '/home/user', '/home/user/django/maap/mainapp', '/home/user/django', '/home/user/django/env/lib/python38.zip', '/home/user/django/env/lib/python3.8', '/home/user/django/env/lib/python3.8/lib-dynload', '/opt/python/3.8.0/lib/python3.8', '/home/user/django/env/lib/python3.8/site-packages', '/home/user/django/maap/mainapp', '/home/user/django']
+['/home/user/django/maap', '/home/user', '/home/user/django/maap/mainapp', '/home/user/django', '/home/user/django/env/lib/python38.zip', '/home/user/django/env/lib/python3.8', '/home/user/django/env/lib/python3.8/lib-dynload', '/opt/python/3.8.0/lib/python3.8', '/home/user/django/env/lib/python3.8/site-packages', '/home/user/django/maap/mainapp', '/home/user/django']
+['/home/user/django/maap', '/home/user', '/home/user/django/maap/mainapp', '/home/user/django', '/home/user/django/env/lib/python38.zip', '/home/user/django/env/lib/python3.8', '/home/user/django/env/lib/python3.8/lib-dynload', '/opt/python/3.8.0/lib/python3.8', '/home/user/django/env/lib/python3.8/site-packages', '/home/user/django/maap/mainapp', '/home/user/django']
+['/home/user/django/maap', '/home/user', '/home/user/django/maap/mainapp', '/home/user/django', '/home/user/django/env/lib/python38.zip', '/home/user/django/env/lib/python3.8', '/home/user/django/env/lib/python3.8/lib-dynload', '/opt/python/3.8.0/lib/python3.8', '/home/user/django/env/lib/python3.8/site-packages', '/home/user/django/maap/mainapp', '/home/user/django']
+['/home/user/django/maap', '/home/user', '/home/user/django/maap/mainapp', '/home/user/django', '/home/user/django/env/lib/python38.zip', '/home/user/django/env/lib/python3.8', '/home/user/django/env/lib/python3.8/lib-dynload', '/opt/python/3.8.0/lib/python3.8', '/home/user/django/env/lib/python3.8/site-packages', '/home/user/django/maap/mainapp', '/home/user/django']
+cron_notify executed..
+ 2020-07-07 01:11:01.667761: Hello from cron
+ 2020-07-07 01:11:01.668575: Bye from cron
+['/home/user/django/maap', '/home/user', '/home/user/django/maap/mainapp', '/home/user/django', '/home/user/django/env/lib/python38.zip', '/home/user/django/env/lib/python3.8', '/home/user/django/env/lib/python3.8/lib-dynload', '/opt/python/3.8.0/lib/python3.8', '/home/user/django/env/lib/python3.8/site-packages', '/home/user/django/maap/mainapp', '/home/user/django']
+['/home/user/django/maap', '/home/user', '/home/user/django/maap/mainapp', '/home/user/django', '/home/user/django/env/lib/python38.zip', '/home/user/django/env/lib/python3.8', '/home/user/django/env/lib/python3.8/lib-dynload', '/opt/python/3.8.0/lib/python3.8', '/home/user/django/env/lib/python3.8/site-packages', '/home/user/django/maap/mainapp', '/home/user/django']
+['/home/user/django/maap', '/home/user', '/home/user/django/maap/mainapp', '/home/user/django', '/home/user/django/env/lib/python38.zip', '/home/user/django/env/lib/python3.8', '/home/user/django/env/lib/python3.8/lib-dynload', '/opt/python/3.8.0/lib/python3.8', '/home/user/django/env/lib/python3.8/site-packages', '/home/user/django/maap/mainapp', '/home/user/django']
+['/home/user/django/maap', '/home/user', '/home/user/django/maap/mainapp', '/home/user/django', '/home/user/django/env/lib/python38.zip', '/home/user/django/env/lib/python3.8', '/home/user/django/env/lib/python3.8/lib-dynload', '/opt/python/3.8.0/lib/python3.8', '/home/user/django/env/lib/python3.8/site-packages', '/home/user/django/maap/mainapp', '/home/user/django']
+['/home/user/django/maap', '/home/user', '/home/user/django/maap/mainapp', '/home/user/django', '/home/user/django/env/lib/python38.zip', '/home/user/django/env/lib/python3.8', '/home/user/django/env/lib/python3.8/lib-dynload', '/opt/python/3.8.0/lib/python3.8', '/home/user/django/env/lib/python3.8/site-packages', '/home/user/django/maap/mainapp', '/home/user/django']
+cron_notify executed..
+ 2020-07-07 01:16:02.046860: Hello from cron
+ 2020-07-07 01:16:02.047756: Bye from cron
+['/home/user/django/maap', '/home/user', '/home/user/django/maap/mainapp', '/home/user/django', '/home/user/django/env/lib/python38.zip', '/home/user/django/env/lib/python3.8', '/home/user/django/env/lib/python3.8/lib-dynload', '/opt/python/3.8.0/lib/python3.8', '/home/user/django/env/lib/python3.8/site-packages', '/home/user/django/maap/mainapp', '/home/user/django']
+['/home/user/django/maap', '/home/user', '/home/user/django/maap/mainapp', '/home/user/django', '/home/user/django/env/lib/python38.zip', '/home/user/django/env/lib/python3.8', '/home/user/django/env/lib/python3.8/lib-dynload', '/opt/python/3.8.0/lib/python3.8', '/home/user/django/env/lib/python3.8/site-packages', '/home/user/django/maap/mainapp', '/home/user/django']
+['/home/user/django/maap', '/home/user', '/home/user/django/maap/mainapp', '/home/user/django', '/home/user/django/env/lib/python38.zip', '/home/user/django/env/lib/python3.8', '/home/user/django/env/lib/python3.8/lib-dynload', '/opt/python/3.8.0/lib/python3.8', '/home/user/django/env/lib/python3.8/site-packages', '/home/user/django/maap/mainapp', '/home/user/django']
+cron_notify executed..
+ 2020-07-07 01:22:01.882911: Hello from cron
+ 2020-07-07 01:22:01.883531: Bye from cron
+cron_notify executed..
+ 2020-07-07 01:27:02.337231: Hello from cron
+ 2020-07-07 01:27:02.337914: Bye from cron
+cron_notify executed..
+ 2020-07-07 01:32:02.410953: Hello from cron
+ 2020-07-07 01:32:02.411711: Bye from cron
+cron_notify executed..
+ 2020-07-07 01:38:02.478424: Hello from cron
+ 2020-07-07 01:38:02.479771: Bye from cron
