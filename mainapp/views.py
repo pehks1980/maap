@@ -409,7 +409,7 @@ def hist(request):
 
     return render(request, 'mainapp/hist.html', content)
 
-
+#compares reports - pk previous report, favor_ans current, result : favor_ans_res will be stored in db
 def compare_reports(pk, favor_ans):
     try:
         lesson = get_object_or_404(MaapLesson, pk=pk)
@@ -440,8 +440,18 @@ def compare_reports(pk, favor_ans):
                     if b == key['b']:
                         if c == key['c']:
                             # same operation found make returned dictionary updated with differnce
-                            diff = key['d'] - d
-                            elem.update(e=diff)
+                            diff = d - key['d'] #if current is longer then prev - then diff > 0
+                            if diff != 0:
+                                elem.update(e=diff)
+                else: #case when multiplication vice versa operands
+                    if a == key['b']:
+                        if b == key['a']:
+                            if c == 1:
+                                diff = d - key['d']  # if current is longer then prev - then diff > 0
+                                if diff != 0:
+                                    elem.update(e=diff)
+
+
             # add new elem to result dict here
             # make new index
             idx = 0
@@ -546,7 +556,10 @@ def make_report(list_hist, rep_hist, request):
 
                 diff = key.get('e')
                 if diff:
-                    str_fav_ans += f', разница c посл. уроком => {diff} сек'
+                    if diff > 0:
+                        str_fav_ans += f', разница c последним уроком => + {diff} сек :('
+                    else:
+                        str_fav_ans += f', разница c последним уроком => - {diff} сек :)'
 
                 if c:
                     rep_hist_row.append(str_fav_ans)

@@ -8,6 +8,12 @@ from _mailsend import mail_notify
 
 from authapp.models import MaapUserProfile
 
+#there is need to pip install django_cron and update users crontab
+# crontab -e
+# put this
+# SHELL=/bin/bash
+# */1 * * * * source /home/user/.bashrc && source /home/user/django/venv/bin/activate && python /home/user/django/maap/manage.py runcrons >> /home/user/django/maap/cronjob.log 2>&1
+#also need to install in system local post MTA like postfix
 
 def cron_notify(jobs,dont_wait=False):
     print(f' {datetime.now()}: Hello from cron')
