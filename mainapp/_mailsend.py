@@ -21,6 +21,12 @@ def send_my_mail(sender_email, receiver_email, user):
     How are you? We need to start again! Костя """
 
     #print(f"Shut the door{'s' if num_doors > 1 else ''}.")
+    dct_choice = [
+        {'val': 1, 'msg' :'каждый день'},
+        {'val': 3, 'msg':'раз в 3 дня'},
+        {'val': 7, 'msg' :'раз в неделю'},
+    ]
+    rem_period_char = list(filter(lambda x: x['val'] == rem_period, dct_choice))
 
     html = f"""\
     <html>
@@ -28,7 +34,7 @@ def send_my_mail(sender_email, receiver_email, user):
         <p>Hi,{str(user_name).capitalize()}<br> Пора начинать занятие! <br>
            
            <a href="{host_url}">MAAP LESSON</a> 
-           <br>текущий режим оповещений - {'раз в 3 дня' if rem_period == 3 else 'раз в неделю'} <br>
+           <br>текущий режим оповещений - {rem_period_char[0]['msg']} <br>
             чтобы отключить рассылку нажмите на ссылку: <a href="{host_url}/uncheck/{receiver_email}/{user_id}/">Остановить</a> <br>
             c уважением MAAP Костя
         </p>

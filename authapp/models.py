@@ -19,6 +19,7 @@ class MaapUser(AbstractUser):
 class MaapUserProfile(models.Model):
 
     APP_EMAIL_CHOICES = (
+        (1, 'Каждый день! (рекомендуется в начале)'),
         (3, 'Раз в 3 дня'),
         (7, 'Раз в неделю'),
 
