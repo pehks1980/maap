@@ -2,6 +2,7 @@
 
 from datetime import datetime
 import pytz
+from collections import OrderedDict
 
 from django.contrib.auth.decorators import login_required
 # from mainapp.models import ProductCategory, Product
@@ -536,8 +537,14 @@ def make_report(list_hist, rep_hist, request):
             saved_report.file_rep.open('r')
             bytes_str = saved_report.file_rep.read()
             saved_str = bytes_str.decode()
-            saved_report_favor_ans = json.loads(saved_str)
+            #saved_report_favor_ans = json.loads(saved_str)
             saved_report.file_rep.close()
+            #load dict report as d
+            d = json.loads(saved_str)
+            saved_report.file_rep.close()
+            # use ordereddict to sort report by filed 'd' = time desc direction
+            saved_report_favor_ans = OrderedDict(sorted(d.items(), key=lambda t: t[1]['d'], reverse=True))
+
             # insert id into each row of report
             # add report rows
             for id, key in saved_report_favor_ans.items():

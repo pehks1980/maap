@@ -35,3 +35,13 @@ cron_notify executed..
 cron_notify executed..
  2020-07-09 10:04:02.020179: Hello from cron
  2020-07-09 10:04:02.021304: Bye from cron
+cron_notify executed..
+ 2020-07-13 02:07:02.520132: Hello from cron
+sending mail to {'first_name': 'val', 'last_name': '', 'id': 1, 'rem_period': 3}, addr pehks@inbox.ru
+ 2020-07-13 02:07:05.838196: Bye from cron
+cron_notify executed..
+ 2020-07-13 02:12:02.358785: Hello from cron
+cron_notify executed..
+ 2020-07-13 02:13:01.992065: Hello from cron
+cron_notify executed..
+ 2020-07-13 02:14:01.652046: Hello from cron
