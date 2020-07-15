@@ -155,6 +155,11 @@ tr:nth-child(even) {
 
  }
 
+ .button2:hover {
+  background-color: #008CBA;
+  color: white;
+}
+
 .search {
 	display: block;
 	width: 23px;

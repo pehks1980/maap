@@ -41,7 +41,7 @@
         </li>
     {% endif %}
     <li>
-        <a href="{% url 'hist' %}" class="{% if request.resolver_match.namespace == 'hist' %}active{% endif %}">
+        <a href="{% url 'hist' 1 %}" class="{% if request.resolver_match.namespace == 'hist' %}active{% endif %}">
             история
         </a>
     </li>

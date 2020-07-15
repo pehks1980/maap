@@ -382,7 +382,7 @@ def clear_hist(request):
     return HttpResponseRedirect(f'/')
 
 
-def hist(request):
+def hist(request , page = 1):
     title = f'главная maap v 1.0/история уроков '
 
 
@@ -399,15 +399,52 @@ def hist(request):
         list_hist_row.append(f' пусто! ')
         list_hist.append(list_hist_row)
         clr_but = False
+        max_page = 1
     else:
         # fillup lists with data
+
         make_report(list_hist, rep_hist, request)
+
+        #paginator self made
+        n = 2 #reports per page
+        #curr page
+        page = int(page)
+        #number of reports all
+        items_cnt = len(list_hist)-1
+        #max page
+        max_page = int ( items_cnt / n )
+
+        #make new page for the rest new page
+        if  items_cnt > max_page*n:
+            max_page = max_page + 1
+
+        #no need
+        #if max_page == 0:
+        #    max_page = 1
+
+        #slice list_hist per one page
+        page_list_hist = list_hist[n*page-1:n*page-1+n]
+        #make rep_hist list corresp list_hist
+        page_rep_hist = []
+        for list_item in page_list_hist:
+            for rep_item in rep_hist:
+                if rep_item[0] == list_item[0]:
+                    page_rep_hist.append(rep_item)
+
+        # page_rep_hist =
         clr_but = True
 
+        paging = {'page':page,
+                    'pages': [x for x in range(1,max_page+1) ],
+                }
+
+        ans_page = {'list_hist': page_list_hist, 'rep_hist': page_rep_hist, 'clr_but': clr_but , 'paging' : paging}
+
+        content = {'title': title, 'ans': ans_page}
+        return render(request, 'mainapp/hist.html', content)
+
     ans = {'list_hist': list_hist, 'rep_hist': rep_hist, 'clr_but': clr_but}
-
     content = {'title': title, 'ans': ans}
-
     return render(request, 'mainapp/hist.html', content)
 
 #compares reports - pk previous report, favor_ans current, result : favor_ans_res will be stored in db

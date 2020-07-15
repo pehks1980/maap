@@ -36,6 +36,17 @@
 <div class="clr"></div>
     {% endif %}
 
+{% if ans.paging %}
+    <p>
+    {% for i_page in ans.paging.pages %}
+        <a href="{% url 'hist' i_page %}" style="text-decoration: none; color: #cc1111">
+                    <button class="button button2">Стр. {{i_page}}</button>
+        </a>
+        &nbsp;
+    {% endfor %}
+    </p>
+{% endif %}
+
 {% if ans.clr_but %}
   <button class="button-order">
     <a href="{% url 'clear_hist' %}" style="text-decoration: none; color: #cc1111">
