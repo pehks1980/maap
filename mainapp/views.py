@@ -382,9 +382,10 @@ def clear_hist(request):
     return HttpResponseRedirect(f'/')
 
 
-def hist(request , page = 1):
+def hist(request , page = 'None'):
     title = f'главная maap v 1.0/история уроков '
 
+    print ('page=',page)
 
     list_hist = []
     rep_hist = []
@@ -407,16 +408,23 @@ def hist(request , page = 1):
 
         #paginator self made
         n = 2 #reports per page
-        #curr page
-        page = int(page)
-        #number of reports all
-        items_cnt = len(list_hist)-1
-        #max page
-        max_page = int ( items_cnt / n )
-
+        # number of reports all
+        items_cnt = len(list_hist) - 1
+        # max page
+        max_page = int(items_cnt / n)
         #make new page for the rest new page
         if  items_cnt > max_page*n:
             max_page = max_page + 1
+
+        if page == 'None':
+            #go to max page
+            page = max_page
+        else:
+            #curr page if page param is given
+            page = int(page)
+
+
+
 
         #no need
         #if max_page == 0:
@@ -601,9 +609,9 @@ def make_report(list_hist, rep_hist, request):
                 diff = key.get('e')
                 if diff:
                     if diff > 0:
-                        str_fav_ans += f', разница c последним уроком => + {diff} сек :('
+                        str_fav_ans += f', разница c последним уроком => + {abs(diff)} сек :('
                     else:
-                        str_fav_ans += f', разница c последним уроком => - {diff} сек :)'
+                        str_fav_ans += f', разница c последним уроком => - {abs(diff)} сек :)'
 
                 if c:
                     rep_hist_row.append(str_fav_ans)

@@ -40,7 +40,7 @@
     <p>
     {% for i_page in ans.paging.pages %}
         <a href="{% url 'hist' i_page %}" style="text-decoration: none; color: #cc1111">
-                    <button class="button button2">Стр. {{i_page}}</button>
+                    <button class="button button2 {% if i_page == ans.paging.page %}active{% endif %}">Стр. {{i_page}}</button>
         </a>
         &nbsp;
     {% endfor %}

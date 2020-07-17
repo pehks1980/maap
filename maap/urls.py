@@ -39,6 +39,7 @@ urlpatterns = [
     path('mathemk/<int:pk1>/<int:pk2>/<int:diff>/', mainapp.mathemk, name='mathemk'),
     path('finish/<int:pk>/', mainapp.finish, name='finish'),
     re_path(r'hist/page/(?P<page>\d+)/', mainapp.hist, name='hist'),
+    re_path(r'hist/', mainapp.hist, name='hist'),
     path('clear-hist/', mainapp.clear_hist, name='clear_hist'),
     path('checkcron/', mainapp.checkCron, name='checkcron'),
     re_path(r'^uncheck/(?P<email>.+)/(?P<id>.+)/$', mainapp.uncheckEmail, name='uncheck'),
