@@ -317,9 +317,15 @@ def mathemk(request, pk1, pk2, diff):
 
         txt00, check_res = check_ans(int(pk2), int(diff), lesson.a1, lesson.b1, lesson.c1)
 
-        lesson.ans_amount += 1
+
         if check_res == 1:
             lesson.ans_correct += 1
+            #update average time
+            lesson.ans_sum = lesson.ans_sum + diff
+            lesson.avg_ans_time  = int (lesson.ans_sum  / lesson.ans_correct)
+
+
+        lesson.ans_amount += 1
 
         lesson.save()
 
@@ -445,6 +451,9 @@ def hist(request , page = 'None'):
         paging = {'page':page,
                     'pages': [x for x in range(1,max_page+1) ],
                 }
+        #copy headers to paged version
+        page_rep_hist.insert(0,rep_hist[0])
+        page_list_hist.insert(0,list_hist[0])
 
         ans_page = {'list_hist': page_list_hist, 'rep_hist': page_rep_hist, 'clr_but': clr_but , 'paging' : paging}
 
@@ -527,12 +536,13 @@ def make_report(list_hist, rep_hist, request):
     list_hist_row.append(f' Общее время')
     list_hist_row.append(f' Кол-во вопросов')
     list_hist_row.append(f' % Правильных')
+    list_hist_row.append(f' Ср. время ответа')
     list_hist.append(list_hist_row)
 
     # make separate list for report
     rep_hist_row = []
     rep_hist_row.append(f' id report')
-    rep_hist_row.append(f' Report ')
+    rep_hist_row.append(f' Отчет: история трудных ответов ')
     rep_hist.append(rep_hist_row)
 
     for i in lessons:
@@ -567,10 +577,16 @@ def make_report(list_hist, rep_hist, request):
             list_hist_row.append(i.ans_amount)
         else:
             list_hist_row.append(f' нет данных')
+
         # tab percent correct
         if (i.ans_amount and i.ans_correct):
             corr_percent = int((i.ans_correct / i.ans_amount) * 100)
             list_hist_row.append(f' {corr_percent} %')
+        else:
+            list_hist_row.append(f' нет данных')
+
+        if (i.avg_ans_time):
+            list_hist_row.append(f' {i.avg_ans_time} сек')
         else:
             list_hist_row.append(f' нет данных')
 

@@ -68,6 +68,11 @@ class MaapLesson(models.Model):
     a1 = models.PositiveIntegerField(verbose_name='a1', default=0)
     b1 = models.PositiveIntegerField(verbose_name='b1', default=0)
     c1 = models.PositiveIntegerField(verbose_name='c1', default=0)
+
+    #last ans time in seconds
+    ans_sum = models.PositiveIntegerField(verbose_name='last_ans_time', default=0)
+    #avg ans time for the lesson
+    avg_ans_time = models.PositiveIntegerField(verbose_name='avg_ans_time', default=0)
     #mult_tabl =
 
 
