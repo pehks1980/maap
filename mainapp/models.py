@@ -35,10 +35,10 @@ class MaapLesson(models.Model):
     report = models.ForeignKey(MaapReport, on_delete=models.CASCADE)
 
     date = models.CharField(verbose_name='s_time', max_length=64, blank=True)
-    s_time = models.CharField(verbose_name='s_time', max_length=64, blank=True)
+    s_time = models.CharField(verbose_name='s_time', max_length=128, blank=True)
     f_time = models.CharField(verbose_name='f_time', max_length=64, blank=True)
     # mode=models.PositiveIntegerField(verbose_name='mode', null=True)
-    mode = models.CharField(verbose_name='mode', max_length=12, blank=True)
+    mode = models.CharField(verbose_name='mode', max_length=32, blank=True)
 
     ans_amount = models.PositiveIntegerField(verbose_name='ans_amount', default=1)  # integer NULL!
     ans_correct = models.PositiveIntegerField(verbose_name='ans_correct', default=0)
@@ -56,10 +56,13 @@ class MaapLesson(models.Model):
     hist_depth = models.PositiveIntegerField(verbose_name='hist_depth', default=5)
     favor_thresold_time = models.PositiveIntegerField(verbose_name='hist_depth', default=15)
 
-    hist = models.CharField(verbose_name='hist', max_length=256, blank=True)
-    favor_ans = models.CharField(verbose_name='hist', max_length=256, blank=True)
+    #hist = models.CharField(verbose_name='hist', max_length=512, blank=True)
+    hist = models.TextField(verbose_name='hist', blank=True)
 
-    qst_time = models.CharField(verbose_name='mode', max_length=12, blank=True)
+    #favor_ans = models.CharField(verbose_name='hist', max_length=512, blank=True)
+    favor_ans = models.TextField(verbose_name='hist', blank=True)
+
+    qst_time = models.CharField(verbose_name='mode', max_length=64, blank=True)
 
     mult = models.PositiveIntegerField(verbose_name='mult', default=1)
     addi = models.PositiveIntegerField(verbose_name='addi', default=1)

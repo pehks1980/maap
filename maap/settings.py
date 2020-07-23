@@ -82,10 +82,19 @@ WSGI_APPLICATION = 'maap.wsgi.application'
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
 DATABASES = {
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    # }
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'NAME': 'maap',
+        'ENGINE': 'django.db.backends.postgresql',
+        'USER': 'maap',
+        'PASSWORD': 'maap',
+        'HOST': '192.168.1.200'
     }
+
+
 }
 
 # Password validation
