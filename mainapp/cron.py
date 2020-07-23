@@ -36,7 +36,7 @@ def cron_notify(jobs,dont_wait=False):
 
             try:
                 time_period = job.email_shed * 1440
-                print(f' job = {job.user.id} has {job.email_shed} param which means time period : {time_period} (mins) last time fired : {job.last_fired_at} difference : {diff_time_mins} (mins)')
+                print(f' job for user id = {job.user.id} ({job.email_addr}) has {job.email_shed} param which means time period : {time_period} (mins) last time fired : {job.last_fired_at} difference : {diff_time_mins} (mins)')
             except:
                 print (f' job = {job.user.id} has {job.email_shed} parameter will not fire notification')
                 time_period = 0
