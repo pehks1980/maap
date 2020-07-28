@@ -55,7 +55,7 @@ def main(request):
             lesson = MaapLesson(user=request.user)
             # reset app
 
-            (lesson.mult, lesson.addi, lesson.subt) = SetAppMode(ans)
+            (lesson.mult, lesson.addi, lesson.subt, lesson.divn) = SetAppMode(ans)
 
             lesson.mode = ' '.join(ans)
 
@@ -170,7 +170,7 @@ def mathem(request, pk):
 
         hist = json.loads(lesson.hist)  # load hist from db
 
-        a, b, code, hist1 = eval(lesson.mult, lesson.addi, lesson.subt, lesson.nx, lesson.ny, lesson.ax,
+        a, b, code, hist1 = eval(lesson.mult, lesson.addi, lesson.subt, lesson.divn, lesson.nx, lesson.ny, lesson.ax,
                                  lesson.two_digit, lesson.sx, \
                                  lesson.no_minus, lesson.no_dec_mul, hist, lesson.hist_depth)
 
@@ -199,13 +199,16 @@ def mathem(request, pk):
         txt1 = f"вопрос {lesson.ans_amount} правильных: {lesson.ans_correct}"
 
         list_txt.append(txt1)
-
+        #code 1 * 2 + 3 - 4 /
         if code == 1:
             txt2 = f'cколько будет {a} X {b} =?'
         if code == 2:
             txt2 = f'cколько будет {a} + {b} =?'
         if code == 3:
             txt2 = f'cколько будет {a} - {b} =?'
+        if code == 4:
+            divsign =u'\u00F7';
+            txt2 = f'cколько будет {a} {divsign} {b} =?'
 
         list_txt.append(txt2)
 
@@ -337,7 +340,7 @@ def mathemk(request, pk1, pk2, diff):
 
         txt1 = f'a1={lesson.a1}, b1={lesson.b1}, c1={lesson.c1}, ans_num={lesson.ans_amount}, ans_corr={lesson.ans_correct}'
         # add mult table
-        if lesson.c1 == 1 and check_res == 0:  # if multip
+        if lesson.c1 == 1 and check_res == 0 and lesson.a1 < lesson.nx+1 and lesson.b1 < lesson.ny+1:  # if multip in range 10*12
             mult_tabl = []
             ny = lesson.ny
             nx = lesson.nx
@@ -621,6 +624,9 @@ def make_report(list_hist, rep_hist, request):
                     str_fav_ans = (f' {a} + {b} (={a + b}) занял {d} секунд')
                 if c == 3:
                     str_fav_ans = (f' {a} - {b} (={a - b}) занял {d} секунд')
+                if c == 4:
+                    divsign = u'\u00F7';
+                    str_fav_ans = (f' {a} {divsign} {b} (={int (a / b)}) занял {d} секунд')
 
                 diff = key.get('e')
                 if diff:

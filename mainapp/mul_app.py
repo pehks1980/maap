@@ -31,6 +31,8 @@ def SetAppMode(list):
     mult = 0
     addi = 0
     subt = 0
+    divn = 0
+
     for i in list:
         if int(i) == 1:
             mult = 1
@@ -38,8 +40,10 @@ def SetAppMode(list):
             addi = 1
         if int(i) == 3:
             subt = 1
+        if int(i) == 4:
+            divn = 1
 
-    return (mult, addi, subt)
+    return (mult, addi, subt, divn)
 
 
 def GetAppModeDesc(list):
@@ -85,23 +89,41 @@ def printMatrix(s, hl, a, b):
     # print(result)
     return result
 
+#choce the next question from random, take into account previous answers hist
+def eval(mult, addi, subt, divn, nx, ny, ax, two_digit, sx, no_minus, no_dec_mul, hist, hist_depth):
 
-def eval(mult, addi, subt, nx, ny, ax, two_digit, sx, no_minus, no_dec_mul, hist, hist_depth):
+    code = None
+
     while True:
         already_in_hist = False
-
-        while True:
-            code = random.randint(1, 3)
-            if (mult == 1) and (code == 1):
-                break
-            if (addi == 1) and (code == 2):
-                break
-            if (subt == 1) and (code == 3):
-                break
-
+        #choice type of question *-+/ if code is not chosen already
+        if code == None:
+            while True:
+                code = random.randint(1, 4)
+                if (mult == 1) and (code == 1):
+                    break
+                if (addi == 1) and (code == 2):
+                    break
+                if (subt == 1) and (code == 3):
+                    break
+                if (divn == 1) and (code == 4):
+                    break
+        #mul a,b 2..10 2..12 mult table 10X12
         if code == 1:
-            a = random.randint(2, nx)
-            b = random.randint(2, ny)
+            #mul op
+            mul_op_ratio = 10
+            op = random.randint(1, 100)
+            if op > mul_op_ratio:
+                a = random.randint(2, nx)
+                b = random.randint(2, ny)
+            else:#a*10,100,100
+                digs = [ 10**x for x in  range(1,4)]
+                a = random.randint(2, ny*nx)
+                b = random.choice(digs)
+
+            #choice of
+
+        #+
         if code == 2:
             while True:
                 a = random.randint(1, ax)
@@ -112,7 +134,7 @@ def eval(mult, addi, subt, nx, ny, ax, two_digit, sx, no_minus, no_dec_mul, hist
                         break
                     else:
                         continue
-
+        #-
         if code == 3:
             while True:
                 a = random.randint(1, sx)
@@ -125,7 +147,7 @@ def eval(mult, addi, subt, nx, ny, ax, two_digit, sx, no_minus, no_dec_mul, hist
                         continue
 
                 if a != b:
-                    break
+                    break # exit
 
             #        print(a,b)
 
@@ -139,6 +161,15 @@ def eval(mult, addi, subt, nx, ny, ax, two_digit, sx, no_minus, no_dec_mul, hist
                 if (a == 10) or (b == 10):
                     already_in_hist = True
                     continue
+        #div on multiple table:
+        if code == 4:
+            ops = []
+            ops.append(random.randint(2, nx))
+            ops.append(random.randint(2, ny))
+            a1 = ops[0]
+            b1 = ops[1]
+            a = a1 * b1
+            b = random.choice(ops)
 
         for id, key in hist.items():
             ha = key['a']
@@ -184,6 +215,8 @@ def check_ans(ans, diff, a1, b1, c1):
         res = a + b
     if code == 3:
         res = a - b
+    if code == 4:
+        res = a / b
 
     if ans != 'q':
         if ans == 'c':
@@ -194,6 +227,8 @@ def check_ans(ans, diff, a1, b1, c1):
                 return (f" подсказка : ответ - правильный {a} + {b} = {res}", 0)
             if code == 3:
                 return (f" подсказка : ответ - правильный {a} - {b} = {res}", 0)
+            if code == 4:
+                return (f" подсказка : ответ - правильный {a} / {b} = {res}", 0)
         else:
             # op ok do the business
             if res == int(ans):
@@ -204,6 +239,9 @@ def check_ans(ans, diff, a1, b1, c1):
                     return (f" ответ - правильный {a} + {b} = {ans}", 1)
                 if code == 3:
                     return (f" ответ - правильный {a} - {b} = {ans}", 1)
+                if code == 4:
+                    divsign = u'\u00F7';
+                    return (f" ответ - правильный {a} {divsign} {b} = {ans}", 1)
 
             else:
                 if code == 1:
@@ -214,6 +252,9 @@ def check_ans(ans, diff, a1, b1, c1):
                     return (f" ответ - не верный  {a} + {b} = {res}", 0)
                 if code == 3:
                     return (f" ответ - не верный  {a} - {b} = {res}", 0)
+                if code == 4:
+                    divsign = u'\u00F7';
+                    return (f" ответ - не верный  {a} {divsign} {b} = {int(res)}", 0)
 
 
 def finish_lesson(f_time, ans_num, ans_corr, favor_ans, favor_thresold_time):
@@ -239,148 +280,9 @@ def finish_lesson(f_time, ans_num, ans_corr, favor_ans, favor_thresold_time):
                 reply.append(f' {a} + {b} (={a + b}) занял {d} секунд (порог {favor_thresold_time}) сек')
             if c == 3:
                 reply.append(f' {a} - {b} (={a - b}) занял {d} секунд (порог {favor_thresold_time}) сек')
+            if c == 4:
+                divsign = u'\u00F7';
+                reply.append(f' {a} {divsign} {b} (={int(a / b)}) занял {d} секунд (порог {favor_thresold_time}) сек')
 
     return reply
 
-    # def __init__(self):
-    #     #init...
-    #     self.mult = 1
-    #     self.addi = 1
-    #     self.subt = 1
-    #     self.hist_depth = 5
-    #
-    #     # mult
-    #     # mult=1#1-yes 0 -no
-    #     self.nx = 12  # range
-    #     self.ny = 10
-    # add
-    # addi=1
-    # self.ax = 50  # range
-    # # subc
-    # # subt=1
-    # self.sx = 50
-    # # no minus in answer substract
-    # self.no_minus = 1
-    # # no dec in multip
-    # self.no_dec_mul = 1
-    # # two_digit nuber a or b in +-
-    # self.two_digit = 1
-    #
-    # self.favor_ans_depth = 10
-    # self.favor_ans_depth_min = 4  # if more it starts to take questions from favor_ans_queue
-    #
-    # self.favor_thresold_time = 14
-    #
-    # self.start_time = 0
-    #
-    # self.ans_num = 1
-    # self.ans_corr = 0
-    #
-    # self.mult_tabl = []
-    #
-    # self.hist = collections.deque()
-    #
-    # self.favor_ans = collections.deque()
-    #
-    # #code op storage
-    # self.a1 = 0
-    # self.b1 = 0
-    # self.c1 = 0
-    # self.now=[]
-    # self.lesson_id=0
-    # self.end_time=[]
-    # self.mode=[]
-    # self.mult_tabl = []
-    # for i in range(1, self.ny + 1):
-    #     row = []
-    #     for j in range(1, self.nx + 1):
-    #         row.append(i * j)
-    #     self.mult_tabl.append(row)
-    #
-    # self.printMatrix(self.mult_tabl,0,0,0)
-
-    # self.size = 13
-    # self.array = [i for i in range(self.size)]
-    # random.shuffle(self.array)
-    #
-    # print(self.array)
-    #
-    # self.new_array, self.k = self.bubble_sort(self.array)
-    #
-    # print(self.new_array, self.k)
-    #
-    # random.seed(self.k)
-
-    #
-    #
-    # if random.randint(1,3)==3:
-    #     if len(favor_ans) > favor_ans_depth_min:
-    #         print(f' попробуйте снова решить задачу:')
-    #         idx=random.randint(0,len(favor_ans)-1)
-    #         a=favor_ans[idx][0]
-    #         b=favor_ans[idx][1]
-    #         code=favor_ans[idx][2]#code oper - 1-mul,2-add,3-sub
-    #
-    #
-    # ch1=[]#hist chunk 0 result 1 op
-    # ch1.append(a)
-    # ch1.append(b)
-    # ch1.append(code)
-    # hist.append(ch1)
-    #
-    # if len(hist) > hist_depth:
-    #     hist.popleft()
-    #
-    # if len(favor_ans) > favor_ans_depth:
-    #     favor_ans.popleft()
-    #
-    #
-    #
-    # print(f"\n вопрос {ans_num}, число правильных {ans_corr}")
-    #
-    #
-    # if code == 1:
-    #     print(f"\n введите сколько будет {a} X {b} (q - exit) (c-podskazka)")
-    # if code == 2:
-    #     print(f"\n введите сколько будет {a} + {b} (q - exit) (c-podskazka)")
-    # if code == 3:
-    #     if a==b:
-    #         print("xxx")
-    #
-    #     print(f"\n введите сколько будет {a} - {b} (q - exit) (c-podskazka)")
-    #
-    # #print(time.ctime())
-    #
-    # now = datetime.now()
-    #
-    # while True:
-    #     ans = input()
-    #     if ans!='':
-    #         break
-    #
-    # later = datetime.now()
-    #
-    # difference = int((later - now).total_seconds())
-    #
-    # if difference >favor_thresold_time:
-    #     already_in=False
-    #
-    #     for x in favor_ans:
-    #         if a == x[0] and b == x[1]:
-    #             already_in=True
-    #
-    #     if already_in==False:
-    #         elem=[]#a,b,op,diff_time
-    #         elem.append(a)
-    #         elem.append(b)
-    #         elem.append(code)
-    #         elem.append(difference)
-    #         favor_ans.append(elem)
-    #
-    # #print(time.ctime())
-
-    # difference = 4
-    # self.f_time +=difference
-    # print(f' время затраченное на ответ {difference} сек')
-    #
-    # else:

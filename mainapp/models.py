@@ -67,6 +67,7 @@ class MaapLesson(models.Model):
     mult = models.PositiveIntegerField(verbose_name='mult', default=1)
     addi = models.PositiveIntegerField(verbose_name='addi', default=1)
     subt = models.PositiveIntegerField(verbose_name='subt', default=1)
+    divn = models.PositiveIntegerField(verbose_name='divn', default=1)
 
     a1 = models.PositiveIntegerField(verbose_name='a1', default=0)
     b1 = models.PositiveIntegerField(verbose_name='b1', default=0)
