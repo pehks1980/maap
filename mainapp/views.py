@@ -529,7 +529,7 @@ def make_report(list_hist, rep_hist, request):
 
    # print(list_txt)
 
-    lessons = MaapLesson.objects.filter(user=request.user).order_by('id')
+    lessons = MaapLesson.objects.filter(user=request.user, ans_amount__gt = 10).order_by('id')
 
     # make headers of the table history
     list_hist_row = []
