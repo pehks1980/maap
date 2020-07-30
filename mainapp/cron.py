@@ -63,7 +63,7 @@ def cron_notify(jobs,dont_wait=False):
     print(f' {datetime.now()}: Bye from cron')
 
 class MyCronJob(CronJobBase):
-    RUN_EVERY_MINS = 5 # every 2 hours
+    RUN_EVERY_MINS = 6*60 # every 2 hours
     #1440*3 3days
     #1440*7 7days
     schedule = Schedule(run_every_mins=RUN_EVERY_MINS)
