@@ -326,6 +326,14 @@ def mathemk(request, pk1, pk2, diff):
             #update average time
             lesson.ans_sum = lesson.ans_sum + diff
             lesson.avg_ans_time  = int (lesson.ans_sum  / lesson.ans_correct)
+        else:
+            try:
+                wrong_ans = json.loads(lesson.wrong_ans, object_pairs_hook=OrderedDict)
+            except:
+                #make first item
+                wrong_ans = []
+            wrong_ans.append(OrderedDict(a=lesson.a1, b=lesson.b1, c=lesson.c1, diff=int(diff), ans=int(pk2)) )
+            lesson.wrong_ans = json.dumps(wrong_ans)
 
 
         lesson.ans_amount += 1
@@ -398,6 +406,7 @@ def hist(request , page = 'None'):
 
     list_hist = []
     rep_hist = []
+    wrong_ans_hist = []
     #try to find if its empty
     lessons = MaapLesson.objects.filter(user=request.user)
 
@@ -413,7 +422,7 @@ def hist(request , page = 'None'):
     else:
         # fillup lists with data
 
-        make_report(list_hist, rep_hist, request)
+        make_report(list_hist, rep_hist, wrong_ans_hist, request, ans_amount_gt=10)
 
         #paginator self made
         n = 2 #reports per page
@@ -441,12 +450,18 @@ def hist(request , page = 'None'):
 
         #slice list_hist per one page
         page_list_hist = list_hist[n*page-1:n*page-1+n]
-        #make rep_hist list corresp list_hist
+        #make rep_hist, wrong_ans_hist lists corresponding to page_list_hist
         page_rep_hist = []
+        page_wrong_ans_hist = []
         for list_item in page_list_hist:
             for rep_item in rep_hist:
                 if rep_item[0] == list_item[0]:
                     page_rep_hist.append(rep_item)
+            for wrong_ans_item in wrong_ans_hist:
+                if wrong_ans_item[0] == list_item[0]:
+                    page_wrong_ans_hist.append(wrong_ans_item)
+
+
 
         # page_rep_hist =
         clr_but = True
@@ -454,16 +469,59 @@ def hist(request , page = 'None'):
         paging = {'page':page,
                     'pages': [x for x in range(1,max_page+1) ],
                 }
+
         #copy headers to paged version
         page_rep_hist.insert(0,rep_hist[0])
         page_list_hist.insert(0,list_hist[0])
+        page_wrong_ans_hist.insert(0, wrong_ans_hist[0])
 
-        ans_page = {'list_hist': page_list_hist, 'rep_hist': page_rep_hist, 'clr_but': clr_but , 'paging' : paging}
+        #ans_page = {'list_hist': page_list_hist, 'rep_hist': page_rep_hist, 'wrong_ans_hist': page_wrong_ans_hist, 'clr_but': clr_but , 'paging' : paging}
+        #generate tables list & tab_idx
+        tables_list=[]
+
+        #make shapka for every entity
+        shapka_list_hist = list_hist[0]
+        shapka_rep_hist = rep_hist[0]
+        shapka_wrong_ans_list = wrong_ans_hist[0]
+
+        #gen combined table from list rep wrong ans lists
+        #1st row is list - 6 cols
+        #2nd row is rep - 1 col N rows
+        #3rd row is wrong ans 1 col N rows
+        #+shapka for every entity
+
+        for i in page_list_hist:
+            table = []
+            table.append(shapka_list_hist)
+            table.append(i[:])
+            add_shapka = True
+            for y in page_rep_hist:
+                if y[0] == i[0]:
+                    if add_shapka == True:
+                        table.append(shapka_rep_hist)
+                        add_shapka = False
+                    table.append(y[:])
+
+            add_shapka = True
+            for y in page_wrong_ans_hist:
+                if y[0] == i[0]:
+                    if add_shapka == True:
+                        table.append(shapka_wrong_ans_list)
+                        add_shapka = False
+                    table.append(y[:])
+
+            tables_list.append(table)
+        #remove first item from tables_list
+        del tables_list[0]
+
+
+        ans_page = {'tab_list': tables_list, 'clr_but': clr_but, 'paging': paging}
 
         content = {'title': title, 'ans': ans_page}
+
         return render(request, 'mainapp/hist.html', content)
 
-    ans = {'list_hist': list_hist, 'rep_hist': rep_hist, 'clr_but': clr_but}
+    ans = {'list_hist': list_hist, 'rep_hist': rep_hist, 'wrong_ans_hist': wrong_ans_hist , 'clr_but': clr_but}
     content = {'title': title, 'ans': ans}
     return render(request, 'mainapp/hist.html', content)
 
@@ -525,15 +583,15 @@ def compare_reports(pk, favor_ans):
         return favor_ans
 
 
-def make_report(list_hist, rep_hist, request):
+def make_report(list_hist, rep_hist, wrong_ans_hist, request, ans_amount_gt = 0):
 
    # print(list_txt)
 
-    lessons = MaapLesson.objects.filter(user=request.user, ans_amount__gt = 10).order_by('id')
+    lessons = MaapLesson.objects.filter(user=request.user, ans_amount__gt = ans_amount_gt).order_by('id')
 
     # make headers of the table history
     list_hist_row = []
-    list_hist_row.append(f' id занятия')
+    list_hist_row.append(f'id')
     list_hist_row.append(f' Дата занятия')
     list_hist_row.append(f' Режим упр.')
     list_hist_row.append(f' Общее время')
@@ -544,9 +602,16 @@ def make_report(list_hist, rep_hist, request):
 
     # make separate list for report
     rep_hist_row = []
-    rep_hist_row.append(f' id report')
+    rep_hist_row.append(f'id')
     rep_hist_row.append(f' Отчет: история трудных ответов ')
     rep_hist.append(rep_hist_row)
+
+    # make separate list for wrong answers
+    wrong_ans_row = []
+    wrong_ans_row.append(f'id')
+    wrong_ans_row.append(f' Отчет: история неверных ответов ')
+    wrong_ans_hist.append(wrong_ans_row)
+
 
     for i in lessons:
         list_hist_row = []
@@ -646,6 +711,41 @@ def make_report(list_hist, rep_hist, request):
             rep_hist_row.append(f' report - нет данных')
             rep_hist.append(rep_hist_row)
 
+        #wrong ans hist
+        try:
+            wrong_ans = json.loads(i.wrong_ans, object_pairs_hook=OrderedDict)
+
+            for key in wrong_ans:
+                wrong_ans_row = []
+                wrong_ans_row.append(f'{i.id}')
+                a = key['a']
+                b = key['b']
+                c = key['c']
+                d = key['diff']
+                ans = key['ans']
+
+                if c == 1:
+                    str_fav_ans = (f' {a} X {b} = {ans} (={a * b}) занял {d} секунд')
+                if c == 2:
+                    str_fav_ans = (f' {a} + {b} = {ans} (={a + b}) занял {d} секунд')
+                if c == 3:
+                    str_fav_ans = (f' {a} - {b} = {ans} (={a - b}) занял {d} секунд')
+                if c == 4:
+                    divsign = u'\u00F7';
+                    str_fav_ans = (f' {a} {divsign} {b} = {ans} (={int(a / b)}) занял {d} секунд')
+
+                wrong_ans_row.append(str_fav_ans)
+                wrong_ans_hist.append(wrong_ans_row)  # one answer per one row
+
+        except:
+            #no items all correct!
+            wrong_ans_row = []
+            wrong_ans_row.append(f'{i.id}')
+            wrong_ans_row.append(f' неверных ответов не обнаружено ')
+            wrong_ans_hist.append(wrong_ans_row)
+
+
+
 
 
 def finish(request, pk):
@@ -669,7 +769,14 @@ def finish(request, pk):
 
     f_time = int(diff_time / 60)
 
-    list_txt = finish_lesson(f_time, lesson.ans_amount, lesson.ans_correct, favor_ans, lesson.favor_thresold_time)
+    #неправилльные ответы
+    try:
+        wrong_ans = json.loads(lesson.wrong_ans, object_pairs_hook=OrderedDict)
+    except:
+        # make first item
+        wrong_ans = []
+
+    list_txt = finish_lesson(f_time, lesson.ans_amount, lesson.ans_correct, favor_ans, wrong_ans, lesson.favor_thresold_time)
 
     txt1 = f'ans_num={lesson.ans_amount}, ans_corr={lesson.ans_correct}'
 
@@ -687,15 +794,19 @@ def finish(request, pk):
 
     report.save()
 
+
+
     lesson.save()
 
     list_hist = []
     rep_hist = []
+    wrong_ans_hist = []
+
     #fillup lists with data
-    make_report(list_hist, rep_hist, request)
+    make_report(list_hist, rep_hist, wrong_ans_hist, request)
 
     ans = {'txt0': txt0, 'txt00': txt00, 'txt1': txt1, 'list_txt': list_txt, 'list_hist': list_hist,
-           'rep_hist': rep_hist}
+           'rep_hist': rep_hist, 'wrong_ans_hist': wrong_ans_hist }
 
     content = {'title': title, 'ans': ans}
     return render(request, 'mainapp/finish.html', content)

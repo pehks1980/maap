@@ -60,7 +60,9 @@ class MaapLesson(models.Model):
     hist = models.TextField(verbose_name='hist', blank=True)
 
     #favor_ans = models.CharField(verbose_name='hist', max_length=512, blank=True)
-    favor_ans = models.TextField(verbose_name='hist', blank=True)
+    favor_ans = models.TextField(verbose_name='favor_ans', blank=True)
+
+    wrong_ans = models.TextField(verbose_name='wrong_ans', blank=True)
 
     qst_time = models.CharField(verbose_name='mode', max_length=64, blank=True)
 

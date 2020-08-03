@@ -257,7 +257,7 @@ def check_ans(ans, diff, a1, b1, c1):
                     return (f" ответ - не верный  {a} {divsign} {b} = {int(res)}", 0)
 
 
-def finish_lesson(f_time, ans_num, ans_corr, favor_ans, favor_thresold_time):
+def finish_lesson(f_time, ans_num, ans_corr, favor_ans, wrong_ans, favor_thresold_time):
     reply = []
     reply.append("пока!")
     if ans_num > 1:
@@ -283,6 +283,25 @@ def finish_lesson(f_time, ans_num, ans_corr, favor_ans, favor_thresold_time):
             if c == 4:
                 divsign = u'\u00F7';
                 reply.append(f' {a} {divsign} {b} (={int(a / b)}) занял {d} секунд (порог {favor_thresold_time}) сек')
+
+        reply.append(f' неправильные примеры: {len(wrong_ans)}')
+
+        for i in wrong_ans:
+            a = i['a']
+            b = i['b']
+            c = i['c']
+            d = i['diff']
+            ans = i['ans']
+
+            if c == 1:
+                reply.append(f' {a} X {b} = {ans} (={a * b}) занял {d} сек')
+            if c == 2:
+                reply.append(f' {a} + {b} = {ans} (={a + b}) занял {d} сек')
+            if c == 3:
+                reply.append(f' {a} - {b} = {ans} (={a - b}) занял {d} сек')
+            if c == 4:
+                divsign = u'\u00F7';
+                reply.append(f' {a} {divsign} {b} = {ans} (={int(a / b)}) занял {d} сек')
 
     return reply
 

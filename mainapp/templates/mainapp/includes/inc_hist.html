@@ -5,7 +5,7 @@
             {% for rowval in ans.list_hist %}
                 <tr>
                 {% for val in rowval %}
-
+                    {# skip first index column id #}
                     {% if forloop.counter != 1 %}
                         <td>{{val}}</td>
                     {% endif %}
@@ -24,7 +24,27 @@
                     {% endif %}
                 {% endfor %}
 
+                {% if ans.wrong_ans_hist%}
+                    <tr><td colspan="6">&nbsp;Неправильные ответы:&nbsp;</td></tr>
+
+                    {% for wa_row in ans.wrong_ans_hist %}
+                        {% if rowval.0 == wa_row.0 %}
+                         <tr>
+                             {% for wa in wa_row %}
+                                {% if forloop.counter != 1 %}
+                                    <td colspan="6">{{wa}}</td>
+                                {% endif %}
+                             {% endfor %}
+                         </tr>
+                        {% endif %}
+                    {% endfor %}
+
+                {% endif %}
+
                 <tr><td colspan="6">&nbsp;</td></tr>
+
+
+
             {% endfor %}
             </table>
 

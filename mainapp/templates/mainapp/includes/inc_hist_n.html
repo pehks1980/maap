@@ -1,0 +1,61 @@
+{% if ans.tab_list %}
+<div class="clr"></div>
+        {% for table in ans.tab_list %}
+         <p>
+             <table class="tab_cl1">
+             {% for row_list in table %}
+                {# in table first 2 lines have 6 cols #}
+                {% if forloop.counter0 < 2 %}
+                    <tr>
+                    {% for val in row_list %}
+                        {# skip first index column id #}
+                        {% if forloop.counter != 1 %}
+                            <td>{{val}}</td>
+                        {% endif %}
+                    {% endfor %}
+                    </tr>
+                {% endif %}
+
+                {# in table rep wrong have 1 cols (w/o ID part skept in next for cycle)#}
+                {% if forloop.counter0 > 1 %}
+                    <tr>
+                        {% for val in row_list %}
+                            {# skip first index column id #}
+                            {% if forloop.counter != 1 %}
+                                <td colspan="6">{{val}}</td>
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
+                {% endif %}
+
+            {% endfor %}
+            <tr><td colspan="6">&nbsp;</td></tr>
+            </table>
+
+        </p>
+        {% endfor %}
+
+
+<div class="clr"></div>
+
+{% endif %}
+
+{% if ans.paging %}
+    <p>
+    {% for i_page in ans.paging.pages %}
+        <a href="{% url 'hist' i_page %}" style="text-decoration: none; color: #cc1111">
+                    <button class="button button2 {% if i_page == ans.paging.page %}active{% endif %}">Стр. {{i_page}}</button>
+        </a>
+        &nbsp;
+    {% endfor %}
+    </p>
+{% endif %}
+
+{% if ans.clr_but %}
+  <button class="button-order">
+    <a href="{% url 'clear_hist' %}" style="text-decoration: none; color: #cc1111">
+      Очистить
+    </a>
+  </button>
+<div class="clr"></div>
+{% endif %}
