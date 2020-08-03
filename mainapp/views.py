@@ -392,10 +392,17 @@ def clean_str(str):
 
 
 def clear_hist(request):
-    lessons = MaapLesson.objects.filter(user=request.user)
-    lessons.delete()
+    #del from where ans_amount < ans_amount
+    MaapLesson.objects.filter(user=request.user).delete()
 
-    print('hist deleted')
+    print(f'{datetime.now()}: {request.user} hist deleted, all !')
+    return HttpResponseRedirect(f'/')
+
+def clear_hist_5(request, ans_amount = 5):
+    #del from where ans_amount < ans_amount
+    MaapLesson.objects.filter(user=request.user, ans_amount__lt = ans_amount).delete()
+
+    print(f'{datetime.now()}: {request.user.username} hist deleted, all with ans_amount < {ans_amount}')
     return HttpResponseRedirect(f'/')
 
 
@@ -803,7 +810,7 @@ def finish(request, pk):
     wrong_ans_hist = []
 
     #fillup lists with data
-    make_report(list_hist, rep_hist, wrong_ans_hist, request)
+    make_report(list_hist, rep_hist, wrong_ans_hist, request, ans_amount_gt=5)
 
     ans = {'txt0': txt0, 'txt00': txt00, 'txt1': txt1, 'list_txt': list_txt, 'list_hist': list_hist,
            'rep_hist': rep_hist, 'wrong_ans_hist': wrong_ans_hist }

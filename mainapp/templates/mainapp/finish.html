@@ -29,6 +29,12 @@
 
   {% include 'mainapp/includes/inc_hist.html' %}
 
+  <button class="button-order-1">
+    <a href="{% url 'clear_hist_5' %}" style="text-decoration: none; color: #cc1111">
+      Очистить Историю уроков < 5 вопросов
+    </a>
+  </button>
+
   <button class="button-order">
     <a href="{% url 'main' %}" style="text-decoration: none; color: #cc1111">
       на главную
