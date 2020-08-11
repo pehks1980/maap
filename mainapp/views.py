@@ -108,7 +108,8 @@ def main(request):
             print(lesson.pk)
             # save primary key for this session lesson (id)
 
-            return HttpResponseRedirect(f'/mathem/{lesson.pk}')
+            # start to ajax version mathemj
+            return HttpResponseRedirect(f'/mathemj/{lesson.pk}')
     else:  # GET
         form_app = AppModForm()
 
@@ -157,8 +158,6 @@ def mathem(request, pk):
     txt00 = None
 
     list_txt = []
-
-
 
     lesson = MaapLesson.objects.get(user=request.user, pk=pk)
 
@@ -270,6 +269,250 @@ def mathem(request, pk):
         lesson.save()
         return HttpResponseRedirect(f'/finish/{lesson.pk}')
 
+def mathemj(request, pk):
+    title = 'Математика '
+
+    txt0 = None
+    txt00 = None
+
+    list_txt = []
+
+    lesson = MaapLesson.objects.get(user=request.user, pk=pk)
+
+    code = 0
+    txt2 = ''
+    # обработчик обрабватывает все реквесты страницы и GET и POST
+    if request.method == 'GET':
+        form = Ans_Form()
+
+        hist = json.loads(lesson.hist)  # load hist from db
+
+        a, b, code, hist1 = eval(lesson.mult, lesson.addi, lesson.subt, lesson.divn, lesson.nx, lesson.ny, lesson.ax,
+                                 lesson.two_digit, lesson.sx, \
+                                 lesson.no_minus, lesson.no_dec_mul, hist, lesson.hist_depth)
+
+        lesson.a1 = a  # update db
+        lesson.b1 = b
+        lesson.c1 = code
+        lesson.hist = json.dumps(hist1)
+
+        t = datetime.now()
+
+        # copy data to db in json format
+
+        tim = {'min': t.minute,
+               'sec': t.second}
+
+        js_tim = json.dumps(tim)
+
+        print(js_tim)
+
+        lesson.qst_time = js_tim
+
+        print(f'aha {lesson.qst_time}')
+
+        lesson.save()
+
+        txt1 = f"вопрос {lesson.ans_amount} правильных: {lesson.ans_correct}"
+
+        list_txt.append(txt1)
+        #code 1 * 2 + 3 - 4 /
+        if code == 1:
+            txt2 = f'cколько будет {a} X {b} =?'
+        if code == 2:
+            txt2 = f'cколько будет {a} + {b} =?'
+        if code == 3:
+            txt2 = f'cколько будет {a} - {b} =?'
+        if code == 4:
+            divsign =u'\u00F7';
+            txt2 = f'cколько будет {a} {divsign} {b} =?'
+
+        list_txt.append(txt2)
+
+        txt3 = ''  # f'a1={a}, b1={b}, c1={code}'
+
+        qst = {'txt0': txt0, 'txt00': txt00, 'txt1': txt1, 'txt2': txt2, 'txt3': txt3, 'list_txt': list_txt}
+
+        content = {'title': title, 'form': form, 'qst': qst, 'pk1' : pk}
+
+        return render(request, 'mainapp/mathem_aj.html', content)
+
+    difference = 0
+    # if this is a POST request we need to process the form data
+    if request.method == 'POST':
+        # process the data in form.cleaned_data as required
+        # ...
+        # redirect to a new URL:
+        # ans=cleaned_data.get("answer")
+        form = Ans_Form(request.POST)
+
+        if form.is_valid():
+            # ans = request.POST.get('answer')
+            ans = form.cleaned_data.get("answer")
+            val = request.POST.get('tstamp')
+            val_li = list(val.split(" "))
+
+            d1 = int(val_li[0]) * 60 + int(val_li[1])  # current time 0 - min 1 - sec
+
+            print(f'post {lesson.qst_time} {val_li}')
+            time_dic = json.loads(lesson.qst_time)
+
+            d2 = time_dic['min'] * 60 + time_dic['sec']
+
+            diff = d1 - d2 - 1
+
+            if diff < 0:
+                diff = 0
+            # print (ans,a,b,code)
+
+            return HttpResponseRedirect(f'/mathemk/{lesson.pk}/{ans}/{diff}')
+
+    if request.method == 'POST':
+        print('clickfinish')
+        val = request.POST.get('tstamp1')
+        val_li = list(val.split("/"))
+
+        # update db with finish time
+        tim = {'hour': val_li[3],
+               'min': val_li[4],
+               'sec': val_li[5]}
+
+        lesson.f_time = json.dumps(tim)
+
+        print(f'fin time {lesson.f_time}')
+        # decrease amount of questions as quit was pressed
+
+        lesson.ans_amount -= 1
+
+        lesson.save()
+        return HttpResponseRedirect(f'/finish/{lesson.pk}')
+
+from django.template.loader import render_to_string
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+
+#ignore csrf shiled as it gets 403 when you send json as POST
+@csrf_exempt
+def mathem_ajax(request):
+   if request.is_ajax():
+
+       #print (request.json())
+       #updatedData = json.loads(request.body.decode('UTF-8'))
+       post_ans = json.loads(request.body)
+
+       print (post_ans)
+       #(pk1 pk2 diff)
+
+       list_txt = []
+
+       lesson = MaapLesson.objects.get(user=request.user, pk=post_ans['pk1'])
+
+       #compute diff time
+
+       val = post_ans['time']
+
+       val_li = list(val.split(" "))
+
+       d1 = int(val_li[0]) * 60 + int(val_li[1])  # current time 0 - min 1 - sec
+
+       print(f'post {lesson.qst_time} {val_li}')
+
+       time_dic = json.loads(lesson.qst_time)
+
+       d2 = time_dic['min'] * 60 + time_dic['sec']
+
+       diff = d1 - d2 - 1
+
+       if diff < 0:
+           diff = 0
+
+       #here
+
+
+       favor_ans = json.loads(lesson.favor_ans)
+
+       # debug diff +=15
+       if diff > lesson.favor_thresold_time:
+           already_in = False
+           for id, key in favor_ans.items():
+               a = key['a']
+               b = key['b']
+               if lesson.a1 == a and lesson.b1 == b:
+                   already_in = True
+
+           if already_in == False:
+               elem = {'a': lesson.a1,
+                       'b': lesson.b1,
+                       'c': lesson.c1,
+                       'd': diff}  # a,b,op,diff_time
+               # make new index
+               idx = 0
+               for i in favor_ans.keys():
+                   if int(i) > idx:
+                       idx = int(i)
+
+               favor_ans[idx + 1] = elem
+               # to add to favor_ans
+               # store it in db
+               lesson.favor_ans = json.dumps(favor_ans)
+               # favor_ans.append(elem)
+
+       txt00, check_res = check_ans(int(post_ans['pk2']), lesson.a1, lesson.b1, lesson.c1)
+
+       if check_res == 1:
+           lesson.ans_correct += 1
+           # update average time
+           lesson.ans_sum = lesson.ans_sum + diff
+           lesson.avg_ans_time = int(lesson.ans_sum / lesson.ans_correct)
+       else:
+           try:
+               wrong_ans = json.loads(lesson.wrong_ans, object_pairs_hook=OrderedDict)
+           except:
+               # make first item
+               wrong_ans = []
+           wrong_ans.append(OrderedDict(a=lesson.a1, b=lesson.b1, c=lesson.c1, diff=int(diff), ans=int(post_ans['pk2'])))
+           lesson.wrong_ans = json.dumps(wrong_ans)
+
+       lesson.ans_amount += 1
+
+       lesson.save()
+
+       list_txt.append(txt00)
+
+       txt22 = f"время затраченное на ответ {diff} сек"
+
+       list_txt.append(txt22)
+
+       txt1 = f'a1={lesson.a1}, b1={lesson.b1}, c1={lesson.c1}, ans_num={lesson.ans_amount}, ans_corr={lesson.ans_correct}'
+       # add mult table
+       if lesson.c1 == 1 and check_res == 0 and lesson.a1 < lesson.nx + 1 and lesson.b1 < lesson.ny + 1:  # if multip in range 10*12
+           mult_tabl = []
+           ny = lesson.ny
+           nx = lesson.nx
+           for i in range(1, ny + 1):
+               row = []
+               for j in range(1, nx + 1):
+                   row.append(i * j)
+               mult_tabl.append(row)
+
+           # self.printMatrix(self.mult_tabl,0,0,0)
+           mul_tab = printMatrix(mult_tabl, lesson.a1 * lesson.b1, lesson.a1, 0)
+           cor_ans = lesson.a1 * lesson.b1
+           cor_ans = ">" + str(cor_ans)
+       else:
+           mul_tab = ''
+           cor_ans = ''
+
+       ans = {'txt00': txt00, 'txt22': txt22, 'txt1': txt1, 'mul_tab': mul_tab, 'list_txt': list_txt, 'ans': cor_ans}
+
+       content = {'ans': ans, 'pk1' : post_ans['pk1']}
+
+       result = render_to_string(
+           'mainapp/includes/inc_mathemk.html',
+           context=content,
+           request=request)
+
+       return JsonResponse({'result': result})
 
 def mathemk(request, pk1, pk2, diff):
     title = 'главная maap v 1.0/проверка'
@@ -318,7 +561,7 @@ def mathemk(request, pk1, pk2, diff):
                 lesson.favor_ans = json.dumps(favor_ans)
                 # favor_ans.append(elem)
 
-        txt00, check_res = check_ans(int(pk2), int(diff), lesson.a1, lesson.b1, lesson.c1)
+        txt00, check_res = check_ans(int(pk2), lesson.a1, lesson.b1, lesson.c1)
 
 
         if check_res == 1:
@@ -395,7 +638,7 @@ def clear_hist(request):
     #del from where ans_amount < ans_amount
     MaapLesson.objects.filter(user=request.user).delete()
 
-    print(f'{datetime.now()}: {request.user} hist deleted, all !')
+    print(f'{datetime.now()}: {request.user.username} hist deleted, all !')
     return HttpResponseRedirect(f'/')
 
 def clear_hist_5(request, ans_amount = 5):
@@ -415,7 +658,8 @@ def hist(request , page = 'None'):
     rep_hist = []
     wrong_ans_hist = []
     #try to find if its empty
-    lessons = MaapLesson.objects.filter(user=request.user)
+    ans_amount_gt = 10
+    lessons = MaapLesson.objects.filter(user=request.user, ans_amount__gt=ans_amount_gt).order_by('id')
 
     list_hist_row = []
 
@@ -429,7 +673,7 @@ def hist(request , page = 'None'):
     else:
         # fillup lists with data
 
-        make_report(list_hist, rep_hist, wrong_ans_hist, request, ans_amount_gt=10)
+        make_report(lessons, list_hist, rep_hist, wrong_ans_hist)
 
         #paginator self made
         n = 2 #reports per page
@@ -467,8 +711,6 @@ def hist(request , page = 'None'):
             for wrong_ans_item in wrong_ans_hist:
                 if wrong_ans_item[0] == list_item[0]:
                     page_wrong_ans_hist.append(wrong_ans_item)
-
-
 
         # page_rep_hist =
         clr_but = True
@@ -520,7 +762,6 @@ def hist(request , page = 'None'):
             tables_list.append(table)
         #remove first item from tables_list
         del tables_list[0]
-
 
         ans_page = {'tab_list': tables_list, 'clr_but': clr_but, 'paging': paging}
 
@@ -590,11 +831,9 @@ def compare_reports(pk, favor_ans):
         return favor_ans
 
 
-def make_report(list_hist, rep_hist, wrong_ans_hist, request, ans_amount_gt = 0):
+def make_report(lessons, list_hist, rep_hist, wrong_ans_hist):
 
    # print(list_txt)
-
-    lessons = MaapLesson.objects.filter(user=request.user, ans_amount__gt = ans_amount_gt).order_by('id')
 
     # make headers of the table history
     list_hist_row = []
@@ -810,7 +1049,11 @@ def finish(request, pk):
     wrong_ans_hist = []
 
     #fillup lists with data
-    make_report(list_hist, rep_hist, wrong_ans_hist, request, ans_amount_gt=5)
+
+    ans_amount_gt = 4
+    lessons = MaapLesson.objects.filter(user=request.user, ans_amount__gt=ans_amount_gt).order_by('id')
+
+    make_report(lessons, list_hist, rep_hist, wrong_ans_hist)
 
     ans = {'txt0': txt0, 'txt00': txt00, 'txt1': txt1, 'list_txt': list_txt, 'list_hist': list_hist,
            'rep_hist': rep_hist, 'wrong_ans_hist': wrong_ans_hist }

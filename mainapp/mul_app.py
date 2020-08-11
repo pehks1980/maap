@@ -201,7 +201,7 @@ def eval(mult, addi, subt, divn, nx, ny, ax, two_digit, sx, no_minus, no_dec_mul
     return a, b, code, hist
 
 
-def check_ans(ans, diff, a1, b1, c1):
+def check_ans(ans, a1, b1, c1):
     a = a1
     b = b1
     code = c1
@@ -216,45 +216,32 @@ def check_ans(ans, diff, a1, b1, c1):
     if code == 3:
         res = a - b
     if code == 4:
-        res = a / b
+        res = int (a / b)
 
-    if ans != 'q':
-        if ans == 'c':
-            if code == 1:
-                # printMatrix(mult_tabl, res, a, b)
-                return f" подсказка : ответ - правильный {a} X {b} = {res}", 0
-            if code == 2:
-                return (f" подсказка : ответ - правильный {a} + {b} = {res}", 0)
-            if code == 3:
-                return (f" подсказка : ответ - правильный {a} - {b} = {res}", 0)
-            if code == 4:
-                return (f" подсказка : ответ - правильный {a} / {b} = {res}", 0)
-        else:
-            # op ok do the business
-            if res == int(ans):
 
-                if code == 1:
-                    return (f" ответ - правильный {a} X {b} = {ans}", 1)
-                if code == 2:
-                    return (f" ответ - правильный {a} + {b} = {ans}", 1)
-                if code == 3:
-                    return (f" ответ - правильный {a} - {b} = {ans}", 1)
-                if code == 4:
-                    divsign = u'\u00F7';
-                    return (f" ответ - правильный {a} {divsign} {b} = {ans}", 1)
+    # op ok do the business
+    if res == int(ans):
 
-            else:
-                if code == 1:
-                    return (f" ответ - не верный  {a} X {b} = {res}", 0)
-                    # return (f' смотрите подсказку в таблице:')
-                    # returnMatrix(mult_tabl, res, a, b)
-                if code == 2:
-                    return (f" ответ - не верный  {a} + {b} = {res}", 0)
-                if code == 3:
-                    return (f" ответ - не верный  {a} - {b} = {res}", 0)
-                if code == 4:
-                    divsign = u'\u00F7';
-                    return (f" ответ - не верный  {a} {divsign} {b} = {int(res)}", 0)
+        if code == 1:
+            return (f" ответ - правильный {a} X {b} = {ans}", 1)
+        if code == 2:
+            return (f" ответ - правильный {a} + {b} = {ans}", 1)
+        if code == 3:
+            return (f" ответ - правильный {a} - {b} = {ans}", 1)
+        if code == 4:
+            divsign = u'\u00F7';
+            return (f" ответ - правильный {a} {divsign} {b} = {ans}", 1)
+
+
+    if code == 1:
+        return (f" ответ - не верный  {a} X {b} = {res}", 0)
+    if code == 2:
+        return (f" ответ - не верный  {a} + {b} = {res}", 0)
+    if code == 3:
+        return (f" ответ - не верный  {a} - {b} = {res}", 0)
+    if code == 4:
+        divsign = u'\u00F7';
+        return (f" ответ - не верный  {a} {divsign} {b} = {res}", 0)
 
 
 def finish_lesson(f_time, ans_num, ans_corr, favor_ans, wrong_ans, favor_thresold_time):

@@ -35,13 +35,15 @@ urlpatterns = [
     path('', mainapp.main, name='index'),
     path('', mainapp.main, name='main'),
     path('mathem/<int:pk>/', mainapp.mathem, name='mathem'),#lesson_id
-    #path('mathem/<int:pk>/<int:a1>/<int:b1>/<int:c1>', mainapp.mathem, name='mathem'),
+    #ajax ver of mathem
+    path('mathemj/<int:pk>/', mainapp.mathemj, name='mathemj'),
     path('mathemk/<int:pk1>/<int:pk2>/<int:diff>/', mainapp.mathemk, name='mathemk'),
     path('finish/<int:pk>/', mainapp.finish, name='finish'),
     path('clear-hist/', mainapp.clear_hist, name='clear_hist'),
     path('clear-hist-5/', mainapp.clear_hist_5, name='clear_hist_5'),
     re_path(r'hist/page/(?P<page>\d+)/', mainapp.hist, name='hist'),
     re_path(r'hist/', mainapp.hist, name='hist'),
+    path('mathemj/ajax/',mainapp.mathem_ajax),
 
     path('checkcron/', mainapp.checkCron, name='checkcron'),
     re_path(r'^uncheck/(?P<email>.+)/(?P<id>.+)/$', mainapp.uncheckEmail, name='uncheck'),

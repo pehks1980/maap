@@ -1,0 +1,258 @@
+{% extends 'mainapp/base.html' %}
+{% load static %}
+
+{% block script %}
+<script>
+
+window.onload = function() // дожидаемся загрузки страницы
+{
+
+
+   //  initializeTimer(); // вызываем функцию инициализации таймера
+
+     var seconds = 0;
+	 var ti = 0;
+
+     var minutes = 0; //seconds/60; // определяем количество минут до истечения таймера
+     var hours = 0; // определяем количество часов до истечения таймера
+
+     setTimePage(ti,hours,minutes,seconds); // выставляем начальные значения таймера
+
+     var timerId = setInterval(tick, 500) // устанавливаем вызов функции через каждую 0.5 секунд
+
+     //clicker for btCheck
+     $('#btCheck').on('click',function(){
+                //json for ans as post here
+                stop_timer();
+
+                var value = tstamp1();
+
+                var lesson_id = $('#lesson_id').text();
+
+                var answer = document.getElementById("id_answer").value;
+                //check if answer is valid
+
+                if (isNaN(answer) == false){
+                    //push button
+                    $.ajax({
+                        type: "POST",
+                        cache: false,
+                        url: "/mathemj/ajax/",
+                        data: JSON.stringify({'time' : value,
+                                             'pk1' : parseInt(lesson_id),
+                                             'pk2' : answer,
+                                             'diff': 0,
+                                            }),
+                        dataType: "json",
+                        success: returnSuccess
+                    })
+                }
+                else
+                {
+                    console.log("is not number",answer);
+                    buttons_toggle();
+                    alert("Ввели ошибочное значение! > "+answer);
+                    start_timer();
+
+                }
+
+
+
+            })
+     //return html response from ajax viewer controller
+     function returnSuccess(data) {
+                console.log("Hello world!!");
+                
+                $('#ans_check').html(data.result);
+
+
+     }
+
+     //tick timer
+     function tick() {
+	    if (ti == 0) {
+            seconds++
+            if (seconds > 59) {
+                minutes++
+                seconds = 0
+            }
+            if (minutes > 59) {
+                hours++
+                minutes = 0
+            }
+
+            setTimePage(ti,hours, minutes, seconds); // обновляем значения таймера на странице
+            ti = 1;
+        }
+	    else
+	    {
+	        setTimePage(ti,hours, minutes, seconds); // обновляем значения таймера на странице
+            ti=0;
+        }
+	}
+
+	function stop_timer(){
+        window.clearInterval(timerId);
+
+    }
+
+    function start_timer(){
+        timerId = setInterval(tick, 500)
+    }
+}
+
+
+function buttons_toggle(set) {
+
+    var cls_name = 'btn btn-primary'
+    var buttons_list = document.getElementsByClassName(cls_name);
+    for (var i = 0; i < buttons_list.length; i++) {
+        console.log(buttons_list[i].id); //second console output
+        if (set === 1){
+            buttons_list[i].disabled = true;
+        }
+        else {
+                if (buttons_list[i].disabled == true){
+                    buttons_list[i].disabled = false;
+                } else
+                {
+                    buttons_list[i].disabled = true;
+                }
+        }
+    }
+
+}
+
+function initializeTimer() {
+	var seconds = 0;
+	var ti = 0;
+
+	var minutes = 0; //seconds/60; // определяем количество минут до истечения таймера
+	var hours = 0; // определяем количество часов до истечения таймера
+
+	setTimePage(ti,hours,minutes,seconds); // выставляем начальные значения таймера
+
+}
+
+function setTimePage(ti,h,m,s) { // функция выставления таймера на странице
+	var element = document.getElementById("timer"); // находим элемент с id = timer
+    if (m<10){
+		     minutes_str = m.toString()
+             minutes_str='0'+minutes_str
+         }
+    else
+    {
+        minutes_str=m;
+    }
+
+    if (s<10){
+		     sec_str = s.toString()
+             sec_str='0'+sec_str
+         }
+    else
+    {
+        sec_str = s
+    }
+
+    if (ti==0){
+        element.innerHTML = "Время "+minutes_str+" "+sec_str; // выставляем новые значения таймеру на странице
+    }
+    else{
+        element.innerHTML = "Время "+minutes_str+":"+sec_str; // выставляем новые значения таймеру на странице
+    }
+
+}
+
+//get to backend in format time : 'mins secs'
+function tstamp1() {
+    var ts = new Date();
+
+    var hours = ts.getMinutes();
+    var secs = ts.getSeconds();
+
+    //document.getElementById("ts").value = hours+' '+secs;
+
+    console.log(ts); // 23
+    console.log(hours); // 23
+
+    console.log(secs); // 23
+    var value = hours+' '+secs;
+    return value
+}
+
+//finish lesson time
+function tstamp2() {
+    var ts = new Date();
+    var mon = ts.getMonth()+1;
+    var date = ts.getDate()+'/'+mon+'/'+ts.getFullYear();
+    var hours = ts.getHours();
+    var mins = ts.getMinutes();
+    var secs = ts.getSeconds();
+
+    document.getElementById("ts1").value = date+'/'+hours+'/'+mins+'/'+secs;
+
+    console.log(ts); // 23
+    console.log(hours); // 23
+
+    console.log(secs); // 23
+    return true;
+}
+
+</script>
+
+</head>
+<body>
+
+<p id="timer"> </p>
+
+
+{% endblock %}
+
+
+{% block menu %}
+   <div class="header clearfix">
+                {% include 'mainapp/includes/inc_menu.html' %}
+    </div>
+
+{% endblock %}
+
+{% block content %}
+
+
+         <p>
+             <table class="tab_cl1">
+                <tr>
+                    <td>{{qst.txt1}}</td>
+                </tr>
+                <tr>
+                    <td style="font-size : 28px; color: orangered;">{{qst.txt2}}</td>
+                </tr>
+            </table>
+         </p>
+
+    <div class="clr"></div>
+
+    {{ form.as_p }}
+
+    <p hidden id="lesson_id">{{ pk1 }}</p>
+
+    <div class="clr"></div>
+    <div style='margin: 10px'>
+    <button id='btCheck' class='btn btn-primary' onclick="buttons_toggle(1)">Ответить</button>
+    </div>
+
+    <div style='margin: 10px'></div>
+
+    <div id='ans_check'></div>
+
+
+    <div class="clr"></div>
+
+  <form class="form-horizontal" method="post" enctype="multipart/form-data" >
+       {% csrf_token %}
+      <input type="hidden" name="tstamp1" id="ts1" value="null1"/>
+      <input class="button button5" type="submit" value="завершить!" onclick="tstamp2();"/>
+  </form>
+
+{% endblock %}
+

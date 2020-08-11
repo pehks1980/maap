@@ -1,0 +1,42 @@
+  {% if ans.list_txt %}
+
+    <div class="clr"></div>
+
+             <table class="tab_cl1">
+            {% for val in ans.list_txt %}
+                <tr>
+                    <td>{{val}}</td>
+                </tr>
+            {% endfor %}
+            </table>
+
+
+  {% endif %}
+
+ {% if ans.mul_tab %}
+
+<div class="clr"></div>
+
+         <p>
+             <table class="tab_cl1">
+            {% for rowval in ans.mul_tab %}
+                <tr>
+                {% for val in rowval %}
+                    {% if val == ans.ans %}
+                        <td style="color: yellow;background-color: blue;">{{val}}</td>
+                    {% else %}
+                        <td>{{val}}</td>
+                    {% endif %}
+                {% endfor %}
+                </tr>
+            {% endfor %}
+            </table>
+
+
+
+        </p>
+    {% endif %}
+    <div class="clr"></div>
+    <div style='margin: 10px'>
+        <button id='btCheck' class='btn btn-primary' onclick="window.location.href='/mathemj/{{ pk1 }}';">Следующий вопрос</button>
+    </div>
