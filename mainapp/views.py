@@ -23,6 +23,10 @@ from .models import MaapLesson, MaapReport
 
 from authapp.models import MaapUserProfile
 
+from django.template.loader import render_to_string
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+
 # create copy
 
 from .mul_app import SetAppMode, eval, check_ans, GetAppModeDesc, finish_lesson, printMatrix
@@ -269,6 +273,78 @@ def mathem(request, pk):
         lesson.save()
         return HttpResponseRedirect(f'/finish/{lesson.pk}')
 
+def clockj(request):
+    title = ' Часы'
+    pk = 1
+
+    ans_amount = 1
+    ans_correct = 0
+
+    txt1 = f"вопрос {ans_amount} правильных: {ans_correct}"
+
+    txt2 = f'cколько времени на часах ?'
+
+    qst = {'txt1': txt1, 'txt2': txt2}
+
+    content = {'title': title, 'qst': qst, 'pk1': pk}
+
+    return render(request, 'mainapp/clock_test.html', content)
+
+@csrf_exempt
+def clock_ajax(request):
+    if request.is_ajax():
+
+        # print (request.json())
+        # updatedData = json.loads(request.body.decode('UTF-8'))
+        post_ans = json.loads(request.body)
+
+        print(post_ans)
+        # (pk1 pk2 diff)
+
+        list_txt = []
+
+        # compute diff time
+
+        val = post_ans['time']
+
+        val_li = list(val.split(" "))
+
+        d1 = int(val_li[0]) * 60 + int(val_li[1])  # current time 0 - min 1 - sec
+
+        #print(f'post {lesson.qst_time} {val_li}')
+
+        #time_dic = json.loads(lesson.qst_time)
+
+        #d2 = time_dic['min'] * 60 + time_dic['sec']
+
+        #diff = d1 - d2 - 1
+
+        #if diff < 0:
+        #    diff = 0
+        if (post_ans['cor_time']['hr'] == int(post_ans['ans_time']['hr'])) and (post_ans['cor_time']['min'] == int(post_ans['ans_time']['min'])):
+            row1 = f"Oтвет верный, на часах {post_ans['cor_time']['hr']} час, {post_ans['cor_time']['min']} минут"
+        else:
+            row1 = f"Oтвет НЕ верный, на часах сейчас {post_ans['cor_time']['hr']} час, {post_ans['cor_time']['min']} минут"
+
+        list_txt.append(row1)
+
+        row2 = f"Ответ занял {d1} сек"
+        list_txt.append(row2)
+
+        ans = {'list_txt': list_txt}
+
+        content = {'ans': ans, 'pk1': post_ans['pk1']}
+
+        result = render_to_string(
+            'mainapp/includes/inc_clockk.html',
+            context=content,
+            request=request)
+
+        return JsonResponse({'result': result})
+
+
+
+
 def mathemj(request, pk):
     title = 'Математика '
 
@@ -387,9 +463,7 @@ def mathemj(request, pk):
         lesson.save()
         return HttpResponseRedirect(f'/finish/{lesson.pk}')
 
-from django.template.loader import render_to_string
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
+
 
 #ignore csrf shiled as it gets 403 when you send json as POST
 @csrf_exempt

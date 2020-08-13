@@ -1,0 +1,19 @@
+  {% if ans.list_txt %}
+
+    <div class="clr"></div>
+
+             <table class="tab_cl1">
+            {% for val in ans.list_txt %}
+                <tr>
+                    <td>{{val}}</td>
+                </tr>
+            {% endfor %}
+            </table>
+
+
+  {% endif %}
+
+    <div class="clr"></div>
+    <div style='margin: 10px'>
+        <button id='btNext' class='btn btn-primary' onclick="window.location.href='/clockj/';">Следующий вопрос</button>
+    </div>

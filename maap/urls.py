@@ -37,6 +37,7 @@ urlpatterns = [
     path('mathem/<int:pk>/', mainapp.mathem, name='mathem'),#lesson_id
     #ajax ver of mathem
     path('mathemj/<int:pk>/', mainapp.mathemj, name='mathemj'),
+    path('clockj/', mainapp.clockj, name='clockj'),
     path('mathemk/<int:pk1>/<int:pk2>/<int:diff>/', mainapp.mathemk, name='mathemk'),
     path('finish/<int:pk>/', mainapp.finish, name='finish'),
     path('clear-hist/', mainapp.clear_hist, name='clear_hist'),
@@ -44,8 +45,10 @@ urlpatterns = [
     re_path(r'hist/page/(?P<page>\d+)/', mainapp.hist, name='hist'),
     re_path(r'hist/', mainapp.hist, name='hist'),
     path('mathemj/ajax/',mainapp.mathem_ajax),
+    path('clockj/ajax/',mainapp.clock_ajax),
 
     path('checkcron/', mainapp.checkCron, name='checkcron'),
+
     re_path(r'^uncheck/(?P<email>.+)/(?P<id>.+)/$', mainapp.uncheckEmail, name='uncheck'),
 
     path('auth/', include('authapp.urls', namespace='auth')),

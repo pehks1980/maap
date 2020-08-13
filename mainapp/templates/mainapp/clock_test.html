@@ -1,0 +1,230 @@
+{% extends 'mainapp/base.html' %}
+{% load static %}
+
+{% block script %}
+<script>
+     const seconds = 0;
+     const minutes = getRandomInt(60); //
+     const hours = getRandomInt(12); //
+
+window.onload = function() // дожидаемся загрузки страницы
+{
+
+
+     initializeClock(); // вызываем функцию запуск часов
+
+
+     //setClockTime(hours,minutes,seconds); // значение на цифеблат
+
+     //clicker for btCheck
+     $('#btCheck').on('click',function(){
+                //json for ans as post here
+
+                var value = tstamp1();
+
+                var lesson_id = $('#lesson_id').text();
+
+                var ans_minutes = document.getElementById("ans_mn").value;
+
+                var ans_hours = document.getElementById("ans_hr").value;
+
+                //check if answer is valid
+
+                if ((isNaN(ans_minutes) == false) || (isNaN(ans_hours) == false) ) {
+                    //push button
+                    $.ajax({
+                        type: "POST",
+                        cache: false,
+                        url: "/clockj/ajax/",
+                        data: JSON.stringify({'time' : value,
+                                             'pk1' : parseInt(lesson_id),
+                                             'cor_time': {'min':minutes,
+                                                            'hr':hours},
+                                             'ans_time': {'min':ans_minutes,
+                                                            'hr':ans_hours},
+
+                                            }),
+                        dataType: "json",
+                        success: returnSuccess
+                    })
+                }
+                else
+                {
+                    console.log("is not number");
+                    buttons_toggle();
+                    alert("Ввели ошибочное значение!");
+
+                }
+
+
+
+            })
+     //return html response from ajax viewer controller
+     function returnSuccess(data) {
+                console.log("Hello world!!");
+                
+                $('#ans_check').html(data.result);
+
+
+     }
+
+}
+
+function getRandomInt(max) {
+  return Math.floor(Math.random() * Math.floor(max));
+}
+
+function buttons_toggle(set) {
+
+    var cls_name = 'btn btn-primary'
+    var buttons_list = document.getElementsByClassName(cls_name);
+    for (var i = 0; i < buttons_list.length; i++) {
+        console.log(buttons_list[i].id); //second console output
+        if (set === 1){
+            buttons_list[i].disabled = true;
+        }
+        else {
+                if (buttons_list[i].disabled == true){
+                    buttons_list[i].disabled = false;
+                } else
+                {
+                    buttons_list[i].disabled = true;
+                }
+        }
+    }
+
+}
+
+//clock
+function initializeClock() {
+
+    const deg = 6;
+    const hr = document.querySelector("#hr");
+    const mn = document.querySelector("#mn");
+    const sc = document.querySelector("#sc");
+
+    setInterval(()=>{
+        let day = new Date();
+        let hh = get_hours() * 30;
+        let mm = get_minutes() * deg;
+        let ss = day.getSeconds() * deg;
+        let hr_deg = hh + (mm/12);
+        hr.style.transform = `rotateZ(${hr_deg}deg)`;
+        mn.style.transform = `rotateZ(${mm}deg)`;
+        sc.style.transform = `rotateZ(${ss}deg)`;
+    })
+
+
+}
+
+function get_hours(){
+    return hours
+}
+
+function get_minutes(){
+    return minutes
+}
+
+
+//get to backend in format time : 'mins secs'
+function tstamp1() {
+    var ts = new Date();
+
+    var hours = ts.getMinutes();
+    var secs = ts.getSeconds();
+
+    //document.getElementById("ts").value = hours+' '+secs;
+
+    console.log(ts); // 23
+    console.log(hours); // 23
+
+    console.log(secs); // 23
+    var value = hours+' '+secs;
+    return value
+}
+
+//finish lesson time
+function tstamp2() {
+    var ts = new Date();
+    var mon = ts.getMonth()+1;
+    var date = ts.getDate()+'/'+mon+'/'+ts.getFullYear();
+    var hours = ts.getHours();
+    var mins = ts.getMinutes();
+    var secs = ts.getSeconds();
+
+    document.getElementById("ts1").value = date+'/'+hours+'/'+mins+'/'+secs;
+
+    console.log(ts); // 23
+    console.log(hours); // 23
+
+    console.log(secs); // 23
+    return true;
+}
+
+</script>
+
+</head>
+<body>
+
+<p id="timer"> </p>
+
+
+{% endblock %}
+
+
+{% block menu %}
+   <div class="header clearfix">
+                {% include 'mainapp/includes/inc_menu.html' %}
+    </div>
+
+{% endblock %}
+
+{% block content %}
+
+    <div class="header clearfix">
+                {% include 'mainapp/includes/inc_clock.html' %}
+    </div>
+
+         <p>
+             <table class="tab_cl1">
+                <tr>
+                    <td>{{qst.txt1}}</td>
+                </tr>
+                <tr>
+                    <td style="font-size : 28px; color: orangered;">{{qst.txt2}}</td>
+                </tr>
+            </table>
+         </p>
+
+    <div class="clr"></div>
+
+    <div>
+	    <span>
+              <label>Ваш ответ:</label>
+              <input type="text" id="ans_hr" name="ans_hr" maxlength="2" size="2">
+        </span>
+              <label>Час </label>
+              <input type="text" id="ans_mn" name="ans_mn" maxlength="2" size="2">&nbsp;Мин<br><br>
+    </div>
+
+    <p hidden id="lesson_id">{{ pk1 }}</p>
+
+    <div class="clr"></div>
+    <div style='margin: 10px'>
+    <button id='btCheck' class='btn btn-primary' onclick="buttons_toggle(1)">Ответить</button>
+    </div>
+
+    <div style='margin: 10px'></div>
+
+    <div id='ans_check'></div>
+
+
+    <div class="clr"></div>
+
+  <form class="form-horizontal" method="post" enctype="multipart/form-data" >
+       {% csrf_token %}
+      <input type="hidden" name="tstamp1" id="ts1" value="null1"/>
+      <input class="button button5" type="submit" value="завершить!" onclick="tstamp2();"/>
+  </form>
+
+{% endblock %}
