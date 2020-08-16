@@ -1,11 +1,14 @@
 {% extends 'mainapp/base.html' %}
 {% load static %}
+{% load my_tags %}
 
 {% block script %}
 <script>
      const seconds = 0;
      const minutes = getRandomInt(60); //
-     const hours = getRandomInt(12); //
+     const hours = randomInt(1,12); //
+     var ans_amount = 0;
+     var ans_correct = 0;
 
 window.onload = function() // дожидаемся загрузки страницы
 {
@@ -23,6 +26,9 @@ window.onload = function() // дожидаемся загрузки страни
                 var value = tstamp1();
 
                 var lesson_id = $('#lesson_id').text();
+
+                ans_correct = {{state | get_item:'ans_correct'}};
+                ans_amount = {{state | get_item:'ans_amount'}};
 
                 var ans_minutes = document.getElementById("ans_mn").value;
 
@@ -42,6 +48,8 @@ window.onload = function() // дожидаемся загрузки страни
                                                             'hr':hours},
                                              'ans_time': {'min':ans_minutes,
                                                             'hr':ans_hours},
+                                             'state' : {'ans_correct':ans_correct,
+                                                            'ans_amount':ans_amount},
 
                                             }),
                         dataType: "json",
@@ -64,14 +72,27 @@ window.onload = function() // дожидаемся загрузки страни
                 console.log("Hello world!!");
                 
                 $('#ans_check').html(data.result);
-
+                ans_correct = data.ans_correct;
+                ans_amount = data.ans_amount;
 
      }
 
+
+
 }
+
+$('#btNext').on('click',function(){
+                //json for ans as post here
+
+
+     })
 
 function getRandomInt(max) {
   return Math.floor(Math.random() * Math.floor(max));
+}
+
+function randomInt(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
 function buttons_toggle(set) {
@@ -161,6 +182,29 @@ function tstamp2() {
     return true;
 }
 
+function btNextClick(){
+    console.log('next clicked!');
+
+    //push button
+    $.ajax({
+        type: "POST",
+        cache: false,
+        url: "/clockj/ajax1/",
+        data: JSON.stringify({
+                             'state' : {'ans_correct':ans_correct,
+                                            'ans_amount':ans_amount},
+                            }),
+        dataType: "json",
+        success: function(data) {
+                        console.log('successful POST');
+                        //redir
+                        window.location.href = data.url;
+                    }
+    })
+
+}
+
+
 </script>
 
 </head>
@@ -182,10 +226,13 @@ function tstamp2() {
 {% block content %}
 
     <div class="header clearfix">
+        <div style="border: 1px solid white; display:inline-block; width:360px; height:420px;float:left;">
                 {% include 'mainapp/includes/inc_clock.html' %}
-    </div>
+        </div>
 
-         <p>
+
+        <div style=" display:inline-block; width:500px;float:left;">
+
              <table class="tab_cl1">
                 <tr>
                     <td>{{qst.txt1}}</td>
@@ -194,37 +241,37 @@ function tstamp2() {
                     <td style="font-size : 28px; color: orangered;">{{qst.txt2}}</td>
                 </tr>
             </table>
-         </p>
+            <div class="clr"></div>
 
-    <div class="clr"></div>
+            <div>
+                <span>
+                      <label>Ваш ответ:</label>
+                      <input type="text" id="ans_hr" name="ans_hr" maxlength="2" size="2">
+                </span>
+                      <label>Час </label>
+                      <input type="text" id="ans_mn" name="ans_mn" maxlength="2" size="2">&nbsp;Мин<br><br>
+            </div>
 
-    <div>
-	    <span>
-              <label>Ваш ответ:</label>
-              <input type="text" id="ans_hr" name="ans_hr" maxlength="2" size="2">
-        </span>
-              <label>Час </label>
-              <input type="text" id="ans_mn" name="ans_mn" maxlength="2" size="2">&nbsp;Мин<br><br>
+            <p hidden id="lesson_id">{{ pk1 }}</p>
+
+            <div id='ans_check' >
+                <button id='btCheck' class='btn btn-primary' style='margin: 10px' onclick="buttons_toggle(1)">Ответить</button>
+            </div>
+
+            <div style='margin: 10px'></div>
+
+        </div>
+
     </div>
 
-    <p hidden id="lesson_id">{{ pk1 }}</p>
-
-    <div class="clr"></div>
-    <div style='margin: 10px'>
-    <button id='btCheck' class='btn btn-primary' onclick="buttons_toggle(1)">Ответить</button>
-    </div>
-
-    <div style='margin: 10px'></div>
-
-    <div id='ans_check'></div>
 
 
-    <div class="clr"></div>
 
-  <form class="form-horizontal" method="post" enctype="multipart/form-data" >
-       {% csrf_token %}
-      <input type="hidden" name="tstamp1" id="ts1" value="null1"/>
-      <input class="button button5" type="submit" value="завершить!" onclick="tstamp2();"/>
-  </form>
+
+
+
+
+
+
 
 {% endblock %}

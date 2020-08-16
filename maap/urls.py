@@ -38,6 +38,8 @@ urlpatterns = [
     #ajax ver of mathem
     path('mathemj/<int:pk>/', mainapp.mathemj, name='mathemj'),
     path('clockj/', mainapp.clockj, name='clockj'),
+    path('clockj/<int:ans_correct>/<int:ans_amount>/', mainapp.clockj, name='clockj'),
+
     path('mathemk/<int:pk1>/<int:pk2>/<int:diff>/', mainapp.mathemk, name='mathemk'),
     path('finish/<int:pk>/', mainapp.finish, name='finish'),
     path('clear-hist/', mainapp.clear_hist, name='clear_hist'),
@@ -46,6 +48,7 @@ urlpatterns = [
     re_path(r'hist/', mainapp.hist, name='hist'),
     path('mathemj/ajax/',mainapp.mathem_ajax),
     path('clockj/ajax/',mainapp.clock_ajax),
+    path('clockj/ajax1/',mainapp.clock_ajax1),
 
     path('checkcron/', mainapp.checkCron, name='checkcron'),
 

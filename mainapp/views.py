@@ -273,20 +273,41 @@ def mathem(request, pk):
         lesson.save()
         return HttpResponseRedirect(f'/finish/{lesson.pk}')
 
-def clockj(request):
-    title = ' Часы'
+@csrf_exempt
+def clock_ajax1(request):
+    if request.is_ajax():
+        post_data = json.loads(request.body)
+        state = post_data['state']
+        url = f"/clockj/{state['ans_correct']}/{state['ans_amount']}"
+        return JsonResponse({
+            'success': True,
+            'url': url,
+        })
+
+
+def clockj(request,ans_correct=None,ans_amount=None):
+    title = 'Часы'
+
     pk = 1
 
-    ans_amount = 1
-    ans_correct = 0
+    if ans_amount == None:
+        state = {
+            'ans_amount' : 1,
+            'ans_correct' : 0
+        }
+    else:
+        state = {
+            'ans_amount': ans_amount,
+            'ans_correct': ans_correct
+        }
 
-    txt1 = f"вопрос {ans_amount} правильных: {ans_correct}"
+    txt1 = f"вопрос {state['ans_amount']} правильных: {state['ans_correct']}"
 
     txt2 = f'cколько времени на часах ?'
 
     qst = {'txt1': txt1, 'txt2': txt2}
 
-    content = {'title': title, 'qst': qst, 'pk1': pk}
+    content = {'title': title, 'qst': qst, 'pk1': pk, 'state': state }
 
     return render(request, 'mainapp/clock_test.html', content)
 
@@ -321,10 +342,15 @@ def clock_ajax(request):
 
         #if diff < 0:
         #    diff = 0
+        state = post_ans['state']
+
         if (post_ans['cor_time']['hr'] == int(post_ans['ans_time']['hr'])) and (post_ans['cor_time']['min'] == int(post_ans['ans_time']['min'])):
             row1 = f"Oтвет верный, на часах {post_ans['cor_time']['hr']} час, {post_ans['cor_time']['min']} минут"
+            state['ans_correct'] = state['ans_correct'] + 1
         else:
             row1 = f"Oтвет НЕ верный, на часах сейчас {post_ans['cor_time']['hr']} час, {post_ans['cor_time']['min']} минут"
+
+        state['ans_amount'] = state['ans_amount'] + 1
 
         list_txt.append(row1)
 
@@ -333,14 +359,17 @@ def clock_ajax(request):
 
         ans = {'list_txt': list_txt}
 
-        content = {'ans': ans, 'pk1': post_ans['pk1']}
+        content = {'ans': ans, 'pk1': post_ans['pk1'], 'state': state}
 
         result = render_to_string(
             'mainapp/includes/inc_clockk.html',
             context=content,
             request=request)
 
-        return JsonResponse({'result': result})
+        return JsonResponse({'result': result,
+                             'ans_correct' : state['ans_correct'],
+                             'ans_amount' : state['ans_amount']
+                             })
 
 
 
