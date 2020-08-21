@@ -125,15 +125,23 @@ def eval(mult, addi, subt, divn, nx, ny, ax, two_digit, sx, no_minus, no_dec_mul
 
         #+
         if code == 2:
-            while True:
-                a = random.randint(1, ax)
-                b = random.randint(1, ax)
+            if random.randint(0,3) == 3:
+                #25% prob rate 100-200  div 2
+                a = random.randint(10, 20) * 10
+                b = random.randint(10, ax-20)
+            else:
+                while True:
+                    a = random.randint(1, ax)
+                    b = random.randint(1, ax)
 
-                if two_digit:
-                    if a > 10 or b > 10:
-                        break
-                    else:
-                        continue
+                    if two_digit:
+                        if a > 50 and b < 50:
+                            break
+                        else:
+                            if b > 50 and a < 50:
+                                break
+
+                            continue
         #-
         if code == 3:
             while True:
@@ -163,13 +171,19 @@ def eval(mult, addi, subt, divn, nx, ny, ax, two_digit, sx, no_minus, no_dec_mul
                     continue
         #div on multiple table:
         if code == 4:
-            ops = []
-            ops.append(random.randint(2, nx))
-            ops.append(random.randint(2, ny))
-            a1 = ops[0]
-            b1 = ops[1]
-            a = a1 * b1
-            b = random.choice(ops)
+            if random.randint(0,3) == 3:
+                #25% prob rate 100-200  div 2
+                a = random.randint(10, 20) * 10
+                b = 2
+            else:
+                #mul table div 72 div 8
+                ops = []
+                ops.append(random.randint(2, nx))
+                ops.append(random.randint(2, ny))
+                a1 = ops[0]
+                b1 = ops[1]
+                a = a1 * b1
+                b = random.choice(ops)
 
         for id, key in hist.items():
             ha = key['a']

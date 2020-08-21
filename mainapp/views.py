@@ -343,18 +343,37 @@ def clock_ajax(request):
         #if diff < 0:
         #    diff = 0
         state = post_ans['state']
+        #morph parse of russian hour minute
+        dct_choice = [
+            {'val1': 0, 'val2': 2, 'msg': ''},
+            {'val1': 1, 'val2': 5, 'msg': 'А'},
+            {'val1': 4, 'val2': 13, 'msg': 'ОВ'},
+        ]
+        rem_okonch_h = list(filter(lambda x: x['val1'] < post_ans['cor_time']['hr'] < x['val2'], dct_choice))
+
+        dct_choice1 = [
+            {'val1': 0, 'val2': 2, 'msg': 'А'},
+            {'val1': 1, 'val2': 5, 'msg': 'Ы'},
+            {'val1': 4, 'val2': 10, 'msg': ''},
+        ]
+
+        msg_m='' # if min in 10-20 - no ending
+        if 10 <= post_ans['cor_time']['min'] >= 20:
+            rem_okonch_m = list(filter(lambda x: x['val1'] < post_ans['cor_time']['min'] % 10 < x['val2'], dct_choice1))
+            msg_m = rem_okonch_m[0]['msg']
 
         if (post_ans['cor_time']['hr'] == int(post_ans['ans_time']['hr'])) and (post_ans['cor_time']['min'] == int(post_ans['ans_time']['min'])):
-            row1 = f"Oтвет верный, на часах {post_ans['cor_time']['hr']} час, {post_ans['cor_time']['min']} минут"
+            row1 = f"Oтвет верный, на часах {post_ans['cor_time']['hr']} ЧАС{rem_okonch_h[0]['msg']}, {post_ans['cor_time']['min']} МИНУТ{msg_m}"
             state['ans_correct'] = state['ans_correct'] + 1
         else:
-            row1 = f"Oтвет НЕ верный, на часах сейчас {post_ans['cor_time']['hr']} час, {post_ans['cor_time']['min']} минут"
+            row1 = f"Oтвет НЕ верный, на часах сейчас {post_ans['cor_time']['hr']} ЧАС{rem_okonch_h[0]['msg']}, {post_ans['cor_time']['min']} МИНУТ{msg_m}"
 
         state['ans_amount'] = state['ans_amount'] + 1
 
         list_txt.append(row1)
 
         row2 = f"Ответ занял {d1} сек"
+        row2 = f" "
         list_txt.append(row2)
 
         ans = {'list_txt': list_txt}

@@ -46,8 +46,8 @@ class MaapLesson(models.Model):
     nx = models.PositiveIntegerField(verbose_name='nx', default=12)
     ny = models.PositiveIntegerField(verbose_name='ny', default=10)
 
-    ax = models.PositiveIntegerField(verbose_name='ax', default=50)
-    sx = models.PositiveIntegerField(verbose_name='sx', default=50)
+    ax = models.PositiveIntegerField(verbose_name='ax', default=100)
+    sx = models.PositiveIntegerField(verbose_name='sx', default=100)
 
     two_digit = models.PositiveIntegerField(verbose_name='two_digit', default=1)
     no_minus = models.PositiveIntegerField(verbose_name='no_minus', default=1)
