@@ -358,7 +358,7 @@ def clock_ajax(request):
         ]
 
         msg_m='' # if min in 10-20 - no ending
-        if 10 <= post_ans['cor_time']['min'] >= 20:
+        if post_ans['cor_time']['min'] >= 20 and post_ans['cor_time']['min'] <= 10:
             rem_okonch_m = list(filter(lambda x: x['val1'] < post_ans['cor_time']['min'] % 10 < x['val2'], dct_choice1))
             msg_m = rem_okonch_m[0]['msg']
 
