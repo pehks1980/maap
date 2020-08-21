@@ -3,3 +3,6 @@ mainapp/__pycache__/
 __pycache__/
 db.sqlite3
 *.log
+/authapp/migrations/__pycache__/
+/maap/__pycache__/
+*/__pycache__/
