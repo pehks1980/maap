@@ -16,6 +16,7 @@ from django.core.files.storage import default_storage
 from django.urls import reverse
 
 from cron import cron_notify
+from maap.settings import NX,NY,AX,SX,TWO_DIGIT, NO_MINUS, NO_DEC_MUL, HIST_DEPTH, FAVOR_THRESOLD_TIME
 
 from .forms import Ans_Form
 from .forms import AppModForm
@@ -173,9 +174,8 @@ def mathem(request, pk):
 
         hist = json.loads(lesson.hist)  # load hist from db
 
-        a, b, code, hist1 = eval(lesson.mult, lesson.addi, lesson.subt, lesson.divn, lesson.nx, lesson.ny, lesson.ax,
-                                 lesson.two_digit, lesson.sx, \
-                                 lesson.no_minus, lesson.no_dec_mul, hist, lesson.hist_depth)
+        a, b, code, hist1 = eval(lesson.mult, lesson.addi, lesson.subt, lesson.divn, NX, NY, AX,
+                                 TWO_DIGIT, SX, NO_MINUS, NO_DEC_MUL, hist, HIST_DEPTH)
 
         lesson.a1 = a  # update db
         lesson.b1 = b
@@ -352,14 +352,19 @@ def clock_ajax(request):
         rem_okonch_h = list(filter(lambda x: x['val1'] < post_ans['cor_time']['hr'] < x['val2'], dct_choice))
 
         dct_choice1 = [
-            {'val1': 0, 'val2': 2, 'msg': 'А'},
-            {'val1': 1, 'val2': 5, 'msg': 'Ы'},
-            {'val1': 4, 'val2': 10, 'msg': ''},
+            {'val1': 0, 'val2': 1, 'msg': 'А'},
+            {'val1': 2, 'val2': 4, 'msg': 'Ы'},
+            {'val1': 5, 'val2': 9, 'msg': ''},
         ]
 
         msg_m='' # if min in 10-20 - no ending
-        if post_ans['cor_time']['min'] >= 20 and post_ans['cor_time']['min'] <= 10:
-            rem_okonch_m = list(filter(lambda x: x['val1'] < post_ans['cor_time']['min'] % 10 < x['val2'], dct_choice1))
+        #testing post_ans['cor_time']['min'] = 15
+        if post_ans['cor_time']['min'] >= 21:
+            rem_okonch_m = list(filter(lambda x: x['val1'] <= post_ans['cor_time']['min'] % 10 <= x['val2'], dct_choice1))
+            msg_m = rem_okonch_m[0]['msg']
+
+        if post_ans['cor_time']['min'] <= 9:
+            rem_okonch_m = list(filter(lambda x: x['val1'] <= post_ans['cor_time']['min'] % 10 <= x['val2'], dct_choice1))
             msg_m = rem_okonch_m[0]['msg']
 
         if (post_ans['cor_time']['hr'] == int(post_ans['ans_time']['hr'])) and (post_ans['cor_time']['min'] == int(post_ans['ans_time']['min'])):
@@ -411,9 +416,8 @@ def mathemj(request, pk):
 
         hist = json.loads(lesson.hist)  # load hist from db
 
-        a, b, code, hist1 = eval(lesson.mult, lesson.addi, lesson.subt, lesson.divn, lesson.nx, lesson.ny, lesson.ax,
-                                 lesson.two_digit, lesson.sx, \
-                                 lesson.no_minus, lesson.no_dec_mul, hist, lesson.hist_depth)
+        a, b, code, hist1 = eval(lesson.mult, lesson.addi, lesson.subt, lesson.divn, NX, NY, AX,
+                                 TWO_DIGIT, SX, NO_MINUS, NO_DEC_MUL, hist, HIST_DEPTH)
 
         lesson.a1 = a  # update db
         lesson.b1 = b
@@ -527,7 +531,7 @@ def mathem_ajax(request):
 
        list_txt = []
 
-       lesson = MaapLesson.objects.get(user=request.user, pk=post_ans['pk1'])
+       lesson = MaapLesson.objects.get(user=request.user, pk=int(post_ans['pk1']) )
 
        #compute diff time
 
@@ -554,7 +558,7 @@ def mathem_ajax(request):
        favor_ans = json.loads(lesson.favor_ans)
 
        # debug diff +=15
-       if diff > lesson.favor_thresold_time:
+       if diff > FAVOR_THRESOLD_TIME:
            already_in = False
            for id, key in favor_ans.items():
                a = key['a']
@@ -581,6 +585,8 @@ def mathem_ajax(request):
 
        txt00, check_res = check_ans(int(post_ans['pk2']), lesson.a1, lesson.b1, lesson.c1)
 
+       lesson.ans_amount = lesson.ans_amount + 1
+
        if check_res == 1:
            lesson.ans_correct += 1
            # update average time
@@ -595,7 +601,6 @@ def mathem_ajax(request):
            wrong_ans.append(OrderedDict(a=lesson.a1, b=lesson.b1, c=lesson.c1, diff=int(diff), ans=int(post_ans['pk2'])))
            lesson.wrong_ans = json.dumps(wrong_ans)
 
-       lesson.ans_amount += 1
 
        lesson.save()
 
@@ -607,10 +612,10 @@ def mathem_ajax(request):
 
        txt1 = f'a1={lesson.a1}, b1={lesson.b1}, c1={lesson.c1}, ans_num={lesson.ans_amount}, ans_corr={lesson.ans_correct}'
        # add mult table
-       if lesson.c1 == 1 and check_res == 0 and lesson.a1 < lesson.nx + 1 and lesson.b1 < lesson.ny + 1:  # if multip in range 10*12
+       if lesson.c1 == 1 and check_res == 0 and lesson.a1 < NX + 1 and lesson.b1 < NY + 1:  # if multip in range 10*12
            mult_tabl = []
-           ny = lesson.ny
-           nx = lesson.nx
+           ny = NY
+           nx = NX
            for i in range(1, ny + 1):
                row = []
                for j in range(1, nx + 1):
@@ -658,7 +663,7 @@ def mathemk(request, pk1, pk2, diff):
         favor_ans = json.loads(lesson.favor_ans)
 
         # debug diff +=15
-        if diff > lesson.favor_thresold_time:
+        if diff > FAVOR_THRESOLD_TIME:
             already_in = False
             for id, key in favor_ans.items():
                 a = key['a']
@@ -713,10 +718,10 @@ def mathemk(request, pk1, pk2, diff):
 
         txt1 = f'a1={lesson.a1}, b1={lesson.b1}, c1={lesson.c1}, ans_num={lesson.ans_amount}, ans_corr={lesson.ans_correct}'
         # add mult table
-        if lesson.c1 == 1 and check_res == 0 and lesson.a1 < lesson.nx+1 and lesson.b1 < lesson.ny+1:  # if multip in range 10*12
+        if lesson.c1 == 1 and check_res == 0 and lesson.a1 < NX+1 and lesson.b1 < NY+1:  # if multip in range 10*12
             mult_tabl = []
-            ny = lesson.ny
-            nx = lesson.nx
+            ny = NY
+            nx = NX
             for i in range(1, ny + 1):
                 row = []
                 for j in range(1, nx + 1):
@@ -1144,7 +1149,7 @@ def finish(request, pk):
         # make first item
         wrong_ans = []
 
-    list_txt = finish_lesson(f_time, lesson.ans_amount, lesson.ans_correct, favor_ans, wrong_ans, lesson.favor_thresold_time)
+    list_txt = finish_lesson(f_time, lesson.ans_amount, lesson.ans_correct, favor_ans, wrong_ans, FAVOR_THRESOLD_TIME)
 
     txt1 = f'ans_num={lesson.ans_amount}, ans_corr={lesson.ans_correct}'
 
@@ -1154,28 +1159,24 @@ def finish(request, pk):
     file_name = 'lesson_data.json'
     file_content_string = json.dumps(favor_ans_cmp)
     content_file = ContentFile(file_content_string.encode())
-    # generacte filefield
+    # generate filefield
     report = lesson.report
-
     report.file_rep.save(file_name, content_file)
     report.file_rep.close()
 
     report.save()
-
-
-
     lesson.save()
 
     list_hist = []
     rep_hist = []
     wrong_ans_hist = []
 
-    #fillup lists with data
-
-    ans_amount_gt = 4
-    lessons = MaapLesson.objects.filter(user=request.user, ans_amount__gt=ans_amount_gt).order_by('id')
-
-    make_report(lessons, list_hist, rep_hist, wrong_ans_hist)
+    # #fillup lists with data
+    #
+    # ans_amount_gt = 4
+    # lessons = MaapLesson.objects.filter(user=request.user, ans_amount__gt=ans_amount_gt).order_by('id')
+    #
+    # make_report(lessons, list_hist, rep_hist, wrong_ans_hist)
 
     ans = {'txt0': txt0, 'txt00': txt00, 'txt1': txt1, 'list_txt': list_txt, 'list_hist': list_hist,
            'rep_hist': rep_hist, 'wrong_ans_hist': wrong_ans_hist }

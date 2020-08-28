@@ -154,3 +154,16 @@ sys.path.append('/home/user/django/maap/mainapp')
 sys.path.append('/home/user/django')
 #print (sys.path)
 
+#app settings
+NX = 12 #models.PositiveIntegerField(verbose_name='nx', default=12)
+NY = 10 #models.PositiveIntegerField(verbose_name='ny', default=10)
+
+AX = 100 #models.PositiveIntegerField(verbose_name='ax', default=100)
+SX = 100 #models.PositiveIntegerField(verbose_name='sx', default=100)
+
+TWO_DIGIT  = 1 #two_digit = models.PositiveIntegerField(verbose_name='two_digit', default=1)
+NO_MINUS = 1 #no_minus = models.PositiveIntegerField(verbose_name='no_minus', default=1)
+NO_DEC_MUL = 1 #no_dec_mul = models.PositiveIntegerField(verbose_name='no_dec_mul', default=1)
+HIST_DEPTH = 10 #hist_depth = models.PositiveIntegerField(verbose_name='hist_depth', default=5)
+FAVOR_THRESOLD_TIME = 15 #favor_thresold_time = models.PositiveIntegerField(verbose_name='hist_depth', default=15)
+

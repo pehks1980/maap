@@ -37,39 +37,18 @@ class MaapLesson(models.Model):
     date = models.CharField(verbose_name='s_time', max_length=64, blank=True)
     s_time = models.CharField(verbose_name='s_time', max_length=128, blank=True)
     f_time = models.CharField(verbose_name='f_time', max_length=64, blank=True)
-    # mode=models.PositiveIntegerField(verbose_name='mode', null=True)
+
     mode = models.CharField(verbose_name='mode', max_length=32, blank=True)
 
     ans_amount = models.PositiveIntegerField(verbose_name='ans_amount', default=1)  # integer NULL!
     ans_correct = models.PositiveIntegerField(verbose_name='ans_correct', default=0)
 
-    nx = models.PositiveIntegerField(verbose_name='nx', default=12)
-    ny = models.PositiveIntegerField(verbose_name='ny', default=10)
-
-    ax = models.PositiveIntegerField(verbose_name='ax', default=100)
-    sx = models.PositiveIntegerField(verbose_name='sx', default=100)
-
-    two_digit = models.PositiveIntegerField(verbose_name='two_digit', default=1)
-    no_minus = models.PositiveIntegerField(verbose_name='no_minus', default=1)
-    no_dec_mul = models.PositiveIntegerField(verbose_name='no_dec_mul', default=1)
-
-    hist_depth = models.PositiveIntegerField(verbose_name='hist_depth', default=5)
-    favor_thresold_time = models.PositiveIntegerField(verbose_name='hist_depth', default=15)
-
-    #hist = models.CharField(verbose_name='hist', max_length=512, blank=True)
     hist = models.TextField(verbose_name='hist', blank=True)
 
-    #favor_ans = models.CharField(verbose_name='hist', max_length=512, blank=True)
     favor_ans = models.TextField(verbose_name='favor_ans', blank=True)
-
     wrong_ans = models.TextField(verbose_name='wrong_ans', blank=True)
 
     qst_time = models.CharField(verbose_name='mode', max_length=64, blank=True)
-
-    mult = models.PositiveIntegerField(verbose_name='mult', default=1)
-    addi = models.PositiveIntegerField(verbose_name='addi', default=1)
-    subt = models.PositiveIntegerField(verbose_name='subt', default=1)
-    divn = models.PositiveIntegerField(verbose_name='divn', default=1)
 
     a1 = models.PositiveIntegerField(verbose_name='a1', default=0)
     b1 = models.PositiveIntegerField(verbose_name='b1', default=0)
@@ -79,8 +58,11 @@ class MaapLesson(models.Model):
     ans_sum = models.PositiveIntegerField(verbose_name='last_ans_time', default=0)
     #avg ans time for the lesson
     avg_ans_time = models.PositiveIntegerField(verbose_name='avg_ans_time', default=0)
-    #mult_tabl =
-
+    #settings for questions
+    mult = models.PositiveIntegerField(verbose_name='mult', default=1)
+    addi = models.PositiveIntegerField(verbose_name='addi', default=1)
+    subt = models.PositiveIntegerField(verbose_name='subt', default=1)
+    divn = models.PositiveIntegerField(verbose_name='divn', default=1)
 
     def __str__(self):
         return self.user_id
