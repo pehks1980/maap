@@ -63,6 +63,11 @@ class MaapLesson(models.Model):
     addi = models.PositiveIntegerField(verbose_name='addi', default=1)
     subt = models.PositiveIntegerField(verbose_name='subt', default=1)
     divn = models.PositiveIntegerField(verbose_name='divn', default=1)
+    #counter operations for the lesson
+    mult_cnt = models.PositiveIntegerField(verbose_name='mult_cnt', default=0)
+    addi_cnt = models.PositiveIntegerField(verbose_name='addi_cnt', default=0)
+    subt_cnt = models.PositiveIntegerField(verbose_name='subt_cnt', default=0)
+    divn_cnt = models.PositiveIntegerField(verbose_name='divn_cnt', default=0)
 
     def __str__(self):
         return self.user_id

@@ -46,20 +46,37 @@ def SetAppMode(list):
     return (mult, addi, subt, divn)
 
 
-def GetAppModeDesc(list):
-    # result=[]
+def GetAppModeDesc(lesson):
+    mode = lesson.mode
+    mult_cnt = lesson.mult_cnt
+    addi_cnt = lesson.addi_cnt
+    subt_cnt = lesson.subt_cnt
+    divn_cnt = lesson.divn_cnt
+
     a = ''
     b = ''
     c = ''
-    for i in list:
+    d = ''
+    for i in mode:
         if i == '1':
-            a = '*,'
+            a = '*'
+            if mult_cnt:
+                a += f'={mult_cnt}'
         if i == '2':
-            b = '+,'
+            b = ',+'
+            if addi_cnt:
+                b += f'={addi_cnt}'
         if i == '3':
-            c = '-'
+            c = ',-'
+            if subt_cnt:
+                c += f'={subt_cnt}'
+        if i == '4':
+            divsign = u'\u00F7'
+            d = f',{divsign}'
+            if divn_cnt:
+                d += f'={divn_cnt}'
 
-    return f'{a}{b}{c}'
+    return f'{a}{b}{c}{d}'
 
 
 def printMatrix(s, hl, a, b):
@@ -258,12 +275,16 @@ def check_ans(ans, a1, b1, c1):
         return (f" ответ - не верный  {a} {divsign} {b} = {res}", 0)
 
 
-def finish_lesson(f_time, ans_num, ans_corr, favor_ans, wrong_ans, favor_thresold_time):
+def finish_lesson(lesson, f_time, favor_ans, wrong_ans, favor_thresold_time):
     reply = []
+    ans_num = lesson.ans_amount
+    ans_corr = lesson.ans_correct
+
     reply.append("пока!")
     if ans_num > 1:
+        mode_description = GetAppModeDesc(lesson)
         reply.append(
-            f"\n вопросов было {ans_num}, число правильных {ans_corr}, процент правильных {int((ans_corr / ans_num) * 100)} %")
+            f"\n вопросов было {ans_num} ({mode_description}), число правильных {ans_corr}, процент правильных {int((ans_corr / ans_num) * 100)} %")
         reply.append(f' всего прошло времени {f_time} мин')
 
         reply.append(f' трудные примеры: {len(favor_ans.keys()) - 1}')

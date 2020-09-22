@@ -155,7 +155,7 @@ def uncheckEmail(request,email,id):
         return HttpResponseRedirect(reverse('main'))
 
 
-
+#deprecated moved from mathem-mathemk to mathemj-mathem_ajax question-answer
 def mathem(request, pk):
     title = 'Математика '
 
@@ -439,7 +439,7 @@ def mathemj(request, pk):
 
         print(f'aha {lesson.qst_time}')
 
-        lesson.save()
+
 
         txt1 = f"вопрос {lesson.ans_amount} правильных: {lesson.ans_correct}"
 
@@ -447,15 +447,21 @@ def mathemj(request, pk):
         #code 1 * 2 + 3 - 4 /
         if code == 1:
             txt2 = f'cколько будет {a} X {b} =?'
+            lesson.mult_cnt += 1
         if code == 2:
             txt2 = f'cколько будет {a} + {b} =?'
+            lesson.addi_cnt += 1
         if code == 3:
             txt2 = f'cколько будет {a} - {b} =?'
+            lesson.subt_cnt += 1
         if code == 4:
             divsign =u'\u00F7';
             txt2 = f'cколько будет {a} {divsign} {b} =?'
+            lesson.divn_cnt += 1
 
         list_txt.append(txt2)
+
+        lesson.save()
 
         txt3 = ''  # f'a1={a}, b1={b}, c1={code}'
 
@@ -641,6 +647,7 @@ def mathem_ajax(request):
 
        return JsonResponse({'result': result})
 
+#deprecated moved from mathem-mathemk to mathemj-mathem_ajax question-answer
 def mathemk(request, pk1, pk2, diff):
     title = 'главная maap v 1.0/проверка'
 
@@ -966,7 +973,7 @@ def make_report(lessons, list_hist, rep_hist, wrong_ans_hist):
     list_hist_row = []
     list_hist_row.append(f'id')
     list_hist_row.append(f' Дата занятия')
-    list_hist_row.append(f' Режим упр.')
+    list_hist_row.append(f' Режим упр. (Кол-во)')
     list_hist_row.append(f' Общее время')
     list_hist_row.append(f' Кол-во вопросов')
     list_hist_row.append(f' % Правильных')
@@ -997,10 +1004,10 @@ def make_report(lessons, list_hist, rep_hist, wrong_ans_hist):
         new_time = start_date['hour'] + ':' + start_date['min'] + ':' + start_date['sec']
 
         list_hist_row.append(f'{new_date} {new_time}')
-        # tab mode
-        a = str(
-            i.mode)  # when only one char from db it assumes digital as int so we need to explicitly change it to str again!
-        list_hist_row.append(GetAppModeDesc(a))
+        # tab mode + description amount of each ops questions
+        #a = str(
+        #    i.mode)  # when only one char from db it assumes digital as int so we need to explicitly change it to str again!
+        list_hist_row.append(GetAppModeDesc(i))
 
         try:
             end_time = json.loads(i.f_time)
@@ -1063,7 +1070,7 @@ def make_report(lessons, list_hist, rep_hist, wrong_ans_hist):
                 if c == 3:
                     str_fav_ans = (f' {a} - {b} (={a - b}) занял {d} секунд')
                 if c == 4:
-                    divsign = u'\u00F7';
+                    divsign = u'\u00F7'
                     str_fav_ans = (f' {a} {divsign} {b} (={int (a / b)}) занял {d} секунд')
 
                 diff = key.get('e')
@@ -1149,7 +1156,7 @@ def finish(request, pk):
         # make first item
         wrong_ans = []
 
-    list_txt = finish_lesson(f_time, lesson.ans_amount, lesson.ans_correct, favor_ans, wrong_ans, FAVOR_THRESOLD_TIME)
+    list_txt = finish_lesson(lesson, f_time, favor_ans, wrong_ans, FAVOR_THRESOLD_TIME)
 
     txt1 = f'ans_num={lesson.ans_amount}, ans_corr={lesson.ans_correct}'
 
