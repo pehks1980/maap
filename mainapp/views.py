@@ -1,5 +1,5 @@
 # Create your views here.
-
+import random
 from datetime import datetime
 import pytz
 from collections import OrderedDict
@@ -16,7 +16,7 @@ from django.core.files.storage import default_storage
 from django.urls import reverse
 
 from cron import cron_notify
-from maap.settings import NX,NY,AX,SX,TWO_DIGIT, NO_MINUS, NO_DEC_MUL, HIST_DEPTH, FAVOR_THRESOLD_TIME
+from maap.settings import NX, NY, AX, SX, TWO_DIGIT, NO_MINUS, NO_DEC_MUL, HIST_DEPTH, FAVOR_THRESOLD_TIME
 
 from .forms import Ans_Form
 from .forms import AppModForm
@@ -33,11 +33,11 @@ from django.views.decorators.csrf import csrf_exempt
 from .mul_app import SetAppMode, eval, check_ans, GetAppModeDesc, finish_lesson, printMatrix
 import os, json
 
+
 # from .mainapp import mul_app
 
 @login_required
 def main(request):
-
     title = 'главная maap v 1.0'
 
     # a = MaapReport()
@@ -119,43 +119,45 @@ def main(request):
         form_app = AppModForm()
 
     # products = Product.objects.all()[:3]
-    #links_menu = {}  # ProductCategory.objects.all()
+    # links_menu = {}  # ProductCategory.objects.all()
 
     content = {'title': title, 'form': form_app}
 
     return render(request, 'mainapp/index.html', content)
 
+
 def checkCron(request):
-    #call cron method to check & debug
+    # call cron method to check & debug
     jobs = MaapUserProfile.objects.filter(user=request.user)
     cron_notify(jobs, dont_wait=True)
     title = 'check cron'
-    content = {'title': title,}
+    content = {'title': title, }
     return render(request, 'mainapp/lala.html', content)
 
-def uncheckEmail(request,email,id):
-    #call cron method to check & debug
+
+def uncheckEmail(request, email, id):
+    # call cron method to check & debug
     try:
-        user_prof = MaapUserProfile.objects.get(id=int(id))#only new accounts
+        user_prof = MaapUserProfile.objects.get(id=int(id))  # only new accounts
         if user_prof.enabled == True:
             user_prof.enabled = False
             user_prof.save()
             result = 'successful'
             print(f'uncheck ok')
             return render(request, 'authapp/email_uncheck.html')
-            #return JsonResponse({'result': result})
+            # return JsonResponse({'result': result})
         else:
             result = 'unsuccessful'
             print(f'error uncheck')
             return render(request, 'authapp/email_uncheck.html')
-            #return JsonResponse({'result': result})
+            # return JsonResponse({'result': result})
 
     except Exception as e:
         print(f'error uncheck user : {e.args}')
         return HttpResponseRedirect(reverse('main'))
 
 
-#deprecated moved from mathem-mathemk to mathemj-mathem_ajax question-answer
+# deprecated moved from mathem-mathemk to mathemj-mathem_ajax question-answer
 def mathem(request, pk):
     title = 'Математика '
 
@@ -202,7 +204,7 @@ def mathem(request, pk):
         txt1 = f"вопрос {lesson.ans_amount} правильных: {lesson.ans_correct}"
 
         list_txt.append(txt1)
-        #code 1 * 2 + 3 - 4 /
+        # code 1 * 2 + 3 - 4 /
         if code == 1:
             txt2 = f'cколько будет {a} X {b} =?'
         if code == 2:
@@ -210,7 +212,7 @@ def mathem(request, pk):
         if code == 3:
             txt2 = f'cколько будет {a} - {b} =?'
         if code == 4:
-            divsign =u'\u00F7';
+            divsign = u'\u00F7';
             txt2 = f'cколько будет {a} {divsign} {b} =?'
 
         list_txt.append(txt2)
@@ -273,6 +275,7 @@ def mathem(request, pk):
         lesson.save()
         return HttpResponseRedirect(f'/finish/{lesson.pk}')
 
+
 @csrf_exempt
 def clock_ajax1(request):
     if request.is_ajax():
@@ -285,31 +288,54 @@ def clock_ajax1(request):
         })
 
 
-def clockj(request,ans_correct=None,ans_amount=None):
+def clockj(request, ans_correct=None, ans_amount=None):
     title = 'Часы'
 
     pk = 1
 
     if ans_amount == None:
         state = {
-            'ans_amount' : 1,
-            'ans_correct' : 0
+            'ans_amount': 1,
+            'ans_correct': 0,
+            'diff': {'hour': 0,
+                     'minute': 0
+                     }
         }
     else:
         state = {
             'ans_amount': ans_amount,
-            'ans_correct': ans_correct
+            'ans_correct': ans_correct,
+
         }
 
     txt1 = f"вопрос {state['ans_amount']} правильных: {state['ans_correct']}"
 
     txt2 = f'cколько времени на часах ?'
 
+    # shuffle for special quaestion with difference
+    flag = False
+    spec_quest_ratio = 30
+    op = random.randint(1, 100)
+
+    if op > spec_quest_ratio:
+        flag = True
+
+    diff = {'hours': 0,
+            'minutes': 0
+            }
+
+    if flag:
+        diff = {'hours': random.randint(1, 3),
+                'minutes': 0
+                }
+        txt2 = f'cколько времени на часах будет через {diff["hours"]} час и {diff["minutes"]} мин??'
+
     qst = {'txt1': txt1, 'txt2': txt2}
 
-    content = {'title': title, 'qst': qst, 'pk1': pk, 'state': state }
+    content = {'title': title, 'qst': qst, 'pk1': pk, 'state': state, 'diff': diff}
 
     return render(request, 'mainapp/clock_test.html', content)
+
 
 @csrf_exempt
 def clock_ajax(request):
@@ -332,18 +358,18 @@ def clock_ajax(request):
 
         d1 = int(val_li[0]) * 60 + int(val_li[1])  # current time 0 - min 1 - sec
 
-        #print(f'post {lesson.qst_time} {val_li}')
+        # print(f'post {lesson.qst_time} {val_li}')
 
-        #time_dic = json.loads(lesson.qst_time)
+        # time_dic = json.loads(lesson.qst_time)
 
-        #d2 = time_dic['min'] * 60 + time_dic['sec']
+        # d2 = time_dic['min'] * 60 + time_dic['sec']
 
-        #diff = d1 - d2 - 1
+        # diff = d1 - d2 - 1
 
-        #if diff < 0:
+        # if diff < 0:
         #    diff = 0
         state = post_ans['state']
-        #morph parse of russian hour minute
+        # morph parse of russian hour minute
         dct_choice = [
             {'val1': 0, 'val2': 2, 'msg': ''},
             {'val1': 1, 'val2': 5, 'msg': 'А'},
@@ -357,21 +383,24 @@ def clock_ajax(request):
             {'val1': 5, 'val2': 9, 'msg': ''},
         ]
 
-        msg_m='' # if min in 10-20 - no ending
-        #testing post_ans['cor_time']['min'] = 15
+        msg_m = ''  # if min in 10-20 - no ending
+        # testing post_ans['cor_time']['min'] = 15
         if post_ans['cor_time']['min'] >= 21:
-            rem_okonch_m = list(filter(lambda x: x['val1'] <= post_ans['cor_time']['min'] % 10 <= x['val2'], dct_choice1))
+            rem_okonch_m = list(
+                filter(lambda x: x['val1'] <= post_ans['cor_time']['min'] % 10 <= x['val2'], dct_choice1))
             msg_m = rem_okonch_m[0]['msg']
 
         if post_ans['cor_time']['min'] <= 9:
-            rem_okonch_m = list(filter(lambda x: x['val1'] <= post_ans['cor_time']['min'] % 10 <= x['val2'], dct_choice1))
+            rem_okonch_m = list(
+                filter(lambda x: x['val1'] <= post_ans['cor_time']['min'] % 10 <= x['val2'], dct_choice1))
             msg_m = rem_okonch_m[0]['msg']
 
-        if (post_ans['cor_time']['hr'] == int(post_ans['ans_time']['hr'])) and (post_ans['cor_time']['min'] == int(post_ans['ans_time']['min'])):
-            row1 = f"Oтвет верный, на часах {post_ans['cor_time']['hr']} ЧАС{rem_okonch_h[0]['msg']}, {post_ans['cor_time']['min']} МИНУТ{msg_m}"
+        if (post_ans['cor_time']['hr'] == int(post_ans['ans_time']['hr'])) and (
+                post_ans['cor_time']['min'] == int(post_ans['ans_time']['min'])):
+            row1 = f"Oтвет верный! - {post_ans['cor_time']['hr']} ЧАС{rem_okonch_h[0]['msg']}, {post_ans['cor_time']['min']} МИНУТ{msg_m}"
             state['ans_correct'] = state['ans_correct'] + 1
         else:
-            row1 = f"Oтвет НЕ верный, на часах сейчас {post_ans['cor_time']['hr']} ЧАС{rem_okonch_h[0]['msg']}, {post_ans['cor_time']['min']} МИНУТ{msg_m}"
+            row1 = f"Oтвет НЕ верный, правильный ответ: {post_ans['cor_time']['hr']} ЧАС{rem_okonch_h[0]['msg']}, {post_ans['cor_time']['min']} МИНУТ{msg_m}"
 
         state['ans_amount'] = state['ans_amount'] + 1
 
@@ -391,11 +420,9 @@ def clock_ajax(request):
             request=request)
 
         return JsonResponse({'result': result,
-                             'ans_correct' : state['ans_correct'],
-                             'ans_amount' : state['ans_amount']
+                             'ans_correct': state['ans_correct'],
+                             'ans_amount': state['ans_amount']
                              })
-
-
 
 
 def mathemj(request, pk):
@@ -439,12 +466,10 @@ def mathemj(request, pk):
 
         print(f'aha {lesson.qst_time}')
 
-
-
         txt1 = f"вопрос {lesson.ans_amount} правильных: {lesson.ans_correct}"
 
         list_txt.append(txt1)
-        #code 1 * 2 + 3 - 4 /
+        # code 1 * 2 + 3 - 4 /
         if code == 1:
             txt2 = f'cколько будет {a} X {b} =?'
             lesson.mult_cnt += 1
@@ -455,7 +480,7 @@ def mathemj(request, pk):
             txt2 = f'cколько будет {a} - {b} =?'
             lesson.subt_cnt += 1
         if code == 4:
-            divsign =u'\u00F7';
+            divsign = u'\u00F7';
             txt2 = f'cколько будет {a} {divsign} {b} =?'
             lesson.divn_cnt += 1
 
@@ -467,7 +492,7 @@ def mathemj(request, pk):
 
         qst = {'txt0': txt0, 'txt00': txt00, 'txt1': txt1, 'txt2': txt2, 'txt3': txt3, 'list_txt': list_txt}
 
-        content = {'title': title, 'form': form, 'qst': qst, 'pk1' : pk}
+        content = {'title': title, 'form': form, 'qst': qst, 'pk1': pk}
 
         return render(request, 'mainapp/mathem_aj.html', content)
 
@@ -522,132 +547,131 @@ def mathemj(request, pk):
         return HttpResponseRedirect(f'/finish/{lesson.pk}')
 
 
-
-#ignore csrf shiled as it gets 403 when you send json as POST
+# ignore csrf shiled as it gets 403 when you send json as POST
 @csrf_exempt
 def mathem_ajax(request):
-   if request.is_ajax():
+    if request.is_ajax():
 
-       #print (request.json())
-       #updatedData = json.loads(request.body.decode('UTF-8'))
-       post_ans = json.loads(request.body)
+        # print (request.json())
+        # updatedData = json.loads(request.body.decode('UTF-8'))
+        post_ans = json.loads(request.body)
 
-       print (post_ans)
-       #(pk1 pk2 diff)
+        print(post_ans)
+        # (pk1 pk2 diff)
 
-       list_txt = []
+        list_txt = []
 
-       lesson = MaapLesson.objects.get(user=request.user, pk=int(post_ans['pk1']) )
+        lesson = MaapLesson.objects.get(user=request.user, pk=int(post_ans['pk1']))
 
-       #compute diff time
+        # compute diff time
 
-       val = post_ans['time']
+        val = post_ans['time']
 
-       val_li = list(val.split(" "))
+        val_li = list(val.split(" "))
 
-       d1 = int(val_li[0]) * 60 + int(val_li[1])  # current time 0 - min 1 - sec
+        d1 = int(val_li[0]) * 60 + int(val_li[1])  # current time 0 - min 1 - sec
 
-       print(f'post {lesson.qst_time} {val_li}')
+        print(f'post {lesson.qst_time} {val_li}')
 
-       time_dic = json.loads(lesson.qst_time)
+        time_dic = json.loads(lesson.qst_time)
 
-       d2 = time_dic['min'] * 60 + time_dic['sec']
+        d2 = time_dic['min'] * 60 + time_dic['sec']
 
-       diff = d1 - d2 - 1
+        diff = d1 - d2 - 1
 
-       if diff < 0:
-           diff = 0
+        if diff < 0:
+            diff = 0
 
-       #here
+        # here
+
+        favor_ans = json.loads(lesson.favor_ans)
+
+        # debug diff +=15
+        if diff > FAVOR_THRESOLD_TIME:
+            already_in = False
+            for id, key in favor_ans.items():
+                a = key['a']
+                b = key['b']
+                if lesson.a1 == a and lesson.b1 == b:
+                    already_in = True
+
+            if already_in == False:
+                elem = {'a': lesson.a1,
+                        'b': lesson.b1,
+                        'c': lesson.c1,
+                        'd': diff}  # a,b,op,diff_time
+                # make new index
+                idx = 0
+                for i in favor_ans.keys():
+                    if int(i) > idx:
+                        idx = int(i)
+
+                favor_ans[idx + 1] = elem
+                # to add to favor_ans
+                # store it in db
+                lesson.favor_ans = json.dumps(favor_ans)
+                # favor_ans.append(elem)
+
+        txt00, check_res = check_ans(int(post_ans['pk2']), lesson.a1, lesson.b1, lesson.c1)
+
+        lesson.ans_amount = lesson.ans_amount + 1
+
+        if check_res == 1:
+            lesson.ans_correct += 1
+            # update average time
+            lesson.ans_sum = lesson.ans_sum + diff
+            lesson.avg_ans_time = int(lesson.ans_sum / lesson.ans_correct)
+        else:
+            try:
+                wrong_ans = json.loads(lesson.wrong_ans, object_pairs_hook=OrderedDict)
+            except:
+                # make first item
+                wrong_ans = []
+            wrong_ans.append(
+                OrderedDict(a=lesson.a1, b=lesson.b1, c=lesson.c1, diff=int(diff), ans=int(post_ans['pk2'])))
+            lesson.wrong_ans = json.dumps(wrong_ans)
+
+        lesson.save()
+
+        list_txt.append(txt00)
+
+        txt22 = f"время затраченное на ответ {diff} сек"
+
+        list_txt.append(txt22)
+
+        txt1 = f'a1={lesson.a1}, b1={lesson.b1}, c1={lesson.c1}, ans_num={lesson.ans_amount}, ans_corr={lesson.ans_correct}'
+        # add mult table
+        if lesson.c1 == 1 and check_res == 0 and lesson.a1 < NX + 1 and lesson.b1 < NY + 1:  # if multip in range 10*12
+            mult_tabl = []
+            ny = NY
+            nx = NX
+            for i in range(1, ny + 1):
+                row = []
+                for j in range(1, nx + 1):
+                    row.append(i * j)
+                mult_tabl.append(row)
+
+            # self.printMatrix(self.mult_tabl,0,0,0)
+            mul_tab = printMatrix(mult_tabl, lesson.a1 * lesson.b1, lesson.a1, 0)
+            cor_ans = lesson.a1 * lesson.b1
+            cor_ans = ">" + str(cor_ans)
+        else:
+            mul_tab = ''
+            cor_ans = ''
+
+        ans = {'txt00': txt00, 'txt22': txt22, 'txt1': txt1, 'mul_tab': mul_tab, 'list_txt': list_txt, 'ans': cor_ans}
+
+        content = {'ans': ans, 'pk1': post_ans['pk1']}
+
+        result = render_to_string(
+            'mainapp/includes/inc_mathemk.html',
+            context=content,
+            request=request)
+
+        return JsonResponse({'result': result})
 
 
-       favor_ans = json.loads(lesson.favor_ans)
-
-       # debug diff +=15
-       if diff > FAVOR_THRESOLD_TIME:
-           already_in = False
-           for id, key in favor_ans.items():
-               a = key['a']
-               b = key['b']
-               if lesson.a1 == a and lesson.b1 == b:
-                   already_in = True
-
-           if already_in == False:
-               elem = {'a': lesson.a1,
-                       'b': lesson.b1,
-                       'c': lesson.c1,
-                       'd': diff}  # a,b,op,diff_time
-               # make new index
-               idx = 0
-               for i in favor_ans.keys():
-                   if int(i) > idx:
-                       idx = int(i)
-
-               favor_ans[idx + 1] = elem
-               # to add to favor_ans
-               # store it in db
-               lesson.favor_ans = json.dumps(favor_ans)
-               # favor_ans.append(elem)
-
-       txt00, check_res = check_ans(int(post_ans['pk2']), lesson.a1, lesson.b1, lesson.c1)
-
-       lesson.ans_amount = lesson.ans_amount + 1
-
-       if check_res == 1:
-           lesson.ans_correct += 1
-           # update average time
-           lesson.ans_sum = lesson.ans_sum + diff
-           lesson.avg_ans_time = int(lesson.ans_sum / lesson.ans_correct)
-       else:
-           try:
-               wrong_ans = json.loads(lesson.wrong_ans, object_pairs_hook=OrderedDict)
-           except:
-               # make first item
-               wrong_ans = []
-           wrong_ans.append(OrderedDict(a=lesson.a1, b=lesson.b1, c=lesson.c1, diff=int(diff), ans=int(post_ans['pk2'])))
-           lesson.wrong_ans = json.dumps(wrong_ans)
-
-
-       lesson.save()
-
-       list_txt.append(txt00)
-
-       txt22 = f"время затраченное на ответ {diff} сек"
-
-       list_txt.append(txt22)
-
-       txt1 = f'a1={lesson.a1}, b1={lesson.b1}, c1={lesson.c1}, ans_num={lesson.ans_amount}, ans_corr={lesson.ans_correct}'
-       # add mult table
-       if lesson.c1 == 1 and check_res == 0 and lesson.a1 < NX + 1 and lesson.b1 < NY + 1:  # if multip in range 10*12
-           mult_tabl = []
-           ny = NY
-           nx = NX
-           for i in range(1, ny + 1):
-               row = []
-               for j in range(1, nx + 1):
-                   row.append(i * j)
-               mult_tabl.append(row)
-
-           # self.printMatrix(self.mult_tabl,0,0,0)
-           mul_tab = printMatrix(mult_tabl, lesson.a1 * lesson.b1, lesson.a1, 0)
-           cor_ans = lesson.a1 * lesson.b1
-           cor_ans = ">" + str(cor_ans)
-       else:
-           mul_tab = ''
-           cor_ans = ''
-
-       ans = {'txt00': txt00, 'txt22': txt22, 'txt1': txt1, 'mul_tab': mul_tab, 'list_txt': list_txt, 'ans': cor_ans}
-
-       content = {'ans': ans, 'pk1' : post_ans['pk1']}
-
-       result = render_to_string(
-           'mainapp/includes/inc_mathemk.html',
-           context=content,
-           request=request)
-
-       return JsonResponse({'result': result})
-
-#deprecated moved from mathem-mathemk to mathemj-mathem_ajax question-answer
+# deprecated moved from mathem-mathemk to mathemj-mathem_ajax question-answer
 def mathemk(request, pk1, pk2, diff):
     title = 'главная maap v 1.0/проверка'
 
@@ -697,21 +721,19 @@ def mathemk(request, pk1, pk2, diff):
 
         txt00, check_res = check_ans(int(pk2), lesson.a1, lesson.b1, lesson.c1)
 
-
         if check_res == 1:
             lesson.ans_correct += 1
-            #update average time
+            # update average time
             lesson.ans_sum = lesson.ans_sum + diff
-            lesson.avg_ans_time  = int (lesson.ans_sum  / lesson.ans_correct)
+            lesson.avg_ans_time = int(lesson.ans_sum / lesson.ans_correct)
         else:
             try:
                 wrong_ans = json.loads(lesson.wrong_ans, object_pairs_hook=OrderedDict)
             except:
-                #make first item
+                # make first item
                 wrong_ans = []
-            wrong_ans.append(OrderedDict(a=lesson.a1, b=lesson.b1, c=lesson.c1, diff=int(diff), ans=int(pk2)) )
+            wrong_ans.append(OrderedDict(a=lesson.a1, b=lesson.b1, c=lesson.c1, diff=int(diff), ans=int(pk2)))
             lesson.wrong_ans = json.dumps(wrong_ans)
-
 
         lesson.ans_amount += 1
 
@@ -725,7 +747,7 @@ def mathemk(request, pk1, pk2, diff):
 
         txt1 = f'a1={lesson.a1}, b1={lesson.b1}, c1={lesson.c1}, ans_num={lesson.ans_amount}, ans_corr={lesson.ans_correct}'
         # add mult table
-        if lesson.c1 == 1 and check_res == 0 and lesson.a1 < NX+1 and lesson.b1 < NY+1:  # if multip in range 10*12
+        if lesson.c1 == 1 and check_res == 0 and lesson.a1 < NX + 1 and lesson.b1 < NY + 1:  # if multip in range 10*12
             mult_tabl = []
             ny = NY
             nx = NX
@@ -769,29 +791,30 @@ def clean_str(str):
 
 
 def clear_hist(request):
-    #del from where ans_amount < ans_amount
+    # del from where ans_amount < ans_amount
     MaapLesson.objects.filter(user=request.user).delete()
 
     print(f'{datetime.now()}: {request.user.username} hist deleted, all !')
     return HttpResponseRedirect(f'/')
 
-def clear_hist_5(request, ans_amount = 5):
-    #del from where ans_amount < ans_amount
-    MaapLesson.objects.filter(user=request.user, ans_amount__lt = ans_amount).delete()
+
+def clear_hist_5(request, ans_amount=5):
+    # del from where ans_amount < ans_amount
+    MaapLesson.objects.filter(user=request.user, ans_amount__lt=ans_amount).delete()
 
     print(f'{datetime.now()}: {request.user.username} hist deleted, all with ans_amount < {ans_amount}')
     return HttpResponseRedirect(f'/')
 
 
-def hist(request , page = 'None'):
+def hist(request, page='None'):
     title = f'главная maap v 1.0/история уроков '
 
-    print ('page=',page)
+    print('page=', page)
 
     list_hist = []
     rep_hist = []
     wrong_ans_hist = []
-    #try to find if its empty
+    # try to find if its empty
     ans_amount_gt = 10
     lessons = MaapLesson.objects.filter(user=request.user, ans_amount__gt=ans_amount_gt).order_by('id')
 
@@ -809,33 +832,30 @@ def hist(request , page = 'None'):
 
         make_report(lessons, list_hist, rep_hist, wrong_ans_hist)
 
-        #paginator self made
-        n = 2 #reports per page
+        # paginator self made
+        n = 2  # reports per page
         # number of reports all
         items_cnt = len(list_hist) - 1
         # max page
         max_page = int(items_cnt / n)
-        #make new page for the rest new page
-        if  items_cnt > max_page*n:
+        # make new page for the rest new page
+        if items_cnt > max_page * n:
             max_page = max_page + 1
 
         if page == 'None':
-            #go to max page
+            # go to max page
             page = max_page
         else:
-            #curr page if page param is given
+            # curr page if page param is given
             page = int(page)
 
-
-
-
-        #no need
-        #if max_page == 0:
+        # no need
+        # if max_page == 0:
         #    max_page = 1
 
-        #slice list_hist per one page
-        page_list_hist = list_hist[n*page-1:n*page-1+n]
-        #make rep_hist, wrong_ans_hist lists corresponding to page_list_hist
+        # slice list_hist per one page
+        page_list_hist = list_hist[n * page - 1:n * page - 1 + n]
+        # make rep_hist, wrong_ans_hist lists corresponding to page_list_hist
         page_rep_hist = []
         page_wrong_ans_hist = []
         for list_item in page_list_hist:
@@ -849,29 +869,29 @@ def hist(request , page = 'None'):
         # page_rep_hist =
         clr_but = True
 
-        paging = {'page':page,
-                    'pages': [x for x in range(1,max_page+1) ],
-                }
+        paging = {'page': page,
+                  'pages': [x for x in range(1, max_page + 1)],
+                  }
 
-        #copy headers to paged version
-        page_rep_hist.insert(0,rep_hist[0])
-        page_list_hist.insert(0,list_hist[0])
+        # copy headers to paged version
+        page_rep_hist.insert(0, rep_hist[0])
+        page_list_hist.insert(0, list_hist[0])
         page_wrong_ans_hist.insert(0, wrong_ans_hist[0])
 
-        #ans_page = {'list_hist': page_list_hist, 'rep_hist': page_rep_hist, 'wrong_ans_hist': page_wrong_ans_hist, 'clr_but': clr_but , 'paging' : paging}
-        #generate tables list & tab_idx
-        tables_list=[]
+        # ans_page = {'list_hist': page_list_hist, 'rep_hist': page_rep_hist, 'wrong_ans_hist': page_wrong_ans_hist, 'clr_but': clr_but , 'paging' : paging}
+        # generate tables list & tab_idx
+        tables_list = []
 
-        #make shapka for every entity
+        # make shapka for every entity
         shapka_list_hist = list_hist[0]
         shapka_rep_hist = rep_hist[0]
         shapka_wrong_ans_list = wrong_ans_hist[0]
 
-        #gen combined table from list rep wrong ans lists
-        #1st row is list - 6 cols
-        #2nd row is rep - 1 col N rows
-        #3rd row is wrong ans 1 col N rows
-        #+shapka for every entity
+        # gen combined table from list rep wrong ans lists
+        # 1st row is list - 6 cols
+        # 2nd row is rep - 1 col N rows
+        # 3rd row is wrong ans 1 col N rows
+        # +shapka for every entity
 
         for i in page_list_hist:
             table = []
@@ -894,7 +914,7 @@ def hist(request , page = 'None'):
                     table.append(y[:])
 
             tables_list.append(table)
-        #remove first item from tables_list
+        # remove first item from tables_list
         del tables_list[0]
 
         ans_page = {'tab_list': tables_list, 'clr_but': clr_but, 'paging': paging}
@@ -903,11 +923,12 @@ def hist(request , page = 'None'):
 
         return render(request, 'mainapp/hist.html', content)
 
-    ans = {'list_hist': list_hist, 'rep_hist': rep_hist, 'wrong_ans_hist': wrong_ans_hist , 'clr_but': clr_but}
+    ans = {'list_hist': list_hist, 'rep_hist': rep_hist, 'wrong_ans_hist': wrong_ans_hist, 'clr_but': clr_but}
     content = {'title': title, 'ans': ans}
     return render(request, 'mainapp/hist.html', content)
 
-#compares reports - pk previous report, favor_ans current, result : favor_ans_res will be stored in db
+
+# compares reports - pk previous report, favor_ans current, result : favor_ans_res will be stored in db
 def compare_reports(pk, favor_ans):
     try:
         lesson = get_object_or_404(MaapLesson, pk=pk)
@@ -938,17 +959,16 @@ def compare_reports(pk, favor_ans):
                     if b == key['b']:
                         if c == key['c']:
                             # same operation found make returned dictionary updated with differnce
-                            diff = d - key['d'] #if current is longer then prev - then diff > 0
+                            diff = d - key['d']  # if current is longer then prev - then diff > 0
                             if diff != 0:
                                 elem.update(e=diff)
-                else: #case when multiplication vice versa operands
+                else:  # case when multiplication vice versa operands
                     if a == key['b']:
                         if b == key['a']:
                             if c == 1:
                                 diff = d - key['d']  # if current is longer then prev - then diff > 0
                                 if diff != 0:
                                     elem.update(e=diff)
-
 
             # add new elem to result dict here
             # make new index
@@ -966,8 +986,7 @@ def compare_reports(pk, favor_ans):
 
 
 def make_report(lessons, list_hist, rep_hist, wrong_ans_hist):
-
-   # print(list_txt)
+    # print(list_txt)
 
     # make headers of the table history
     list_hist_row = []
@@ -992,7 +1011,6 @@ def make_report(lessons, list_hist, rep_hist, wrong_ans_hist):
     wrong_ans_row.append(f' Отчет: история неверных ответов ')
     wrong_ans_hist.append(wrong_ans_row)
 
-
     for i in lessons:
         list_hist_row = []
         # add id lesson
@@ -1005,7 +1023,7 @@ def make_report(lessons, list_hist, rep_hist, wrong_ans_hist):
 
         list_hist_row.append(f'{new_date} {new_time}')
         # tab mode + description amount of each ops questions
-        #a = str(
+        # a = str(
         #    i.mode)  # when only one char from db it assumes digital as int so we need to explicitly change it to str again!
         list_hist_row.append(GetAppModeDesc(i))
 
@@ -1046,9 +1064,9 @@ def make_report(lessons, list_hist, rep_hist, wrong_ans_hist):
             saved_report.file_rep.open('r')
             bytes_str = saved_report.file_rep.read()
             saved_str = bytes_str.decode()
-            #saved_report_favor_ans = json.loads(saved_str)
+            # saved_report_favor_ans = json.loads(saved_str)
             saved_report.file_rep.close()
-            #load dict report as d
+            # load dict report as d
             d = json.loads(saved_str)
             saved_report.file_rep.close()
             # use ordereddict to sort report by filed 'd' = time desc direction
@@ -1071,7 +1089,7 @@ def make_report(lessons, list_hist, rep_hist, wrong_ans_hist):
                     str_fav_ans = (f' {a} - {b} (={a - b}) занял {d} секунд')
                 if c == 4:
                     divsign = u'\u00F7'
-                    str_fav_ans = (f' {a} {divsign} {b} (={int (a / b)}) занял {d} секунд')
+                    str_fav_ans = (f' {a} {divsign} {b} (={int(a / b)}) занял {d} секунд')
 
                 diff = key.get('e')
                 if diff:
@@ -1091,7 +1109,7 @@ def make_report(lessons, list_hist, rep_hist, wrong_ans_hist):
             rep_hist_row.append(f' report - нет данных')
             rep_hist.append(rep_hist_row)
 
-        #wrong ans hist
+        # wrong ans hist
         try:
             wrong_ans = json.loads(i.wrong_ans, object_pairs_hook=OrderedDict)
 
@@ -1118,14 +1136,11 @@ def make_report(lessons, list_hist, rep_hist, wrong_ans_hist):
                 wrong_ans_hist.append(wrong_ans_row)  # one answer per one row
 
         except:
-            #no items all correct!
+            # no items all correct!
             wrong_ans_row = []
             wrong_ans_row.append(f'{i.id}')
             wrong_ans_row.append(f' неверных ответов не обнаружено ')
             wrong_ans_hist.append(wrong_ans_row)
-
-
-
 
 
 def finish(request, pk):
@@ -1149,7 +1164,7 @@ def finish(request, pk):
 
     f_time = int(diff_time / 60)
 
-    #неправилльные ответы
+    # неправилльные ответы
     try:
         wrong_ans = json.loads(lesson.wrong_ans, object_pairs_hook=OrderedDict)
     except:
@@ -1186,7 +1201,7 @@ def finish(request, pk):
     # make_report(lessons, list_hist, rep_hist, wrong_ans_hist)
 
     ans = {'txt0': txt0, 'txt00': txt00, 'txt1': txt1, 'list_txt': list_txt, 'list_hist': list_hist,
-           'rep_hist': rep_hist, 'wrong_ans_hist': wrong_ans_hist }
+           'rep_hist': rep_hist, 'wrong_ans_hist': wrong_ans_hist}
 
     content = {'title': title, 'ans': ans}
     return render(request, 'mainapp/finish.html', content)

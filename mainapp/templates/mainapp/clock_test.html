@@ -5,16 +5,26 @@
 {% block script %}
 <script>
      const seconds = 0;
-     const minutes = getRandomInt(60); //
+     const minutes = getRandomInt(60); // on clock
      const hours = randomInt(1,12); //
+     //difference for question
+     const diff_hours = {{diff | get_item:'hours'}};
+     const diff_minutes = {{diff | get_item:'minutes'}};
+     //correct reply with difference in question
+     const cor_minutes = minutes + diff_minutes;
+     const cor_hours = hours + diff_hours;
+
      var ans_amount = 0;
      var ans_correct = 0;
+     var glob_clockInterval1;
+
+
 
 window.onload = function() // дожидаемся загрузки страницы
 {
 
 
-     initializeClock(); // вызываем функцию запуск часов
+     initializeClock(0); // вызываем функцию запуск часов 0 - no change 1 - set clock to cor_minutes/hours
 
 
      //setClockTime(hours,minutes,seconds); // значение на цифеблат
@@ -44,8 +54,8 @@ window.onload = function() // дожидаемся загрузки страни
                         url: "/clockj/ajax/",
                         data: JSON.stringify({'time' : value,
                                              'pk1' : parseInt(lesson_id),
-                                             'cor_time': {'min':minutes,
-                                                            'hr':hours},
+                                             'cor_time': {'min': cor_minutes,
+                                                            'hr': cor_hours},
                                              'ans_time': {'min':ans_minutes,
                                                             'hr':ans_hours},
                                              'state' : {'ans_correct':ans_correct,
@@ -59,7 +69,7 @@ window.onload = function() // дожидаемся загрузки страни
                 else
                 {
                     console.log("is not number");
-                    buttons_toggle();
+                    //buttons_toggle();
                     alert("Ввели ошибочное значение!");
 
                 }
@@ -74,6 +84,9 @@ window.onload = function() // дожидаемся загрузки страни
                 $('#ans_check').html(data.result);
                 ans_correct = data.ans_correct;
                 ans_amount = data.ans_amount;
+                //set clock to corr time after answer
+                initializeClock(1);
+
 
      }
 
@@ -117,33 +130,52 @@ function buttons_toggle(set) {
 }
 
 //clock
-function initializeClock() {
+function initializeClock(param) {
 
-    const deg = 6;
-    const hr = document.querySelector("#hr");
-    const mn = document.querySelector("#mn");
-    const sc = document.querySelector("#sc");
 
-    setInterval(()=>{
-        let day = new Date();
-        let hh = get_hours() * 30;
-        let mm = get_minutes() * deg;
-        let ss = day.getSeconds() * deg;
-        let hr_deg = hh + (mm/12);
-        hr.style.transform = `rotateZ(${hr_deg}deg)`;
-        mn.style.transform = `rotateZ(${mm}deg)`;
-        sc.style.transform = `rotateZ(${ss}deg)`;
-    })
 
+    if (param == 1){
+        window.clearInterval(glob_clockInterval1);
+        setInterval(clockTime2, 500);
+    }
+
+    if (param == 0){
+        var clockInterval1 = setInterval(clockTime1, 500);
+        glob_clockInterval1 = clockInterval1;
+    }
 
 }
 
-function get_hours(){
-    return hours
+function clockTime1(){
+    let deg = 6;
+    let hr = document.querySelector("#hr");
+    let mn = document.querySelector("#mn");
+    let sc = document.querySelector("#sc");
+    let day = new Date();
+    let hh = hours * 30;
+    let mm = minutes * deg;
+    let ss = day.getSeconds() * deg;
+    let hr_deg = hh + (mm/12);
+    hr.style.transform = `rotateZ(${hr_deg}deg)`;
+    mn.style.transform = `rotateZ(${mm}deg)`;
+    sc.style.transform = `rotateZ(${ss}deg)`;
+
 }
 
-function get_minutes(){
-    return minutes
+function clockTime2(){
+    let deg = 6;
+    let hr = document.querySelector("#hr");
+    let mn = document.querySelector("#mn");
+    let sc = document.querySelector("#sc");
+    let day = new Date();
+    let hh = cor_hours * 30;//set cor_answer time
+    let mm = cor_minutes * deg;
+    let ss = day.getSeconds() * deg;
+    let hr_deg = hh + (mm/12);
+    hr.style.transform = `rotateZ(${hr_deg}deg)`;
+    mn.style.transform = `rotateZ(${mm}deg)`;
+    sc.style.transform = `rotateZ(${ss}deg)`;
+
 }
 
 
@@ -255,7 +287,7 @@ function btNextClick(){
             <p hidden id="lesson_id">{{ pk1 }}</p>
 
             <div id='ans_check' >
-                <button id='btCheck' class='btn btn-primary' style='margin: 10px' onclick="buttons_toggle(1)">Ответить</button>
+                <button id='btCheck' class='btn btn-primary' style='margin: 10px' onclick="">Ответить</button>
             </div>
 
             <div style='margin: 10px'></div>
