@@ -11,8 +11,30 @@
      const diff_hours = {{diff | get_item:'hours'}};
      const diff_minutes = {{diff | get_item:'minutes'}};
      //correct reply with difference in question
-     const cor_minutes = minutes + diff_minutes;
-     const cor_hours = hours + diff_hours;
+
+     var _cor_minutes = 0;
+     var _addhour = 0;
+
+     if ( (minutes + diff_minutes) > 60 )
+        {
+            _cor_minutes = minutes + diff_minutes - 60;
+            _addhour = 1;
+        }
+        else
+         {
+            _cor_minutes = minutes + diff_minutes;
+            _addhour = 0;
+         }
+
+     if ( (hours + diff_hours) > 12 )
+        {
+            _cor_hours = hours + diff_hours - 12 + _addhour;
+        } else {
+            _cor_hours = hours + diff_hours + _addhour;
+        }
+
+     const cor_minutes = _cor_minutes;
+     const cor_hours = _cor_hours;
 
      var ans_amount = 0;
      var ans_correct = 0;

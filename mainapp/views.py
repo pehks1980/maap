@@ -312,7 +312,7 @@ def clockj(request, ans_correct=None, ans_amount=None):
 
     txt2 = f'cколько времени на часах ?'
 
-    # shuffle for special quaestion with difference
+    # shuffle for special question with difference
     flag = False
     spec_quest_ratio = 30
     op = random.randint(1, 100)
@@ -325,8 +325,9 @@ def clockj(request, ans_correct=None, ans_amount=None):
             }
 
     if flag:
-        diff = {'hours': random.randint(1, 3),
-                'minutes': 0
+        mins = [0, 5, 10]
+        diff = {'hours': random.randint(1, 2),
+                'minutes': random.choice(mins)
                 }
         txt2 = f'cколько времени на часах будет через {diff["hours"]} час и {diff["minutes"]} мин??'
 
@@ -371,14 +372,15 @@ def clock_ajax(request):
         state = post_ans['state']
         # morph parse of russian hour minute
         dct_choice = [
-            {'val1': 0, 'val2': 2, 'msg': ''},
-            {'val1': 1, 'val2': 5, 'msg': 'А'},
-            {'val1': 4, 'val2': 13, 'msg': 'ОВ'},
+            {'val1': 0, 'val2': 1, 'msg': ''},
+            {'val1': 2, 'val2': 4, 'msg': 'А'},
+            {'val1': 5, 'val2': 12, 'msg': 'ОВ'},
         ]
-        rem_okonch_h = list(filter(lambda x: x['val1'] < post_ans['cor_time']['hr'] < x['val2'], dct_choice))
+        rem_okonch_h = list(filter(lambda x: x['val1'] <= post_ans['cor_time']['hr'] <= x['val2'], dct_choice))
 
         dct_choice1 = [
-            {'val1': 0, 'val2': 1, 'msg': 'А'},
+            {'val1': 0, 'val2': 0, 'msg': ''},
+            {'val1': 1, 'val2': 1, 'msg': 'А'},
             {'val1': 2, 'val2': 4, 'msg': 'Ы'},
             {'val1': 5, 'val2': 9, 'msg': ''},
         ]

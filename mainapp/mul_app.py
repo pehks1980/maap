@@ -110,6 +110,10 @@ def printMatrix(s, hl, a, b):
 def eval(mult, addi, subt, divn, nx, ny, ax, two_digit, sx, no_minus, no_dec_mul, hist, hist_depth):
 
     code = None
+    #param sets upper range for +,- questions operands
+    up_range = 80
+    #param sets minimum diff b/w operands to avoid  such 34+1 questions like
+    range_diff = 7
 
     while True:
         already_in_hist = False
@@ -138,11 +142,9 @@ def eval(mult, addi, subt, divn, nx, ny, ax, two_digit, sx, no_minus, no_dec_mul
                 a = random.randint(2, ny*nx)
                 b = random.choice(digs)
 
-            #choice of
-
         #+
         if code == 2:
-            if random.randint(0,3) == 3:
+            if random.randint(0, 3) == 3:
                 #25% prob rate 100-200  div 2
                 a = random.randint(10, 20) * 10
                 b = random.randint(10, ax-20)
@@ -152,13 +154,15 @@ def eval(mult, addi, subt, divn, nx, ny, ax, two_digit, sx, no_minus, no_dec_mul
                     b = random.randint(1, ax)
 
                     if two_digit:
-                        if a > 50 and b < 50:
-                            break
-                        else:
-                            if b > 50 and a < 50:
+                        if a > up_range and b < up_range:
+                            if abs(a-b) > range_diff:
                                 break
+                        else:
+                            if b > up_range and a < up_range:
+                                if abs(a-b) > range_diff:
+                                    break
+                        continue
 
-                            continue
         #-
         if code == 3:
             while True:
@@ -166,15 +170,15 @@ def eval(mult, addi, subt, divn, nx, ny, ax, two_digit, sx, no_minus, no_dec_mul
                 b = random.randint(1, sx)
 
                 if two_digit:
-                    if a > 10 or b > 10:
-                        break
+                    if a > up_range and b < up_range:
+                        if abs(a - b) > range_diff:
+                            break
                     else:
-                        continue
+                        if b > up_range and a < up_range:
+                            if abs(a - b) > range_diff:
+                                break
+                    continue
 
-                if a != b:
-                    break # exit
-
-            #        print(a,b)
 
             if no_minus:
                 if a < b:
@@ -186,6 +190,7 @@ def eval(mult, addi, subt, divn, nx, ny, ax, two_digit, sx, no_minus, no_dec_mul
                 if (a == 10) or (b == 10):
                     already_in_hist = True
                     continue
+
         #div on multiple table:
         if code == 4:
             if random.randint(0,3) == 3:
@@ -260,7 +265,7 @@ def check_ans(ans, a1, b1, c1):
         if code == 3:
             return (f" ответ - правильный {a} - {b} = {ans}", 1)
         if code == 4:
-            divsign = u'\u00F7';
+            divsign = u'\u00F7'
             return (f" ответ - правильный {a} {divsign} {b} = {ans}", 1)
 
 
@@ -322,7 +327,7 @@ def finish_lesson(lesson, f_time, favor_ans, wrong_ans, favor_thresold_time):
             if c == 3:
                 reply.append(f' {a} - {b} = {ans} (={a - b}) занял {d} сек')
             if c == 4:
-                divsign = u'\u00F7';
+                divsign = u'\u00F7'
                 reply.append(f' {a} {divsign} {b} = {ans} (={int(a / b)}) занял {d} сек')
 
     return reply
