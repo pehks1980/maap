@@ -1,8 +1,6 @@
-authapp/migrations/
-authapp/__pycache__/
-mainapp/__pycache__/
-__pycache__/
-db.sqlite3
 *.log
+*.pyc
+db.sqlite3
+__pycache__/
 mainapp/migrations/
-maap/__pycache__/
+authapp/migrations/

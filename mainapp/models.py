@@ -13,13 +13,15 @@ from datetime import datetime
 
 import random
 
+
 class Report(models.Model):
     bytes = models.TextField()
     filename = models.CharField(max_length=255)
     mimetype = models.CharField(max_length=50)
 
+
 class MaapReport(models.Model):
-   # report_pk = models.AutoField(primary_key=True)
+    # report_pk = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100)
     file_rep = models.FileField(
         upload_to='mainapp.Report/bytes/filename/mimetype',
@@ -54,16 +56,16 @@ class MaapLesson(models.Model):
     b1 = models.PositiveIntegerField(verbose_name='b1', default=0)
     c1 = models.PositiveIntegerField(verbose_name='c1', default=0)
 
-    #last ans time in seconds
+    # last ans time in seconds
     ans_sum = models.PositiveIntegerField(verbose_name='last_ans_time', default=0)
-    #avg ans time for the lesson
+    # avg ans time for the lesson
     avg_ans_time = models.PositiveIntegerField(verbose_name='avg_ans_time', default=0)
-    #settings for questions
+    # settings for questions
     mult = models.PositiveIntegerField(verbose_name='mult', default=1)
     addi = models.PositiveIntegerField(verbose_name='addi', default=1)
     subt = models.PositiveIntegerField(verbose_name='subt', default=1)
     divn = models.PositiveIntegerField(verbose_name='divn', default=1)
-    #counter operations for the lesson
+    # counter operations for the lesson
     mult_cnt = models.PositiveIntegerField(verbose_name='mult_cnt', default=0)
     addi_cnt = models.PositiveIntegerField(verbose_name='addi_cnt', default=0)
     subt_cnt = models.PositiveIntegerField(verbose_name='subt_cnt', default=0)
@@ -71,10 +73,3 @@ class MaapLesson(models.Model):
 
     def __str__(self):
         return self.user_id
-
-
-
-
-
-
-

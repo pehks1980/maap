@@ -33,9 +33,6 @@ class AppModForm(forms.Form):
             field.widget.attrs['class'] = 'form-control2'
             field.help_text = ''
 
-
-
-
 class Ans_Form(forms.Form):
     answer = forms.CharField(label='Ваш ответ:')
 

@@ -1,46 +1,32 @@
 # Create your views here.
+import json
 import random
-from datetime import datetime
-import pytz
 from collections import OrderedDict
+from datetime import datetime
 
 from django.contrib.auth.decorators import login_required
-# from mainapp.models import ProductCategory, Product
-# from basketapp.models import Basket
 from django.core.files.base import ContentFile
-from django.http import HttpResponseRedirect, JsonResponse
+from django.http import HttpResponseRedirect
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render
-
-from django.core.files.storage import default_storage
+from django.template.loader import render_to_string
 from django.urls import reverse
+from django.views.decorators.csrf import csrf_exempt
+from maap.settings import NX, NY, AX, SX, TWO_DIGIT, NO_MINUS, \
+    NO_DEC_MUL, HIST_DEPTH, FAVOR_THRESOLD_TIME
 
+from authapp.models import MaapUserProfile
 from cron import cron_notify
-from maap.settings import NX, NY, AX, SX, TWO_DIGIT, NO_MINUS, NO_DEC_MUL, HIST_DEPTH, FAVOR_THRESOLD_TIME
-
 from .forms import Ans_Form
 from .forms import AppModForm
 from .models import MaapLesson, MaapReport
-
-from authapp.models import MaapUserProfile
-
-from django.template.loader import render_to_string
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-
-# create copy
-
-from .mul_app import SetAppMode, eval, check_ans, GetAppModeDesc, finish_lesson, printMatrix
-import os, json
-
-
-# from .mainapp import mul_app
+from .mul_app import set_app_mode, eval_quest, check_ans, \
+    get_app_mode_desc, finish_lesson
 
 @login_required
 def main(request):
     title = 'главная maap v 1.0'
-
-    # a = MaapReport()
 
     # last change
     if request.method == 'POST':
@@ -60,7 +46,7 @@ def main(request):
             lesson = MaapLesson(user=request.user)
             # reset app
 
-            (lesson.mult, lesson.addi, lesson.subt, lesson.divn) = SetAppMode(ans)
+            (lesson.mult, lesson.addi, lesson.subt, lesson.divn) = set_app_mode(ans)
 
             lesson.mode = ' '.join(ans)
 
@@ -139,7 +125,7 @@ def uncheckEmail(request, email, id):
     # call cron method to check & debug
     try:
         user_prof = MaapUserProfile.objects.get(id=int(id))  # only new accounts
-        if user_prof.enabled == True:
+        if user_prof.enabled:
             user_prof.enabled = False
             user_prof.save()
             result = 'successful'
@@ -176,8 +162,10 @@ def mathem(request, pk):
 
         hist = json.loads(lesson.hist)  # load hist from db
 
-        a, b, code, hist1 = eval(lesson.mult, lesson.addi, lesson.subt, lesson.divn, NX, NY, AX,
-                                 TWO_DIGIT, SX, NO_MINUS, NO_DEC_MUL, hist, HIST_DEPTH)
+        a, b, code, hist1 = eval_quest(lesson.mult, lesson.addi, lesson.subt,
+                                          lesson.divn, NX, NY, AX,
+                                          TWO_DIGIT, SX, NO_MINUS,
+                                          NO_DEC_MUL, hist, HIST_DEPTH)
 
         lesson.a1 = a  # update db
         lesson.b1 = b
@@ -212,7 +200,7 @@ def mathem(request, pk):
         if code == 3:
             txt2 = f'cколько будет {a} - {b} =?'
         if code == 4:
-            divsign = u'\u00F7';
+            divsign = u'\u00F7'
             txt2 = f'cколько будет {a} {divsign} {b} =?'
 
         list_txt.append(txt2)
@@ -445,8 +433,8 @@ def mathemj(request, pk):
 
         hist = json.loads(lesson.hist)  # load hist from db
 
-        a, b, code, hist1 = eval(lesson.mult, lesson.addi, lesson.subt, lesson.divn, NX, NY, AX,
-                                 TWO_DIGIT, SX, NO_MINUS, NO_DEC_MUL, hist, HIST_DEPTH)
+        a, b, code, hist1 = eval_quest(lesson.mult, lesson.addi, lesson.subt, lesson.divn, NX, NY, AX,
+                                          TWO_DIGIT, SX, NO_MINUS, NO_DEC_MUL, hist, HIST_DEPTH)
 
         lesson.a1 = a  # update db
         lesson.b1 = b
@@ -482,7 +470,7 @@ def mathemj(request, pk):
             txt2 = f'cколько будет {a} - {b} =?'
             lesson.subt_cnt += 1
         if code == 4:
-            divsign = u'\u00F7';
+            divsign = u'\u00F7'
             txt2 = f'cколько будет {a} {divsign} {b} =?'
             lesson.divn_cnt += 1
 
@@ -591,7 +579,7 @@ def mathem_ajax(request):
         # debug diff +=15
         if diff > FAVOR_THRESOLD_TIME:
             already_in = False
-            for id, key in favor_ans.items():
+            for _, key in favor_ans.items():
                 a = key['a']
                 b = key['b']
                 if lesson.a1 == a and lesson.b1 == b:
@@ -698,7 +686,7 @@ def mathemk(request, pk1, pk2, diff):
         # debug diff +=15
         if diff > FAVOR_THRESOLD_TIME:
             already_in = False
-            for id, key in favor_ans.items():
+            for _, key in favor_ans.items():
                 a = key['a']
                 b = key['b']
                 if lesson.a1 == a and lesson.b1 == b:
@@ -1027,7 +1015,7 @@ def make_report(lessons, list_hist, rep_hist, wrong_ans_hist):
         # tab mode + description amount of each ops questions
         # a = str(
         #    i.mode)  # when only one char from db it assumes digital as int so we need to explicitly change it to str again!
-        list_hist_row.append(GetAppModeDesc(i))
+        list_hist_row.append(get_app_mode_desc(i))
 
         try:
             end_time = json.loads(i.f_time)
@@ -1131,7 +1119,7 @@ def make_report(lessons, list_hist, rep_hist, wrong_ans_hist):
                 if c == 3:
                     str_fav_ans = (f' {a} - {b} = {ans} (={a - b}) занял {d} секунд')
                 if c == 4:
-                    divsign = u'\u00F7';
+                    divsign = u'\u00F7'
                     str_fav_ans = (f' {a} {divsign} {b} = {ans} (={int(a / b)}) занял {d} секунд')
 
                 wrong_ans_row.append(str_fav_ans)
