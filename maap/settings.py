@@ -25,7 +25,7 @@ SECRET_KEY = 'e2nsv_7ja12&g=x5amt(ojd4b5o8&oi8g#3kpfk#xnnav490)4'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*', '192.168.1.100']
+ALLOWED_HOSTS = ['*', '192.168.1.200']
 
 # Application definition
 
