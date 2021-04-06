@@ -22,7 +22,7 @@ from .forms import Ans_Form
 from .forms import AppModForm
 from .models import MaapLesson, MaapReport
 from .mul_app import set_app_mode, eval_quest, check_ans, \
-    get_app_mode_desc, finish_lesson
+    get_app_mode_desc, finish_lesson, printMatrix
 
 @login_required
 def main(request):
@@ -414,28 +414,31 @@ def clock_ajax(request):
                              'ans_amount': state['ans_amount']
                              })
 
-
+@csrf_exempt
 def mathemj(request, pk):
     title = 'Математика '
-
+    print("matemj clicked.. db req..")
     txt0 = None
     txt00 = None
 
     list_txt = []
 
     lesson = MaapLesson.objects.get(user=request.user, pk=pk)
-
+    print("matemj db request finished")
     code = 0
     txt2 = ''
     # обработчик обрабватывает все реквесты страницы и GET и POST
     if request.method == 'GET':
+        print("question..next")
         form = Ans_Form()
 
         hist = json.loads(lesson.hist)  # load hist from db
 
-        a, b, code, hist1 = eval_quest(lesson.mult, lesson.addi, lesson.subt, lesson.divn, NX, NY, AX,
-                                          TWO_DIGIT, SX, NO_MINUS, NO_DEC_MUL, hist, HIST_DEPTH)
-
+        print(f"eval quest start SX={SX}")
+        a, b, code, hist1 = eval_quest(lesson.mult, lesson.addi, lesson.subt, lesson.divn,
+                                       NX, NY, AX, TWO_DIGIT,
+                                       NO_MINUS, SX, NO_DEC_MUL, hist, HIST_DEPTH)
+        print("eval quest finish")
         lesson.a1 = a  # update db
         lesson.b1 = b
         lesson.c1 = code
@@ -601,8 +604,13 @@ def mathem_ajax(request):
                 # store it in db
                 lesson.favor_ans = json.dumps(favor_ans)
                 # favor_ans.append(elem)
-
-        txt00, check_res = check_ans(int(post_ans['pk2']), lesson.a1, lesson.b1, lesson.c1)
+        # если приходит '' как pk2
+        pk2_chr = post_ans['pk2']
+        if pk2_chr == '':
+            ans = 0
+        else:
+            ans = int(pk2_chr)
+        txt00, check_res = check_ans(ans, lesson.a1, lesson.b1, lesson.c1)
 
         lesson.ans_amount = lesson.ans_amount + 1
 
@@ -617,8 +625,13 @@ def mathem_ajax(request):
             except:
                 # make first item
                 wrong_ans = []
+                pk2_chr = post_ans['pk2']
+                if pk2_chr == '':
+                    ans = 0
+                else:
+                    ans = int(pk2_chr)
             wrong_ans.append(
-                OrderedDict(a=lesson.a1, b=lesson.b1, c=lesson.c1, diff=int(diff), ans=int(post_ans['pk2'])))
+                OrderedDict(a=lesson.a1, b=lesson.b1, c=lesson.c1, diff=int(diff), ans=ans))
             lesson.wrong_ans = json.dumps(wrong_ans)
 
         lesson.save()

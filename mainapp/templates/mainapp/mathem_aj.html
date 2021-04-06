@@ -32,7 +32,7 @@ window.onload = function() // дожидаемся загрузки страни
                 var answer = document.getElementById("id_answer").value;
                 //check if answer is valid
 
-                if (isNaN(answer) == false){
+                if (isNaN(answer) == false && answer != ""){
                     //push button
                     $.ajax({
                         type: "POST",
@@ -49,9 +49,9 @@ window.onload = function() // дожидаемся загрузки страни
                 }
                 else
                 {
-                    console.log("is not number",answer);
+                    console.log("number not int",answer);
                     buttons_toggle();
-                    alert("Ввели ошибочное значение! > "+answer);
+                    alert("Ввели ошибочное значение! введите цифры > "+answer);
                     start_timer();
 
                 }

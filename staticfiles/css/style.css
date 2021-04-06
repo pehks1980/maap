@@ -262,7 +262,7 @@ tr:nth-child(even) {
 	display: block;
 	width: 23px;
 	height: 23px;	
-	background-image: url(img/search.png);
+	background-image: url(/staticfiles/img/search.png);
 	position: absolute;
 	top: 63px;
 	left: 1176px;
@@ -271,7 +271,7 @@ tr:nth-child(even) {
 	display: block;
 	width: 23px;
 	height: 23px;	
-	background-image: url(img/basket.png);
+	background-image: url(/staticfiles/img/basket.png);
 	position: absolute;
 	top: 63px;
 	left: 1210px;
@@ -907,14 +907,14 @@ td:first-child {
 	margin-top: 30px;
 }
 .social1{
-	background: url(img/social-links.png);
+	background: url(/staticfiles/img/social-links.png);
 	height: 28px;
 	width: 28px;
 	float: left;
 
 }
 .social2{
-	background: url(img/social-links.png);
+	background: url(/staticfiles/img/social-links.png);
 	background-position: -34px 0px;
 	height: 28px;
 	width: 28px;
@@ -922,7 +922,7 @@ td:first-child {
 	margin-left: 3px;
 }
 .social3{
-	background: url(img/social-links.png);
+	background: url(/staticfiles/img/social-links.png);
 	background-position: -67px 0px;
 	height: 28px;
 	width: 28px;
@@ -930,7 +930,7 @@ td:first-child {
 	margin-left: 3px;
 }
 .social4{
-	background: url(img/social-links.png);
+	background: url(/staticfiles/img/social-links.png);
 	background-position: -101px 0px;
 	height: 28px;
 	width: 28px;

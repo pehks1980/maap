@@ -92,7 +92,7 @@ def get_app_mode_desc(lesson):
     return f'{a}{b}{c}{d}'
 
 
-def print_matrix(s, hl, a, b):
+def printMatrix(s, hl, a, b):
     """
     Do heading
     :param s:
@@ -126,9 +126,9 @@ def print_matrix(s, hl, a, b):
     return result
 
 
-
-def eval_quest(mult, addi, subt, divn, nx, ny, ax, two_digit, no_minus,
-               sx, no_dec_mul, hist, hist_depth):
+def eval_quest(mult, addi, subt, divn,
+               nx, ny, ax, two_digit,
+               no_minus, sx, no_dec_mul, hist, hist_depth):
     """
     choice the next question from random, take into account previous answers hist
     :param mult:
@@ -166,6 +166,7 @@ def eval_quest(mult, addi, subt, divn, nx, ny, ax, two_digit, no_minus,
                     break
                 if (divn == 1) and (code == 4):
                     break
+
         # mul a,b 2..10 2..12 mult table 10X12
         if code == 1:
             # mul op
@@ -202,31 +203,30 @@ def eval_quest(mult, addi, subt, divn, nx, ny, ax, two_digit, no_minus,
 
         # -
         if code == 3:
+            print(f'вычетание {sx}')
+            two_digit = True
             while True:
                 a = random.randint(1, sx)
                 b = random.randint(1, sx)
 
                 if two_digit:
-                    if a > up_range > b:
-                        if abs(a - b) > range_diff:
-                            break
+                    if a > up_range and b < up_range and abs(a - b) > range_diff:
+                        break
                     else:
-                        if b > up_range > a:
-                            if abs(a - b) > range_diff:
-                                break
-                    continue
+                        if b > up_range and a < up_range and abs(a - b) > range_diff:
+                            break
 
             if no_minus:
                 if a < b:
-                    # tmp = a  # swap it so there is no minus
-                    # a = b
-                    # b = tmp
-                    a, b = b, a
+                    tmp = a  # swap it so there is no minus
+                    a = b
+                    b = tmp
+                    # a, b = b, a
 
-            if no_dec_mul:  # no 10s in multiplication
-                if (a == 10) or (b == 10):
-                    already_in_hist = True
-                    continue
+            # if no_dec_mul:  # no 10s in multiplication
+            #     if (a == 10) or (b == 10):
+            #         already_in_hist = True
+            #         continue
 
         # div on multiple table:
         if code == 4:

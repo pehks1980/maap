@@ -49,12 +49,9 @@ class Ans_Form(forms.Form):
 
 
     def clean_answer(self):
-        data=""
+        #data=""
         data = self.cleaned_data['answer']
-        if data.isdigit() == True:
-            if int(data) < 18:
-                pass#
-        else:
+        if not data.isdigit():
             raise forms.ValidationError("только цифры!")
 
         return data

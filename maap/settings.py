@@ -87,11 +87,11 @@ DATABASES = {
     #     'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     # }
     'default': {
-        'NAME': 'maap_bk',
+        'NAME': 'maap',
         'ENGINE': 'django.db.backends.postgresql',
         'USER': 'maap',
         'PASSWORD': 'maap',
-        'HOST': '192.168.1.200'
+        'HOST': '192.168.1.204'
     }
 
 
