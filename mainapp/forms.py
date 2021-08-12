@@ -1,20 +1,15 @@
 from django import forms
 
-
+# Начальная форма выбора упражнений
 class AppModForm(forms.Form):
     APP_MODE_CHOICES = (
         (1, 'Умножение'),
         (2, 'Сложение'),
         (3, 'Вычитание'),
-        (4, 'Деление')
+        (4, 'Деление'),
+        (5, 'Примеры столбиком'),
+        (6, 'Пример с дробями'),
     )
-    # CHOICES = (('a', 'a'),
-    #            ('b', 'b'),
-    #            ('c', 'c'),
-    #            ('d', 'd'),)
-    # picked = forms.MultipleChoiceField(choices=CHOICES, widget=forms.CheckboxSelectMultiple())
-
-    # app_mode=[]
 
     app_mode = forms.MultipleChoiceField(
          label='Выберите режим упражнения:',
@@ -22,10 +17,6 @@ class AppModForm(forms.Form):
          widget=forms.CheckboxSelectMultiple(attrs={'checked': True}),
          choices=APP_MODE_CHOICES,
     )
-    #
-    # class UserForm(forms.Form):
-    #     name = forms.CharField(label="Имя")
-    #     comment = forms.CharField(label="Комментарий", widget=forms.Textarea)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -33,6 +24,7 @@ class AppModForm(forms.Form):
             field.widget.attrs['class'] = 'form-control2'
             field.help_text = ''
 
+# Форма-вопрос-ответ для примеров 1-4 типа
 class Ans_Form(forms.Form):
     answer = forms.CharField(label='Ваш ответ:')
 
@@ -49,7 +41,6 @@ class Ans_Form(forms.Form):
 
 
     def clean_answer(self):
-        #data=""
         data = self.cleaned_data['answer']
         if not data.isdigit():
             raise forms.ValidationError("только цифры!")

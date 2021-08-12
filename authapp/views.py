@@ -18,9 +18,6 @@ from django.urls import reverse
 
 def login(request):
     title = 'вход'
-
-
-
     #get next (when buy unauthenticated
     next = request.GET['next'] if 'next' in request.GET.keys() else ''
 

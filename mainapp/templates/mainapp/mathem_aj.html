@@ -6,6 +6,30 @@
 
 window.onload = function() // дожидаемся загрузки страницы
 {
+    console.log('Client-side code running');
+    const $inp = $(".ap-otp-input");
+
+    $inp.on({
+
+        input(ev) { // Handle typing
+        const i = $inp.index(this);
+
+        if (this.value) $inp.eq(i - 1).focus();
+        },
+
+        keydown(ev) { // Handle Deleting
+        const i = $inp.index(this);
+        const maxi = $inp.length - 1;
+
+        if (!this.value && ev.key === "Backspace" && i)
+            $inp.eq(i - 1).focus();
+
+        if (!this.value && ev.key === "Backspace" && i == 0)
+            $inp.eq(maxi).focus();
+
+        }
+
+    });
 
 
    //  initializeTimer(); // вызываем функцию инициализации таймера
@@ -24,48 +48,62 @@ window.onload = function() // дожидаемся загрузки страни
      $('#btCheck').on('click',function(){
                 //json for ans as post here
                 stop_timer();
-
                 var value = tstamp1();
-
                 var lesson_id = $('#lesson_id').text();
 
-                var answer = document.getElementById("id_answer").value;
-                //check if answer is valid
+                var answer = ""
 
-                if (isNaN(answer) == false && answer != ""){
-                    //push button
-                    $.ajax({
-                        type: "POST",
-                        cache: false,
-                        url: "/mathemj/ajax/",
-                        data: JSON.stringify({'time' : value,
-                                             'pk1' : parseInt(lesson_id),
-                                             'pk2' : answer,
-                                             'diff': 0,
-                                            }),
-                        dataType: "json",
-                        success: returnSuccess
-                    })
-                }
-                else
-                {
-                    console.log("number not int",answer);
-                    buttons_toggle();
-                    alert("Ввели ошибочное значение! введите цифры > "+answer);
-                    start_timer();
+                //check if stolbik answer
+                let $inp = $(".ap-otp-input");
+                var stolbik = $inp.length == 0 ? false : true;
 
-                }
+                if ( stolbik ) {
+                    const $inp = $(".ap-otp-input");
+                    const maxi = $inp.length;
+                    let result = '';
+                    // get value of each last input in slice
+                    $.each($inp.slice(maxi-4,maxi), function( index, item ) {
+                      result += item.value;
+                        //console.log(index, item)
+                    });
+
+                    answer = result;
+                    //alert(result);
+
+                } else {
+                    answer = document.getElementById("id_answer").value;
+                    //check if answer is valid
+                    if (isNaN(answer) == true || answer == ""){
+                        console.log("number not int",answer);
+                        buttons_toggle();
+                        alert("Ввели ошибочное значение! введите цифры > "+answer);
+                        start_timer();
+                        return;
+                    }
+                };
+
+                // send answer to server
+                $.ajax({
+                    type: "POST",
+                    cache: false,
+                    url: "/mathemj/ajax/",
+                    data: JSON.stringify({'time' : value,
+                                         'pk1' : parseInt(lesson_id),
+                                         'pk2' : answer,
+                                         'diff': 0,
+                                        }),
+                    dataType: "json",
+                    success: returnSuccess
+                })
 
 
+     });
 
-            })
      //return html response from ajax viewer controller
      function returnSuccess(data) {
                 console.log("Hello world!!");
                 
                 $('#ans_check').html(data.result);
-
-
      }
 
      //tick timer
@@ -225,7 +263,19 @@ function tstamp2() {
                     <td>{{qst.txt1}}</td>
                 </tr>
                 <tr>
+                    {% if qst.stolb1 %}
+
+                     <td>{{qst.stolb1|safe}}</td>
+
+                    {% elif qst.stolb2 %}
+
+                    <td>{{qst.stolb2|safe}}</td>
+
+                    {% else %}
+
                     <td style="font-size : 28px; color: orangered;">{{qst.txt2}}</td>
+                    {% endif %}
+
                 </tr>
             </table>
          </p>

@@ -40,6 +40,8 @@ def set_app_mode(list_mode):
     addi = 0
     subt = 0
     divn = 0
+    stolbik = 0
+    drob = 0
 
     for i in list_mode:
         if int(i) == 1:
@@ -50,8 +52,12 @@ def set_app_mode(list_mode):
             subt = 1
         if int(i) == 4:
             divn = 1
+        if int(i) == 5:
+            stolbik = 1
+        if int(i) == 6:
+            drob = 1
 
-    return (mult, addi, subt, divn)
+    return mult, addi, subt, divn, stolbik, drob
 
 
 def get_app_mode_desc(lesson):
@@ -126,15 +132,9 @@ def printMatrix(s, hl, a, b):
     return result
 
 
-def eval_quest(mult, addi, subt, divn,
-               nx, ny, ax, two_digit,
-               no_minus, sx, no_dec_mul, hist, hist_depth):
+def eval_quest(nx, ny, ax, two_digit,no_minus, sx, no_dec_mul, hist, hist_depth, app_mode):
     """
     choice the next question from random, take into account previous answers hist
-    :param mult:
-    :param addi:
-    :param subt:
-    :param divn:
     :param nx:
     :param ny:
     :param ax:
@@ -152,20 +152,28 @@ def eval_quest(mult, addi, subt, divn,
     # param sets minimum diff b/w operands to avoid  such 34+1 questions like
     range_diff = 7
 
+    stolbik = False
+
     while True:
         already_in_hist = False
         # choice type of question *-+/ if code is not chosen already
         if code is None:
             while True:
-                code = random.randint(1, 4)
-                if (mult == 1) and (code == 1):
+                stolbik = False
+                code = random.randint(1, 6)
+                if (app_mode['mult'] == 1) and (code == 1):
                     break
-                if (addi == 1) and (code == 2):
+                if (app_mode['addi'] == 1) and (code == 2):
                     break
-                if (subt == 1) and (code == 3):
+                if (app_mode['subt'] == 1) and (code == 3):
                     break
-                if (divn == 1) and (code == 4):
+                if (app_mode['divn'] == 1) and (code == 4):
                     break
+                if (app_mode['stolbik'] == 1) and (code == 5):
+                    break
+                if (app_mode['drob'] == 1) and (code == 6):
+                    pass #break
+
 
         # mul a,b 2..10 2..12 mult table 10X12
         if code == 1:
@@ -242,6 +250,31 @@ def eval_quest(mult, addi, subt, divn,
                 a = a1 * b1
                 b = random.choice(ops)
 
+        # v stolbik
+        if code == 5:
+            stolbik = True
+            # chose 0 - + 1 - - 2 *
+            oper = random.randint(0, 2)
+            # -
+            if oper == 0:
+                a = random.randint(99, 999)
+                b = random.randint(19, 99)
+                code = 3
+            # +
+            if oper == 1:
+                a = random.randint(99, 9999)
+                b = random.randint(99, 9999)
+                if a + b > 9999:
+                    b = random.randint(99, 4999)
+                code = 2
+            # *
+            if oper == 2:
+                a = random.randint(10, 99)
+                b = random.randint(10, 99)
+                code = 1
+
+
+        # check if we go these already
         for _, key in hist.items():
             ha = key['a']
             hb = key['b']
@@ -269,7 +302,8 @@ def eval_quest(mult, addi, subt, divn,
         del hist[f'{idx - hist_depth}']
     #     hist.popleft()
 
-    return a, b, code, hist
+    # stolbik - if operation is stolbik (because code is replaced with +-*)
+    return a, b, code, stolbik, hist
 
 
 def check_ans(ans, a1, b1, c1):
