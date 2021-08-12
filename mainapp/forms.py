@@ -1,5 +1,6 @@
 from django import forms
 
+
 # Начальная форма выбора упражнений
 class AppModForm(forms.Form):
     APP_MODE_CHOICES = (
@@ -12,10 +13,10 @@ class AppModForm(forms.Form):
     )
 
     app_mode = forms.MultipleChoiceField(
-         label='Выберите режим упражнения:',
-         required=True,
-         widget=forms.CheckboxSelectMultiple(attrs={'checked': True}),
-         choices=APP_MODE_CHOICES,
+        label='Выберите режим упражнения:',
+        required=True,
+        widget=forms.CheckboxSelectMultiple(attrs={'checked': True}),
+        choices=APP_MODE_CHOICES,
     )
 
     def __init__(self, *args, **kwargs):
@@ -23,6 +24,7 @@ class AppModForm(forms.Form):
         for field_name, field in self.fields.items():
             field.widget.attrs['class'] = 'form-control2'
             field.help_text = ''
+
 
 # Форма-вопрос-ответ для примеров 1-4 типа
 class Ans_Form(forms.Form):
@@ -32,13 +34,12 @@ class Ans_Form(forms.Form):
         super().__init__(*args, **kwargs)
         for field_name, field in self.fields.items():
             field.widget.attrs['class'] = 'form-control2'
-            qt="\'"
+            qt = "\'"
             field.widget.attrs['onfocus'] = f"this.value={qt}{qt}"
             field.widget.attrs['autocomplete'] = "off"
             field.widget.attrs['value'] = f"сюда"
             field.widget.attrs['autofocus'] = "autofocus"
             field.help_text = ''
-
 
     def clean_answer(self):
         data = self.cleaned_data['answer']
@@ -46,6 +47,3 @@ class Ans_Form(forms.Form):
             raise forms.ValidationError("только цифры!")
 
         return data
-
-
-
