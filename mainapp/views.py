@@ -17,12 +17,13 @@ from maap.settings import NX, NY, AX, SX, TWO_DIGIT, NO_MINUS, \
     NO_DEC_MUL, HIST_DEPTH, FAVOR_THRESOLD_TIME
 
 from authapp.models import MaapUserProfile
-from cron import cron_notify
+from .cron import cron_notify
 from .forms import Ans_Form
 from .forms import AppModForm
 from .models import MaapLesson, MaapReport
 from .mul_app import set_app_mode, eval_quest, check_ans, \
     get_app_mode_desc, finish_lesson, printMatrix
+
 
 @login_required
 def main(request):
@@ -45,15 +46,11 @@ def main(request):
             # make up lesson log
             lesson = MaapLesson(user=request.user)
             # reset app
-
-            (lesson.mult, lesson.addi, lesson.subt, lesson.divn) = set_app_mode(ans)
+            (lesson.mult, lesson.addi, lesson.subt, lesson.divn, lesson.stolbik, lesson.drob) = set_app_mode(ans)
 
             lesson.mode = ' '.join(ans)
-
             # print(lesson.pk)
-
             # set mode for app
-
             # get time from js browser of user
             val = request.POST.get('tstamp')
             val_li = list(val.split("/"))
@@ -162,10 +159,18 @@ def mathem(request, pk):
 
         hist = json.loads(lesson.hist)  # load hist from db
 
+        app_mode = {
+            'mult': lesson.mult,
+            'addi': lesson.addi,
+            'subt': lesson.subt,
+            'stolbik': lesson.stolbik,
+            'drob': lesson.drob,
+        }
+
         a, b, code, hist1 = eval_quest(lesson.mult, lesson.addi, lesson.subt,
-                                          lesson.divn, NX, NY, AX,
-                                          TWO_DIGIT, SX, NO_MINUS,
-                                          NO_DEC_MUL, hist, HIST_DEPTH)
+                                       lesson.divn, NX, NY, AX,
+                                       TWO_DIGIT, SX, NO_MINUS,
+                                       NO_DEC_MUL, hist, HIST_DEPTH, app_mode)
 
         lesson.a1 = a  # update db
         lesson.b1 = b
@@ -414,6 +419,7 @@ def clock_ajax(request):
                              'ans_amount': state['ans_amount']
                              })
 
+
 @csrf_exempt
 def mathemj(request, pk):
     title = 'Математика '
@@ -429,15 +435,21 @@ def mathemj(request, pk):
     txt2 = ''
     # обработчик обрабватывает все реквесты страницы и GET и POST
     if request.method == 'GET':
-        print("question..next")
+        print("question.next")
         form = Ans_Form()
-
         hist = json.loads(lesson.hist)  # load hist from db
 
-        print(f"eval quest start SX={SX}")
-        a, b, code, hist1 = eval_quest(lesson.mult, lesson.addi, lesson.subt, lesson.divn,
-                                       NX, NY, AX, TWO_DIGIT,
-                                       NO_MINUS, SX, NO_DEC_MUL, hist, HIST_DEPTH)
+        app_mode = {
+            'mult': lesson.mult,
+            'addi': lesson.addi,
+            'subt': lesson.subt,
+            'divn': lesson.divn,
+            'stolbik': lesson.stolbik,
+            'drob': lesson.drob,
+        }
+
+        a, b, code, stolbik, hist1 = eval_quest(NX, NY, AX, TWO_DIGIT,
+                                       NO_MINUS, SX, NO_DEC_MUL, hist, HIST_DEPTH, app_mode)
         print("eval quest finish")
         lesson.a1 = a  # update db
         lesson.b1 = b
@@ -447,7 +459,6 @@ def mathemj(request, pk):
         t = datetime.now()
 
         # copy data to db in json format
-
         tim = {'min': t.minute,
                'sec': t.second}
 
@@ -462,16 +473,20 @@ def mathemj(request, pk):
         txt1 = f"вопрос {lesson.ans_amount} правильных: {lesson.ans_correct}"
 
         list_txt.append(txt1)
+        oper = ''
         # code 1 * 2 + 3 - 4 /
         if code == 1:
             txt2 = f'cколько будет {a} X {b} =?'
             lesson.mult_cnt += 1
+            oper = 'X'
         if code == 2:
             txt2 = f'cколько будет {a} + {b} =?'
             lesson.addi_cnt += 1
+            oper = '+'
         if code == 3:
             txt2 = f'cколько будет {a} - {b} =?'
             lesson.subt_cnt += 1
+            oper = '-'
         if code == 4:
             divsign = u'\u00F7'
             txt2 = f'cколько будет {a} {divsign} {b} =?'
@@ -483,7 +498,67 @@ def mathemj(request, pk):
 
         txt3 = ''  # f'a1={a}, b1={b}, c1={code}'
 
-        qst = {'txt0': txt0, 'txt00': txt00, 'txt1': txt1, 'txt2': txt2, 'txt3': txt3, 'list_txt': list_txt}
+        # maket stolbika for +/-
+
+        stolb1 = stolb2 = ''
+
+        if stolbik:
+            if oper == '+' or oper == '-':
+                stolb1 = f'''<div class="primer">
+                
+                <p class="sup1">{oper}
+                    <div class="frac">
+                        <span class="top1">{a}</span>
+                        <span class="middle1">{b}</span>
+                     
+                            <div class="ap-otp-inputs" data-length="4">
+                                <input class="ap-otp-input" type="tel" maxlength="1" data-index="0">
+                                <input class="ap-otp-input" type="tel" maxlength="1" data-index="1">
+                                <input class="ap-otp-input" type="tel" maxlength="1" data-index="2">
+                                <input class="ap-otp-input" type="tel" maxlength="1" data-index="3">
+                            </div>
+                    </div>
+                </p>  
+                </div>
+                '''
+
+            if oper == 'X':
+                stolb2 = f'''
+                <div class="primer">
+            
+                <p class="sup1">{oper}
+                    <div class="frac">
+                        <span class="top1">{a}</span>
+                        <span class="middle1">{b}</span>
+                     
+                            <div class="ap-otp-inputs" data-length="4">
+                                <input class="ap-otp-input" type="tel" maxlength="1" data-index="0">
+                                <input class="ap-otp-input" type="tel" maxlength="1" data-index="1">
+                                <input class="ap-otp-input" type="tel" maxlength="1" data-index="2">
+                                <input class="ap-otp-input" type="tel" maxlength="1" data-index="3">
+                            </div>
+                        
+                        <div class="ap-otp-inputs1" data-length="3">
+                                <input class="ap-otp-input" type="tel" maxlength="1" data-index="0">
+                                <input class="ap-otp-input" type="tel" maxlength="1" data-index="1">
+                                <input class="ap-otp-input" type="tel" maxlength="1" data-index="2">
+                
+                            </div>
+                        
+                        <div class="ap-otp-inputs" data-length="4">
+                                <input class="ap-otp-input" type="tel" maxlength="1" data-index="0">
+                                <input class="ap-otp-input" type="tel" maxlength="1" data-index="1">
+                                <input class="ap-otp-input" type="tel" maxlength="1" data-index="2">
+                                <input class="ap-otp-input" type="tel" maxlength="1" data-index="3">
+                            </div>
+                    </div>
+                </p>
+            
+            </div>
+            '''
+
+        qst = {'txt0': txt0, 'txt00': txt00, 'txt1': txt1, 'txt2': txt2, 'txt3': txt3,
+               'list_txt': list_txt, 'stolb1': stolb1, 'stolb2': stolb2}
 
         content = {'title': title, 'form': form, 'qst': qst, 'pk1': pk}
 
@@ -1207,4 +1282,5 @@ def finish(request, pk):
            'rep_hist': rep_hist, 'wrong_ans_hist': wrong_ans_hist}
 
     content = {'title': title, 'ans': ans}
+
     return render(request, 'mainapp/finish.html', content)

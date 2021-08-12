@@ -4,7 +4,7 @@ from django.utils.timezone import make_aware
 
 from django_cron import CronJobBase, Schedule
 
-from _mailsend import mail_notify
+from ._mailsend import mail_notify
 
 from authapp.models import MaapUserProfile
 

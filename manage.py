@@ -2,7 +2,7 @@
 """Django's command-line utility for administrative tasks."""
 import os
 import sys
-import mul_app
+#import mul_app
 
 def main():
 
