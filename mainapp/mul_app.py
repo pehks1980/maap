@@ -276,9 +276,9 @@ def eval_quest(nx, ny, ax, two_digit,no_minus, sx, no_dec_mul, hist, hist_depth,
             # +
             if oper == 1:
                 a = random.randint(99, 9999)
-                b = random.randint(99, 9999)
+                b = random.randint(99, 4999)
                 if a + b > 9999:
-                    b = random.randint(99, 4999)
+                    a = random.randint(99, 4999)
                 code = 2
             # *
             if oper == 2:
@@ -315,7 +315,7 @@ def eval_quest(nx, ny, ax, two_digit,no_minus, sx, no_dec_mul, hist, hist_depth,
         del hist[f'{idx - hist_depth}']
     #     hist.popleft()
 
-    # stolbik - if operation is stolbik (because code is replaced with +-*)
+    # stolbik t - if operation is stolbik (because code is replaced with +-*)
     return a, b, code, stolbik, hist
 
 

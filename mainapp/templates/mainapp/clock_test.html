@@ -5,7 +5,7 @@
 {% block script %}
 <script>
      const seconds = 0;
-     const minutes = getRandomInt(60); // on clock
+     const minutes = getRandomInt(59); // on clock
      const hours = randomInt(1,12); //
      //difference for question
      const diff_hours = {{diff | get_item:'hours'}};
