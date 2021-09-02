@@ -8,6 +8,11 @@
                     <td>{{val}}</td>
                 </tr>
             {% endfor %}
+             {% if ans.drob %}
+                <tr>
+                    <td>{{ans.drob|safe}}</td>
+                </tr>
+            {% endif %}
             </table>
 
 

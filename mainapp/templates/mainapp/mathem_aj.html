@@ -73,7 +73,7 @@ window.onload = function() // дожидаемся загрузки страни
                 } else {
                     answer = document.getElementById("id_answer").value;
                     //check if answer is valid
-                    if (isNaN(answer) == true || answer == ""){
+                    if (answer == ""){
                         console.log("number not int",answer);
                         buttons_toggle();
                         alert("Ввели ошибочное значение! введите цифры > "+answer);
@@ -270,6 +270,10 @@ function tstamp2() {
                     {% elif qst.stolb2 %}
 
                     <td>{{qst.stolb2|safe}}</td>
+
+                    {% elif qst.drob1 %}
+
+                    <td>{{qst.drob1|safe}}</td>
 
                     {% else %}
 

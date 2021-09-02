@@ -21,8 +21,9 @@ from .cron import cron_notify
 from .forms import Ans_Form
 from .forms import AppModForm
 from .models import MaapLesson, MaapReport
-from .mul_app import set_app_mode, eval_quest, check_ans, \
+from .mul_app import set_app_mode, eval_quest, check_ans, check_ans_drob, \
     get_app_mode_desc, finish_lesson, printMatrix
+from .drob import Drob
 
 
 @login_required
@@ -448,11 +449,18 @@ def mathemj(request, pk):
             'drob': lesson.drob,
         }
 
-        a, b, code, stolbik, hist1 = eval_quest(NX, NY, AX, TWO_DIGIT,
-                                       NO_MINUS, SX, NO_DEC_MUL, hist, HIST_DEPTH, app_mode)
+        a, b, code, stolbik, drob, hist1 = eval_quest(NX, NY, AX, TWO_DIGIT,
+                                                      NO_MINUS, SX, NO_DEC_MUL, hist, HIST_DEPTH, app_mode)
         print("eval quest finish")
-        lesson.a1 = a  # update db
-        lesson.b1 = b
+        # update db
+        if drob:
+            lesson.a1_drob = json.dumps(a)
+            lesson.b1_drob = json.dumps(b)
+            lesson.is_drob = True
+        else:
+            lesson.a1 = a
+            lesson.b1 = b
+
         lesson.c1 = code
         lesson.hist = json.dumps(hist1)
 
@@ -473,44 +481,21 @@ def mathemj(request, pk):
         txt1 = f"вопрос {lesson.ans_amount} правильных: {lesson.ans_correct}"
 
         list_txt.append(txt1)
-        oper = ''
-        # code 1 * 2 + 3 - 4 /
-        if code == 1:
-            txt2 = f'cколько будет {a} X {b} =?'
-            lesson.mult_cnt += 1
-            oper = 'X'
-        if code == 2:
-            txt2 = f'cколько будет {a} + {b} =?'
-            lesson.addi_cnt += 1
-            oper = '+'
-        if code == 3:
-            txt2 = f'cколько будет {a} - {b} =?'
-            lesson.subt_cnt += 1
-            oper = '-'
-        if code == 4:
-            divsign = u'\u00F7'
-            txt2 = f'cколько будет {a} {divsign} {b} =?'
-            lesson.divn_cnt += 1
-
-        list_txt.append(txt2)
-
-        lesson.save()
-
-        txt3 = ''  # f'a1={a}, b1={b}, c1={code}'
+        opers = ['X', '+', '-', '/']
+        oper = opers[code - 1]
 
         # maket stolbika for +/-
 
         stolb1 = stolb2 = ''
-
         if stolbik:
             if oper == '+' or oper == '-':
                 stolb1 = f'''<div class="primer">
-                
+
                 <p class="sup1">{oper}
                     <div class="frac">
                         <span class="top1">{a}</span>
                         <span class="middle1">{b}</span>
-                     
+
                             <div class="ap-otp-inputs" data-length="4">
                                 <input class="ap-otp-input" type="tel" maxlength="1" data-index="0">
                                 <input class="ap-otp-input" type="tel" maxlength="1" data-index="1">
@@ -525,26 +510,26 @@ def mathemj(request, pk):
             if oper == 'X':
                 stolb2 = f'''
                 <div class="primer">
-            
+
                 <p class="sup1">{oper}
                     <div class="frac">
                         <span class="top1">{a}</span>
                         <span class="middle1">{b}</span>
-                     
+
                             <div class="ap-otp-inputs" data-length="4">
                                 <input class="ap-otp-input" type="tel" maxlength="1" data-index="0">
                                 <input class="ap-otp-input" type="tel" maxlength="1" data-index="1">
                                 <input class="ap-otp-input" type="tel" maxlength="1" data-index="2">
                                 <input class="ap-otp-input" type="tel" maxlength="1" data-index="3">
                             </div>
-                        
+
                         <div class="ap-otp-inputs1" data-length="3">
                                 <input class="ap-otp-input" type="tel" maxlength="1" data-index="0">
                                 <input class="ap-otp-input" type="tel" maxlength="1" data-index="1">
                                 <input class="ap-otp-input" type="tel" maxlength="1" data-index="2">
-                
+
                             </div>
-                        
+
                         <div class="ap-otp-inputs" data-length="4">
                                 <input class="ap-otp-input" type="tel" maxlength="1" data-index="0">
                                 <input class="ap-otp-input" type="tel" maxlength="1" data-index="1">
@@ -553,12 +538,80 @@ def mathemj(request, pk):
                             </div>
                     </div>
                 </p>
-            
+
             </div>
             '''
 
+            a = b = code = 0
+            lesson.stolb_cnt += 1
+
+        drob1 = ''
+        if drob:
+            a_int = a.get('inte')
+            if a_int == None:
+                a_int = ''
+            b_int = b.get('inte')
+            if b_int == None:
+                b_int = ''
+
+            drob1 = f'''
+            <div class="primer">
+                <p class="sup">{a_int}
+                    <div class="frac">
+                        <span>{a['chis']}</span>
+                        <span class="symbol">/</span>
+                        <span class="bottom">{a['znam']}</span>
+                    </div>
+                </p>
+
+                <div class="oper">
+                    <span>{oper}</span>
+                </div>
+
+                <p class="sup">{b_int}
+                    <div class="frac">
+                        <span>{b['chis']}</span>
+                        <span class="symbol">/</span>
+                        <span class="bottom">{b['znam']}</span>
+                    </div>
+                </p>
+
+                <div class="oper">
+                    <span>=</span>
+                </div>
+
+                <p class="sup">?</p>
+            </div>
+            '''
+            a = b = code = 0
+            lesson.drob_cnt += 1
+
+        # code 1 * 2 + 3 - 4 /
+        if code == 1:
+            txt2 = f'cколько будет {a} X {b} =?'
+            lesson.mult_cnt += 1
+        # oper = 'X'
+        if code == 2:
+            txt2 = f'cколько будет {a} + {b} =?'
+            lesson.addi_cnt += 1
+        # oper = '+'
+        if code == 3:
+            txt2 = f'cколько будет {a} - {b} =?'
+            lesson.subt_cnt += 1
+        # oper = '-'
+        if code == 4:
+            divsign = u'\u00F7'
+            txt2 = f'cколько будет {a} {divsign} {b} =?'
+            lesson.divn_cnt += 1
+
+        list_txt.append(txt2)
+
+        lesson.save()
+
+        txt3 = ''  # f'a1={a}, b1={b}, c1={code}'
+
         qst = {'txt0': txt0, 'txt00': txt00, 'txt1': txt1, 'txt2': txt2, 'txt3': txt3,
-               'list_txt': list_txt, 'stolb1': stolb1, 'stolb2': stolb2}
+               'list_txt': list_txt, 'stolb1': stolb1, 'stolb2': stolb2, 'drob1': drob1}
 
         content = {'title': title, 'form': form, 'qst': qst, 'pk1': pk}
 
@@ -684,8 +737,26 @@ def mathem_ajax(request):
         if pk2_chr == '':
             ans = 0
         else:
-            ans = int(pk2_chr)
-        txt00, check_res = check_ans(ans, lesson.a1, lesson.b1, lesson.c1)
+            ans = pk2_chr
+
+        a1 = lesson.a1
+        b1 = lesson.b1
+        c1 = lesson.c1
+
+        txt00 = ''
+        check_res = 0
+        drob_txt = ''
+        if lesson.is_drob:
+            a1 = json.loads(lesson.a1_drob)
+            b1 = json.loads(lesson.b1_drob)
+            drob_txt, check_res = check_ans_drob(ans, a1, b1, c1)
+            if check_res == 1:
+                txt00 = f" ответ - правильный "
+            else:
+                txt00 = f" ответ - не верный "
+            lesson.is_drob = False
+        else:
+            txt00, check_res = check_ans(int(ans), a1, b1, c1)
 
         lesson.ans_amount = lesson.ans_amount + 1
 
@@ -704,40 +775,42 @@ def mathem_ajax(request):
                 if pk2_chr == '':
                     ans = 0
                 else:
-                    ans = int(pk2_chr)
+                    ans = pk2_chr
             wrong_ans.append(
-                OrderedDict(a=lesson.a1, b=lesson.b1, c=lesson.c1, diff=int(diff), ans=ans))
+                OrderedDict(a=a1, b=b1, c=c1, diff=int(diff), ans=ans))
             lesson.wrong_ans = json.dumps(wrong_ans)
 
         lesson.save()
 
         list_txt.append(txt00)
 
-        txt22 = f"время затраченное на ответ {diff} сек"
+        txt22 = f"время, затраченное на ответ: {diff} сек"
 
         list_txt.append(txt22)
 
-        txt1 = f'a1={lesson.a1}, b1={lesson.b1}, c1={lesson.c1}, ans_num={lesson.ans_amount}, ans_corr={lesson.ans_correct}'
-        # add mult table
-        if lesson.c1 == 1 and check_res == 0 and lesson.a1 < NX + 1 and lesson.b1 < NY + 1:  # if multip in range 10*12
-            mult_tabl = []
-            ny = NY
-            nx = NX
-            for i in range(1, ny + 1):
-                row = []
-                for j in range(1, nx + 1):
-                    row.append(i * j)
-                mult_tabl.append(row)
+        txt1 = f'a1={a1}, b1={b1}, c1={c1}, ans_num={lesson.ans_amount}, ans_corr={lesson.ans_correct}'
 
-            # self.printMatrix(self.mult_tabl,0,0,0)
-            mul_tab = printMatrix(mult_tabl, lesson.a1 * lesson.b1, lesson.a1, 0)
-            cor_ans = lesson.a1 * lesson.b1
-            cor_ans = ">" + str(cor_ans)
-        else:
-            mul_tab = ''
-            cor_ans = ''
+        mul_tab = ''
+        cor_ans = ''
+        if not lesson.drob:
+            # add mult table
+            if lesson.c1 == 1 and check_res == 0 and lesson.a1 < NX + 1 and lesson.b1 < NY + 1:  # if multip in range 10*12
+                mult_tabl = []
+                ny = NY
+                nx = NX
+                for i in range(1, ny + 1):
+                    row = []
+                    for j in range(1, nx + 1):
+                        row.append(i * j)
+                    mult_tabl.append(row)
 
-        ans = {'txt00': txt00, 'txt22': txt22, 'txt1': txt1, 'mul_tab': mul_tab, 'list_txt': list_txt, 'ans': cor_ans}
+                # self.printMatrix(self.mult_tabl,0,0,0)
+                mul_tab = printMatrix(mult_tabl, lesson.a1 * lesson.b1, lesson.a1, 0)
+                cor_ans = lesson.a1 * lesson.b1
+                cor_ans = ">" + str(cor_ans)
+        # txt1 = ''
+        ans = {'txt00': txt00, 'txt22': txt22, 'txt1': txt1, 'mul_tab': mul_tab, 'drob': drob_txt, 'list_txt': list_txt,
+               'ans': cor_ans, }
 
         content = {'ans': ans, 'pk1': post_ans['pk1']}
 
@@ -1152,22 +1225,31 @@ def make_report(lessons, list_hist, rep_hist, wrong_ans_hist):
 
             # insert id into each row of report
             # add report rows
+            divsign = u'\u00F7'
+            oper_list = ['X', '+', '-', divsign]
+
             for id, key in saved_report_favor_ans.items():
-                rep_hist_row = []
-                rep_hist_row.append(f'{i.id}')
+                rep_hist_row = [f'{i.id}']
                 a = key['a']
                 b = key['b']
                 c = key['c']
                 d = key['d']
-                if c == 1:
-                    str_fav_ans = (f' {a} X {b} (={a * b}) занял {d} секунд')
-                if c == 2:
-                    str_fav_ans = (f' {a} + {b} (={a + b}) занял {d} секунд')
-                if c == 3:
-                    str_fav_ans = (f' {a} - {b} (={a - b}) занял {d} секунд')
-                if c == 4:
-                    divsign = u'\u00F7'
-                    str_fav_ans = (f' {a} {divsign} {b} (={int(a / b)}) занял {d} секунд')
+
+                oper = oper_list[c - 1]
+                if not isinstance(a, int):
+                    # a,b drob
+                    str_fav_ans = (f""" {a['chis']}/{a['znam']} {oper} {b['chis']}/{b['znam']} занял {d} сек""")
+                else:
+                    # a,b integer
+                    if c == 1:
+                        str_fav_ans = (f' {a} X {b} (={a * b}) занял {d} секунд')
+                    if c == 2:
+                        str_fav_ans = (f' {a} + {b} (={a + b}) занял {d} секунд')
+                    if c == 3:
+                        str_fav_ans = (f' {a} - {b} (={a - b}) занял {d} секунд')
+                    if c == 4:
+                        divsign = u'\u00F7'
+                        str_fav_ans = (f' {a} {divsign} {b} (={int(a / b)}) занял {d} секунд')
 
                 diff = key.get('e')
                 if diff:
@@ -1191,6 +1273,9 @@ def make_report(lessons, list_hist, rep_hist, wrong_ans_hist):
         try:
             wrong_ans = json.loads(i.wrong_ans, object_pairs_hook=OrderedDict)
 
+            divsign = u'\u00F7'
+            oper_list = ['X', '+', '-', divsign]
+
             for key in wrong_ans:
                 wrong_ans_row = []
                 wrong_ans_row.append(f'{i.id}')
@@ -1200,15 +1285,21 @@ def make_report(lessons, list_hist, rep_hist, wrong_ans_hist):
                 d = key['diff']
                 ans = key['ans']
 
-                if c == 1:
-                    str_fav_ans = (f' {a} X {b} = {ans} (={a * b}) занял {d} секунд')
-                if c == 2:
-                    str_fav_ans = (f' {a} + {b} = {ans} (={a + b}) занял {d} секунд')
-                if c == 3:
-                    str_fav_ans = (f' {a} - {b} = {ans} (={a - b}) занял {d} секунд')
-                if c == 4:
-                    divsign = u'\u00F7'
-                    str_fav_ans = (f' {a} {divsign} {b} = {ans} (={int(a / b)}) занял {d} секунд')
+                oper = oper_list[c - 1]
+                if not isinstance(a, int):
+                    # a,b drob
+                    str_fav_ans = (f""" {a['chis']}/{a['znam']} {oper} {b['chis']}/{b['znam']} = {ans} занял {d} сек""")
+                else:
+                    # a,b integer
+                    if c == 1:
+                        str_fav_ans = (f' {a} X {b} = {ans} (={a * b}) занял {d} секунд')
+                    if c == 2:
+                        str_fav_ans = (f' {a} + {b} = {ans} (={a + b}) занял {d} секунд')
+                    if c == 3:
+                        str_fav_ans = (f' {a} - {b} = {ans} (={a - b}) занял {d} секунд')
+                    if c == 4:
+                        divsign = u'\u00F7'
+                        str_fav_ans = (f' {a} {divsign} {b} = {ans} (={int(a / b)}) занял {d} секунд')
 
                 wrong_ans_row.append(str_fav_ans)
                 wrong_ans_hist.append(wrong_ans_row)  # one answer per one row

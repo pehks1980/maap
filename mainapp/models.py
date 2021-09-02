@@ -56,6 +56,10 @@ class MaapLesson(models.Model):
     b1 = models.PositiveIntegerField(verbose_name='b1', default=0)
     c1 = models.PositiveIntegerField(verbose_name='c1', default=0)
 
+    a1_drob = models.CharField(verbose_name='a1_drob', max_length=64, blank=True)
+    b1_drob = models.CharField(verbose_name='b1_drob', max_length=64, blank=True)
+    is_drob = models.BooleanField(verbose_name='is_drob', default=False)
+
     # last ans time in seconds
     ans_sum = models.PositiveIntegerField(verbose_name='last_ans_time', default=0)
     # avg ans time for the lesson
@@ -73,6 +77,7 @@ class MaapLesson(models.Model):
     subt_cnt = models.PositiveIntegerField(verbose_name='subt_cnt', default=0)
     divn_cnt = models.PositiveIntegerField(verbose_name='divn_cnt', default=0)
     drob_cnt = models.PositiveIntegerField(verbose_name='drob_cnt', default=0)
+    stolb_cnt = models.PositiveIntegerField(verbose_name='stolb_cnt', default=0)
 
     def __str__(self):
         return self.user_id
