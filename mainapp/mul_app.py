@@ -3,6 +3,8 @@ mul_app модуль для вычислений примеров
 """
 import random
 
+from .drob import *
+
 
 def bubble_sort(source_arr):
     """
@@ -71,31 +73,39 @@ def get_app_mode_desc(lesson):
     addi_cnt = lesson.addi_cnt
     subt_cnt = lesson.subt_cnt
     divn_cnt = lesson.divn_cnt
+    stolb_cnt = lesson.stolb_cnt
+    drob_cnt = lesson.drob_cnt
 
-    a = ''
-    b = ''
-    c = ''
-    d = ''
+    a = b = c = d = e = f = ''
+
     for i in mode:
         if i == '1':
             a = '*'
             if mult_cnt:
                 a += f'={mult_cnt}'
         if i == '2':
-            b = ',+'
+            b = ' +'
             if addi_cnt:
                 b += f'={addi_cnt}'
         if i == '3':
-            c = ',-'
+            c = ' -'
             if subt_cnt:
                 c += f'={subt_cnt}'
         if i == '4':
             divsign = u'\u00F7'
-            d = f',{divsign}'
+            d = f' {divsign}'
             if divn_cnt:
                 d += f'={divn_cnt}'
+        if i == '5':
+            e = f' ст.'
+            if stolb_cnt:
+                e += f'={stolb_cnt}'
+        if i == '6':
+            f = f' др.'
+            if drob_cnt:
+                f += f'={drob_cnt}'
 
-    return f'{a}{b}{c}{d}'
+    return f'{a}{b}{c}{d}{e}{f}'
 
 
 def printMatrix(s, hl, a, b):
@@ -132,7 +142,7 @@ def printMatrix(s, hl, a, b):
     return result
 
 
-def eval_quest(nx, ny, ax, two_digit,no_minus, sx, no_dec_mul, hist, hist_depth, app_mode):
+def eval_quest(nx, ny, ax, two_digit, no_minus, sx, no_dec_mul, hist, hist_depth, app_mode):
     """
     choice the next question from random, take into account previous answers hist
     :param nx:
@@ -147,6 +157,8 @@ def eval_quest(nx, ny, ax, two_digit,no_minus, sx, no_dec_mul, hist, hist_depth,
     :return:
     """
     code = None
+    a = 0
+    b = 0
     # param sets upper range for +,- questions operands
     up_range = 80
     # param sets minimum diff b/w operands to avoid  such 34+1 questions like
@@ -154,12 +166,16 @@ def eval_quest(nx, ny, ax, two_digit,no_minus, sx, no_dec_mul, hist, hist_depth,
 
     stolbik = False
 
+    drob = False
+
     while True:
         already_in_hist = False
         # choice type of question *-+/ if code is not chosen already
         if code is None:
             while True:
                 stolbik = False
+                drob = False
+
                 code = random.randint(1, 6)
                 if (app_mode['mult'] == 1) and (code == 1):
                     break
@@ -172,8 +188,7 @@ def eval_quest(nx, ny, ax, two_digit,no_minus, sx, no_dec_mul, hist, hist_depth,
                 if (app_mode['stolbik'] == 1) and (code == 5):
                     break
                 if (app_mode['drob'] == 1) and (code == 6):
-                    pass #break
-
+                    break
 
         # mul a,b 2..10 2..12 mult table 10X12
         if code == 1:
@@ -211,7 +226,7 @@ def eval_quest(nx, ny, ax, two_digit,no_minus, sx, no_dec_mul, hist, hist_depth,
 
         # -
         if code == 3:
-            print(f'вычетание {sx}')
+            print(f'вычитание {sx}')
             two_digit = True
             while True:
                 a = random.randint(1, sx)
@@ -250,10 +265,18 @@ def eval_quest(nx, ny, ax, two_digit,no_minus, sx, no_dec_mul, hist, hist_depth,
                 a = a1 * b1
                 b = random.choice(ops)
 
+        # check if we go these already
+        for _, key in hist.items():
+            ha = key['a']
+            hb = key['b']
+            hcode = key['c']
+            if a == ha and b == hb and code == hcode:
+                already_in_hist = True
+
         # v stolbik
         if code == 5:
             stolbik = True
-            #oper = ''
+            # oper = ''
             while True:
                 # chose 0 - + 1 - - 2 *
                 oper = random.randint(0, 2)
@@ -265,7 +288,8 @@ def eval_quest(nx, ny, ax, two_digit,no_minus, sx, no_dec_mul, hist, hist_depth,
                     break
                 if app_mode['divn'] == 1:
                     break
-                if (app_mode['divn'] == 0) and (app_mode['mult'] == 0) and (app_mode['subt'] == 0) and (app_mode['addi'] == 0):
+                if (app_mode['divn'] == 0) and (app_mode['mult'] == 0) and (app_mode['subt'] == 0) and (
+                        app_mode['addi'] == 0):
                     break
 
             # -
@@ -286,14 +310,44 @@ def eval_quest(nx, ny, ax, two_digit,no_minus, sx, no_dec_mul, hist, hist_depth,
                 b = random.randint(10, 99)
                 code = 1
 
+        # drob
+        if code == 6:
+            drob = True
+            same_znam = True
+            set_choice = False
 
-        # check if we go these already
-        for _, key in hist.items():
-            ha = key['a']
-            hb = key['b']
-            hcode = key['c']
-            if a == ha and b == hb and code == hcode:
-                already_in_hist = True
+            # chose 0=+ 1=- 2=* 3=/
+            oper = 2  # random.randint(0, 3)
+
+            # drobi!!
+            # we get code == 6 oper = operation
+            # now we have to choose a,b - operands
+            # +
+            if oper == 2:
+                if same_znam:
+                    znam = random.randint(3, 25)
+                    chis_a = random.randint(1, int(znam/2)+1)
+                    chis_b = random.randint(1, int(znam/2)-1)
+                    a = {'chis': chis_a,
+                         'znam': znam
+                         }
+                    b = {'chis': chis_b,
+                         'znam': znam
+                         }
+                if set_choice:
+                    a = random.choice(DROBI_PLUS_SET)
+                    b = random.choice(DROBI_PLUS_SET)
+            # -
+            if oper == 1:
+                pass
+            # *
+            if oper == 2:
+                pass
+            # /
+            if oper == 3:
+                pass
+            # in case of drob = true code is operation +-/*
+            code = oper
 
         if not already_in_hist:
             break
@@ -316,7 +370,92 @@ def eval_quest(nx, ny, ax, two_digit,no_minus, sx, no_dec_mul, hist, hist_depth,
     #     hist.popleft()
 
     # stolbik t - if operation is stolbik (because code is replaced with +-*)
-    return a, b, code, stolbik, hist
+    return a, b, code, stolbik, drob, hist
+
+
+def check_ans_drob(ans, a, b, code):
+    opers = ['X', '+', '-', '/']
+    oper = opers[code - 1]
+
+    # calculate answer
+    a_int = a.get('inte')
+    if a_int is None:
+        a_int = ''
+        a_inte = 0
+    b_int = b.get('inte')
+    if b_int is None:
+        b_int = ''
+        b_inte = 0
+
+    d1 = Drob(chis=a['chis'], znam=a['znam'], inte=a_inte)
+    d2 = Drob(chis=b['chis'], znam=b['znam'], inte=b_inte)
+    print(d1, d2)
+
+    d1.denormalize()
+    d2.denormalize()
+    # print(d1, d2)
+    if oper == '+':
+        d1.add(d2.chis, d2.znam)
+
+    d1.normalize()
+    d1_int = d1.inte
+    if d1.inte == 0:
+        d1_int = ''
+    drob1 = f'''
+                <div class="primer">
+                    <p class="sup">{a_int}
+                        <div class="frac">
+                            <span>{a['chis']}</span>
+                            <span class="symbol">/</span>
+                            <span class="bottom">{a['znam']}</span>
+                        </div>
+                    </p>
+
+                    <div class="oper">
+                        <span>{oper}</span>
+                    </div>
+
+                    <p class="sup">{b_int}
+                        <div class="frac">
+                            <span>{b['chis']}</span>
+                            <span class="symbol">/</span>
+                            <span class="bottom">{b['znam']}</span>
+                        </div>
+                    </p>
+
+                    <div class="oper">
+                        <span>=</span>
+                    </div>
+
+                    <p class="sup">{d1_int}
+                        <div class="frac">
+                            <span>{d1.chis}</span>
+                            <span class="symbol">/</span>
+                            <span class="bottom">{d1.znam}</span>
+                        </div>
+                    </p>
+                </div>
+                '''
+    # ans = '1 2/3'
+    # ans = '2/3'
+    # ans = ' 1 2/3 '
+    ans = ans.strip()
+    ans_int_list = ans.split(' ')
+    if len(ans_int_list) > 1:
+        ans_drob = ans_int_list[1].split('/')
+        ans_int = ans_int_list[0]
+    else:
+        ans_drob = ans_int_list[0].split('/')
+        ans_int = 0
+    # check if answer is correct
+    answer_correct = 0
+
+    if d1.inte == int(ans_int):
+        if d1.chis == int(ans_drob[0]):
+            if d1.znam == int(ans_drob[1]):
+                answer_correct = 1
+
+    return drob1, answer_correct
 
 
 def check_ans(ans, a1, b1, c1):
@@ -415,6 +554,9 @@ def finish_lesson(lesson, f_time, favor_ans, wrong_ans, favor_thresold_time):
 
         reply.append(f' неправильные примеры: {len(wrong_ans)}')
 
+        divsign = u'\u00F7'
+        oper_list = ['X', '+', '-', divsign]
+
         for i in wrong_ans:
             a = i['a']
             b = i['b']
@@ -422,14 +564,20 @@ def finish_lesson(lesson, f_time, favor_ans, wrong_ans, favor_thresold_time):
             d = i['diff']
             ans = i['ans']
 
-            if c == 1:
-                reply.append(f' {a} X {b} = {ans} (={a * b}) занял {d} сек')
-            if c == 2:
-                reply.append(f' {a} + {b} = {ans} (={a + b}) занял {d} сек')
-            if c == 3:
-                reply.append(f' {a} - {b} = {ans} (={a - b}) занял {d} сек')
-            if c == 4:
-                divsign = u'\u00F7'
-                reply.append(f' {a} {divsign} {b} = {ans} (={int(a / b)}) занял {d} сек')
+            oper = oper_list[c - 1]
+
+            if not isinstance(a, int):
+                # a,b drob
+                reply.append(f""" {a['chis']}/{a['znam']} {oper} {b['chis']}/{b['znam']} = {ans} занял {d} сек""")
+            else:
+                # a,b integer
+                if oper == '*':
+                    reply.append(f' {a} {oper} {b} = {ans} (={a * b}) занял {d} сек')
+                if oper == '+':
+                    reply.append(f' {a} {oper} {b} = {ans} (={a + b}) занял {d} сек')
+                if oper == '-':
+                    reply.append(f' {a} {oper} {b} = {ans} (={a - b}) занял {d} сек')
+                if oper == divsign:
+                    reply.append(f' {a} {oper} {b} = {ans} (={int(a / b)}) занял {d} сек')
 
     return reply

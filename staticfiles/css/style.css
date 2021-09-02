@@ -178,16 +178,16 @@ tr:nth-child(even) {
 
 
 .slider {
-	height: 700px;
+	height: 800px;
 	background-image: url(/staticfiles/img/slid.jpg);
 	background-repeat: no-repeat;
-    background-size: 1120px 700px;
+    background-size: 1120px 800px;
 	padding-left: 90px;
 	padding-right: 211px;
 	padding-bottom: 100px;
 	position: relative;
 	border-style: solid;
-	border-color: aqua;
+	border-color: #17a2b8;
 }
 
 .logo {
@@ -790,8 +790,8 @@ tr:nth-child(even) {
 }
 
 .footer {
-    height: 384px;
-	width: 1169px;
+    height: 200px;
+	width: auto;
 	background-color: #f7f7f7;
 	padding-left: 99px;
 	padding-right: 98px;
@@ -812,7 +812,7 @@ tr:nth-child(even) {
     color: #6c6c6c;
 }
 .text-footer {
-	margin-top: 120px;
+	margin-top: 60px;
 	width: 221px;
 	float: left;
 	margin-right: 68px;
