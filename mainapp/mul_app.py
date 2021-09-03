@@ -313,6 +313,7 @@ def eval_quest(nx, ny, ax, two_digit, no_minus, sx, no_dec_mul, hist, hist_depth
         # drob
         if code == 6:
             drob = True
+            # rule for generating a and b
             same_znam = True
             set_choice = False
 
@@ -326,8 +327,8 @@ def eval_quest(nx, ny, ax, two_digit, no_minus, sx, no_dec_mul, hist, hist_depth
             if oper == 2:
                 if same_znam:
                     znam = random.randint(3, 25)
-                    chis_a = random.randint(1, int(znam/2)+1)
-                    chis_b = random.randint(1, int(znam/2)-1)
+                    chis_a = random.randint(1, int(znam / 2) + 1)
+                    chis_b = random.randint(1, int(znam / 2) - 1)
                     a = {'chis': chis_a,
                          'znam': znam
                          }
@@ -443,16 +444,23 @@ def check_ans_drob(ans, a, b, code):
     ans_int_list = ans.split(' ')
     if len(ans_int_list) > 1:
         ans_drob = ans_int_list[1].split('/')
-        ans_int = ans_int_list[0]
+        ans_int = int(ans_int_list[0])
     else:
         ans_drob = ans_int_list[0].split('/')
         ans_int = 0
+
+    print(f'result={d1}, user answer=(int) {ans_int} , (drob)={ans_drob}')
+    try:
+        ans_drob = list(map(int, ans_drob))
+    except:
+        return drob1, 0
+
     # check if answer is correct
     answer_correct = 0
 
-    if d1.inte == int(ans_int):
-        if d1.chis == int(ans_drob[0]):
-            if d1.znam == int(ans_drob[1]):
+    if d1.inte == ans_int:
+        if len(ans_drob) == 2:
+            if (d1.znam == ans_drob[1]) and (d1.chis == ans_drob[0]):
                 answer_correct = 1
 
     return drob1, answer_correct
