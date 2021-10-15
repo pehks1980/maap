@@ -1,10 +1,10 @@
-
 DROBI_PLUS_SET = [
     {'chis': 1, 'znam': 5},
     {'chis': 1, 'znam': 4},
     {'chis': 1, 'znam': 3},
     {'chis': 2, 'znam': 3},
     {'chis': 3, 'znam': 5},
+    {'chis': 1, 'znam': 2},
 ]
 
 DROBI_MINUS_SET = [
@@ -15,6 +15,7 @@ DROBI_MULT_SET = [
 
 ]
 
+
 class Drob:
     def __init__(self, chis, znam, inte=0):
         self.chis = chis
@@ -23,14 +24,23 @@ class Drob:
 
     def normalize(self):
         def iter1():
+            z = self.gcd(self.chis, self.znam)
             if self.chis > self.znam:
-                z = self.gcd(self.chis, self.znam)
+
                 if z > 0:
-                    self.inte += z
-                    self.chis = self.chis - self.znam
+                    self.inte += 1
+                    self.chis = int((self.chis - self.znam) / z)
+                    self.znam = int(self.znam / z)
                     iter1()
             else:
+                # todo сократить дробь
+                if self.chis == self.znam:
+                    self.inte += 1
+                    self.chis = 0
+                    self.znam = 0
+
                 return
+
         # call inline func recursively
         iter1()
 

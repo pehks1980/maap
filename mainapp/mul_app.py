@@ -315,39 +315,78 @@ def eval_quest(nx, ny, ax, two_digit, no_minus, sx, no_dec_mul, hist, hist_depth
             drob = True
             # rule for generating a and b
             same_znam = True
-            set_choice = False
+            set_choice = True
 
-            # chose 0=+ 1=- 2=* 3=/
-            oper = 2  # random.randint(0, 3)
-
+            # chose 1=* 2=+ 3=- 4=/ 5='='(преобразование)
+            oper_set = (2, 5)
+            oper = random.choice(oper_set)
+            # oper = 5
             # drobi!!
             # we get code == 6 oper = operation
             # now we have to choose a,b - operands
+            # *
+            if oper == 1:
+                pass
             # +
             if oper == 2:
-                if same_znam:
+                sub_choice = random.randint(1, 2)
+                if same_znam and sub_choice == 1:
                     znam = random.randint(3, 25)
                     chis_a = random.randint(1, int(znam / 2) + 1)
-                    chis_b = random.randint(1, int(znam / 2) - 1)
+                    chis_b = random.randint(1, int(znam / 2))
                     a = {'chis': chis_a,
                          'znam': znam
                          }
                     b = {'chis': chis_b,
                          'znam': znam
                          }
-                if set_choice:
+                elif set_choice and sub_choice == 2:
                     a = random.choice(DROBI_PLUS_SET)
                     b = random.choice(DROBI_PLUS_SET)
             # -
-            if oper == 1:
-                pass
-            # *
-            if oper == 2:
-                pass
-            # /
             if oper == 3:
                 pass
-            # in case of drob = true code is operation +-/*
+            # /
+            if oper == 4:
+                pass
+            # =
+            if oper == 5:
+                # rnd choose type of fraction to transform
+                # transf_type = random.randint(1, 2)
+                transf_type = 1
+                if transf_type == 1:
+                    # denormalize drob ie 12 / 5 = 2 2/5
+                    chis = random.randint(1, 5)
+                    znam = random.randint(1, 5)
+                    if chis > znam:
+                        tmp = chis
+                        chis = znam
+                        znam = tmp
+                    if chis == znam:
+                        znam += random.randint(1, 5)
+                    # chis must be > znam
+                    a = {'chis': chis,
+                         'znam': znam,
+                         'inte': random.randint(1, 3)
+                         }
+                    d1 = Drob(chis=a['chis'], znam=a['znam'], inte=a['inte'])
+                    print(d1)
+                    d1.denormalize()
+                    a = {'chis': d1.chis,
+                         'znam': d1.znam,
+                         }
+
+                    b = {'chis': 0,
+                         'znam': 0,
+                         }
+                    print(a)
+
+                if transf_type == 2:
+                    pass
+                if transf_type == 3:
+                    pass
+
+            # in case of drob = true code is operation +-/*=
             code = oper
 
         if not already_in_hist:
@@ -375,7 +414,7 @@ def eval_quest(nx, ny, ax, two_digit, no_minus, sx, no_dec_mul, hist, hist_depth
 
 
 def check_ans_drob(ans, a, b, code):
-    opers = ['X', '+', '-', '/']
+    opers = ['X', '+', '-', '/', '=']
     oper = opers[code - 1]
 
     # calculate answer
@@ -397,57 +436,104 @@ def check_ans_drob(ans, a, b, code):
     # print(d1, d2)
     if oper == '+':
         d1.add(d2.chis, d2.znam)
+    if oper == '=':
+        pass
 
     d1.normalize()
     d1_int = d1.inte
     if d1.inte == 0:
         d1_int = ''
-    drob1 = f'''
-                <div class="primer">
-                    <p class="sup">{a_int}
-                        <div class="frac">
-                            <span>{a['chis']}</span>
-                            <span class="symbol">/</span>
-                            <span class="bottom">{a['znam']}</span>
-                        </div>
-                    </p>
 
-                    <div class="oper">
-                        <span>{oper}</span>
+    res = {
+        'chis': d1.chis,
+        'znam': d1.znam,
+        'inte': d1_int
+    }
+    if d1.chis == 0:
+        res = {
+            'chis': '',
+            'znam': '',
+            'inte': d1_int
+        }
+
+    if oper == '=':
+
+
+        drob1 = f'''
+                            <div class="primer">
+                                <p class="sup">{a_int}
+                                    <div class="frac">
+                                        <span>{a['chis']}</span>
+                                        <span class="symbol">/</span>
+                                        <span class="bottom">{a['znam']}</span>
+                                    </div>
+                                </p>
+
+                                <div class="oper">
+                                    <span>=</span>
+                                </div>
+
+                                <p class="sup">{res['inte']}
+                                    <div class="frac">
+                                        <span>{res['chis']}</span>
+                                        <span class="symbol">/</span>
+                                        <span class="bottom">{res['znam']}</span>
+                                    </div>
+                                </p>
+                            </div>
+                            '''
+    else:
+        drob1 = f'''
+                    <div class="primer">
+                        <p class="sup">{a_int}
+                            <div class="frac">
+                                <span>{a['chis']}</span>
+                                <span class="symbol">/</span>
+                                <span class="bottom">{a['znam']}</span>
+                            </div>
+                        </p>
+    
+                        <div class="oper">
+                            <span>{oper}</span>
+                        </div>
+    
+                        <p class="sup">{b_int}
+                            <div class="frac">
+                                <span>{b['chis']}</span>
+                                <span class="symbol">/</span>
+                                <span class="bottom">{b['znam']}</span>
+                            </div>
+                        </p>
+    
+                        <div class="oper">
+                            <span>=</span>
+                        </div>
+    
+                        <p class="sup">{res['inte']}
+                            <div class="frac">
+                                <span>{res['chis']}</span>
+                                <span class="symbol">/</span>
+                                <span class="bottom">{res['znam']}</span>
+                            </div>
+                        </p>
                     </div>
-
-                    <p class="sup">{b_int}
-                        <div class="frac">
-                            <span>{b['chis']}</span>
-                            <span class="symbol">/</span>
-                            <span class="bottom">{b['znam']}</span>
-                        </div>
-                    </p>
-
-                    <div class="oper">
-                        <span>=</span>
-                    </div>
-
-                    <p class="sup">{d1_int}
-                        <div class="frac">
-                            <span>{d1.chis}</span>
-                            <span class="symbol">/</span>
-                            <span class="bottom">{d1.znam}</span>
-                        </div>
-                    </p>
-                </div>
-                '''
+                    '''
     # ans = '1 2/3'
     # ans = '2/3'
     # ans = ' 1 2/3 '
     ans = ans.strip()
     ans_int_list = ans.split(' ')
-    if len(ans_int_list) > 1:
+    ans_int = 0
+    ans_drob = []
+    if len(ans_int_list) == 1:
+        ans_drob = ans_int_list[0].split('/')
+        if len(ans_drob) == 1:
+            ans_int = int(ans_drob[0])
+        else:
+            ans_int = 0
+    elif len(ans_int_list) == 2:
         ans_drob = ans_int_list[1].split('/')
         ans_int = int(ans_int_list[0])
-    else:
-        ans_drob = ans_int_list[0].split('/')
-        ans_int = 0
 
     print(f'result={d1}, user answer=(int) {ans_int} , (drob)={ans_drob}')
     try:
@@ -459,7 +545,9 @@ def check_ans_drob(ans, a, b, code):
     answer_correct = 0
 
     if d1.inte == ans_int:
-        if len(ans_drob) == 2:
+        if d1.chis == 0:
+            answer_correct = 1
+        elif len(ans_drob) == 2:
             if (d1.znam == ans_drob[1]) and (d1.chis == ans_drob[0]):
                 answer_correct = 1
 
@@ -563,7 +651,7 @@ def finish_lesson(lesson, f_time, favor_ans, wrong_ans, favor_thresold_time):
         reply.append(f' неправильные примеры: {len(wrong_ans)}')
 
         divsign = u'\u00F7'
-        oper_list = ['X', '+', '-', divsign]
+        oper_list = ['X', '+', '-', divsign, '=']
 
         for i in wrong_ans:
             a = i['a']
@@ -576,7 +664,10 @@ def finish_lesson(lesson, f_time, favor_ans, wrong_ans, favor_thresold_time):
 
             if not isinstance(a, int):
                 # a,b drob
-                reply.append(f""" {a['chis']}/{a['znam']} {oper} {b['chis']}/{b['znam']} = {ans} занял {d} сек""")
+                if oper == '=':
+                    reply.append(f""" {a['chis']}/{a['znam']} = {ans} занял {d} сек""")
+                else:
+                    reply.append(f""" {a['chis']}/{a['znam']} {oper} {b['chis']}/{b['znam']} = {ans} занял {d} сек""")
             else:
                 # a,b integer
                 if oper == '*':

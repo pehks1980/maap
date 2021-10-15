@@ -451,7 +451,7 @@ def mathemj(request, pk):
 
         a, b, code, stolbik, drob, hist1 = eval_quest(NX, NY, AX, TWO_DIGIT,
                                                       NO_MINUS, SX, NO_DEC_MUL, hist, HIST_DEPTH, app_mode)
-        print("eval quest finish")
+        print(f"eval quest finish a= {a}, b={b} code = {code}")
         # update db
         if drob:
             lesson.a1_drob = json.dumps(a)
@@ -481,7 +481,7 @@ def mathemj(request, pk):
         txt1 = f"вопрос {lesson.ans_amount} правильных: {lesson.ans_correct}"
 
         list_txt.append(txt1)
-        opers = ['X', '+', '-', '/']
+        opers = ['X', '+', '-', '/', '=']
         oper = opers[code - 1]
 
         # maket stolbika for +/-
@@ -554,35 +554,54 @@ def mathemj(request, pk):
             if b_int == None:
                 b_int = ''
 
-            drob1 = f'''
-            <div class="primer">
-                <p class="sup">{a_int}
-                    <div class="frac">
-                        <span>{a['chis']}</span>
-                        <span class="symbol">/</span>
-                        <span class="bottom">{a['znam']}</span>
+            if oper == "=":
+                drob1 = f'''
+                            <div class="primer">
+                                <p class="sup">{a_int}
+                                    <div class="frac">
+                                        <span>{a['chis']}</span>
+                                        <span class="symbol">/</span>
+                                        <span class="bottom">{a['znam']}</span>
+                                    </div>
+                                </p>
+
+                                <div class="oper">
+                                    <span>=</span>
+                                </div>
+
+                                <p class="sup">?</p>
+                            </div>
+                            '''
+            else:
+                drob1 = f'''
+                <div class="primer">
+                    <p class="sup">{a_int}
+                        <div class="frac">
+                            <span>{a['chis']}</span>
+                            <span class="symbol">/</span>
+                            <span class="bottom">{a['znam']}</span>
+                        </div>
+                    </p>
+    
+                    <div class="oper">
+                        <span>{oper}</span>
                     </div>
-                </p>
-
-                <div class="oper">
-                    <span>{oper}</span>
-                </div>
-
-                <p class="sup">{b_int}
-                    <div class="frac">
-                        <span>{b['chis']}</span>
-                        <span class="symbol">/</span>
-                        <span class="bottom">{b['znam']}</span>
+    
+                    <p class="sup">{b_int}
+                        <div class="frac">
+                            <span>{b['chis']}</span>
+                            <span class="symbol">/</span>
+                            <span class="bottom">{b['znam']}</span>
+                        </div>
+                    </p>
+    
+                    <div class="oper">
+                        <span>=</span>
                     </div>
-                </p>
-
-                <div class="oper">
-                    <span>=</span>
+    
+                    <p class="sup">?</p>
                 </div>
-
-                <p class="sup">?</p>
-            </div>
-            '''
+                '''
             a = b = code = 0
             lesson.drob_cnt += 1
 
