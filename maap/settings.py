@@ -24,7 +24,7 @@ SECRET_KEY = 'e2nsv_7ja12&g=x5amt(ojd4b5o8&oi8g#3kpfk#xnnav490)4'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*', '192.168.1.200']
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -81,18 +81,18 @@ WSGI_APPLICATION = 'maap.wsgi.application'
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-         'ENGINE': 'django.db.backends.sqlite3',
-         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-     }
-
-    # 'default': {
-    #     'NAME': 'maap_test',
-    #     'ENGINE': 'django.db.backends.postgresql',
-    #     'USER': 'maap',
-    #     'PASSWORD': 'maap',
-    #     'HOST': '192.168.1.204'
+    #'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     # }
+
+     'default': {
+         'NAME': 'maap',
+         'ENGINE': 'django.db.backends.postgresql',
+         'USER': 'maap',
+         'PASSWORD': 'maap',
+         'HOST': '192.168.1.204'
+     }
 
 
 

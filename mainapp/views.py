@@ -1245,7 +1245,7 @@ def make_report(lessons, list_hist, rep_hist, wrong_ans_hist):
             # insert id into each row of report
             # add report rows
             divsign = u'\u00F7'
-            oper_list = ['X', '+', '-', divsign]
+            oper_list = ['X', '+', '-', divsign, '=']
 
             for id, key in saved_report_favor_ans.items():
                 rep_hist_row = [f'{i.id}']
@@ -1256,8 +1256,11 @@ def make_report(lessons, list_hist, rep_hist, wrong_ans_hist):
 
                 oper = oper_list[c - 1]
                 if not isinstance(a, int):
+                    if oper == '=':
+                        str_fav_ans = (f""" {a['chis']}/{a['znam']} (преобразование) {d} сек""")
                     # a,b drob
-                    str_fav_ans = (f""" {a['chis']}/{a['znam']} {oper} {b['chis']}/{b['znam']} занял {d} сек""")
+                    else:
+                        str_fav_ans = (f""" {a['chis']}/{a['znam']} {oper} {b['chis']}/{b['znam']} занял {d} сек""")
                 else:
                     # a,b integer
                     if c == 1:
@@ -1293,7 +1296,7 @@ def make_report(lessons, list_hist, rep_hist, wrong_ans_hist):
             wrong_ans = json.loads(i.wrong_ans, object_pairs_hook=OrderedDict)
 
             divsign = u'\u00F7'
-            oper_list = ['X', '+', '-', divsign]
+            oper_list = ['X', '+', '-', divsign, '=']
 
             for key in wrong_ans:
                 wrong_ans_row = []
@@ -1306,8 +1309,12 @@ def make_report(lessons, list_hist, rep_hist, wrong_ans_hist):
 
                 oper = oper_list[c - 1]
                 if not isinstance(a, int):
-                    # a,b drob
-                    str_fav_ans = (f""" {a['chis']}/{a['znam']} {oper} {b['chis']}/{b['znam']} = {ans} занял {d} сек""")
+                    if oper == '=':
+                        str_fav_ans = (f""" {a['chis']}/{a['znam']} (преобразование) = {ans} занял {d} сек""")
+                    else:
+                        # a,b drob
+                        str_fav_ans = (
+                            f""" {a['chis']}/{a['znam']} {oper} {b['chis']}/{b['znam']} = {ans} занял {d} сек""")
                 else:
                     # a,b integer
                     if c == 1:

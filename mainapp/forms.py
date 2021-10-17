@@ -15,8 +15,9 @@ class AppModForm(forms.Form):
     app_mode = forms.MultipleChoiceField(
         label='Выберите режим упражнения:',
         required=True,
-        widget=forms.CheckboxSelectMultiple(attrs={'checked': True}),
+        widget=forms.CheckboxSelectMultiple(attrs={'checked': False}),
         choices=APP_MODE_CHOICES,
+        initial=[3, 4, 5, 6]
     )
 
     def __init__(self, *args, **kwargs):
