@@ -17,7 +17,8 @@ class AppModForm(forms.Form):
         required=True,
         widget=forms.CheckboxSelectMultiple(attrs={'checked': False}),
         choices=APP_MODE_CHOICES,
-        initial=[3, 4, 5, 6]
+        #checked items
+        initial=[4, 5, 6]
     )
 
     def __init__(self, *args, **kwargs):

@@ -18,7 +18,7 @@ from django.urls import reverse
 
 def login(request):
     title = 'вход'
-    #get next (when buy unauthenticated
+    # get next (when buy unauthenticated
     next = request.GET['next'] if 'next' in request.GET.keys() else ''
 
     if request.method == 'POST':
@@ -29,8 +29,8 @@ def login(request):
             password = request.POST['password']
 
             user = auth.authenticate(username=username, password=password)
-    # когда срабатывает враппер логин-рек (при попытке заказа) в таком виде адресс http://127.0.0.1:8000/auth/login/?next=/basket/add/3/
-        #при заходе возврат на ту страницу заказа
+            # когда срабатывает враппер логин-рек (при попытке заказа) в таком виде адресс http://127.0.0.1:8000/auth/login/?next=/basket/add/3/
+            # при заходе возврат на ту страницу заказа
 
             if user and user.is_active:
                 auth.login(request, user)
@@ -54,10 +54,8 @@ def logout(request):
     auth.logout(request)
     return HttpResponseRedirect(reverse('main'))
 
-
 # def register(request):
 #     return HttpResponseRedirect(reverse('main'))
-
 
 def register(request):
     title = 'регистрация'
@@ -75,9 +73,9 @@ def register(request):
 
     return render(request, 'authapp/register.html', content)
 
+
 # def edit(request):
 #     return HttpResponseRedirect(reverse('main'))
-
 
 
 def edit(request):
@@ -94,6 +92,7 @@ def edit(request):
     content = {'title': title, 'edit_form': edit_form}
 
     return render(request, 'authapp/edit.html', content)
+
 
 def email_sched(request):
     title = 'редактирование режима оповещения'
