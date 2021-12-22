@@ -481,7 +481,7 @@ def mathemj(request, pk):
         txt1 = f"вопрос {lesson.ans_amount} правильных: {lesson.ans_correct}"
 
         list_txt.append(txt1)
-        opers = ['X', '+', '-', '/', '=']
+        opers = ['X', '+', '-', '/', '=', '!']
         oper = opers[code - 1]
 
         # maket stolbika for +/-
@@ -547,14 +547,21 @@ def mathemj(request, pk):
 
         drob1 = ''
         if drob:
-            a_int = a.get('inte')
-            if a_int == None:
-                a_int = ''
-            b_int = b.get('inte')
-            if b_int == None:
-                b_int = ''
 
-            if oper == "=":
+            # a_int = a.get('inte')
+            # if a_int == None:
+            #     a_int = ''
+            # b_int = b.get('inte')
+            # if b_int == None:
+            #     b_int = ''
+
+            a_int = b_int = ''
+            if a['inte'] != 0:
+                a_int = a['inte']
+            if b['inte'] != 0:
+                b_int = b['inte']
+
+            if oper == "=" or oper == "!":
                 drob1 = f'''
                             <div class="primer">
                                 <p class="sup">{a_int}
@@ -1000,12 +1007,10 @@ def hist(request, page='None'):
     else:
         # fillup lists with data
 
-        make_report(lessons, list_hist, rep_hist, wrong_ans_hist)
-
         # paginator self made
-        n = 2  # reports per page
+        n = 3  # reports per page
         # number of reports all
-        items_cnt = len(list_hist) - 1
+        items_cnt = len(lessons) - 1
         # max page
         max_page = int(items_cnt / n)
         # make new page for the rest new page
@@ -1019,34 +1024,35 @@ def hist(request, page='None'):
             # curr page if page param is given
             page = int(page)
 
-        # no need
-        # if max_page == 0:
-        #    max_page = 1
+        # calc start lesson on this page
+        lesson_id = n * page - 1
+        # get from db only what we need for this page
+        make_report(lessons, lesson_id, n, list_hist, rep_hist, wrong_ans_hist)
 
-        # slice list_hist per one page
-        page_list_hist = list_hist[n * page - 1:n * page - 1 + n]
-        # make rep_hist, wrong_ans_hist lists corresponding to page_list_hist
-        page_rep_hist = []
-        page_wrong_ans_hist = []
-        for list_item in page_list_hist:
-            for rep_item in rep_hist:
-                if rep_item[0] == list_item[0]:
-                    page_rep_hist.append(rep_item)
-            for wrong_ans_item in wrong_ans_hist:
-                if wrong_ans_item[0] == list_item[0]:
-                    page_wrong_ans_hist.append(wrong_ans_item)
+        page_list_hist = list_hist
+        page_rep_hist = rep_hist
+        page_wrong_ans_hist = wrong_ans_hist
 
-        # page_rep_hist =
-        clr_but = True
-
-        paging = {'page': page,
-                  'pages': [x for x in range(1, max_page + 1)],
-                  }
-
-        # copy headers to paged version
-        page_rep_hist.insert(0, rep_hist[0])
-        page_list_hist.insert(0, list_hist[0])
-        page_wrong_ans_hist.insert(0, wrong_ans_hist[0])
+        # # slice list_hist per one page
+        # page_list_hist = list_hist   #[n * page - 1:n * page - 1 + n]
+        # # make rep_hist, wrong_ans_hist lists corresponding to page_list_hist
+        # page_rep_hist = []
+        # page_wrong_ans_hist = []
+        # for list_item in page_list_hist:
+        #     for rep_item in rep_hist:
+        #         if rep_item[0] == list_item[0]:
+        #             page_rep_hist.append(rep_item)
+        #     for wrong_ans_item in wrong_ans_hist:
+        #         if wrong_ans_item[0] == list_item[0]:
+        #             page_wrong_ans_hist.append(wrong_ans_item)
+        #
+        # # page_rep_hist =
+        #
+        #
+        # # copy headers to paged version
+        # page_rep_hist.insert(0, rep_hist[0])
+        # page_list_hist.insert(0, list_hist[0])
+        # page_wrong_ans_hist.insert(0, wrong_ans_hist[0])
 
         # ans_page = {'list_hist': page_list_hist, 'rep_hist': page_rep_hist, 'wrong_ans_hist': page_wrong_ans_hist, 'clr_but': clr_but , 'paging' : paging}
         # generate tables list & tab_idx
@@ -1061,7 +1067,7 @@ def hist(request, page='None'):
         # 1st row is list - 6 cols
         # 2nd row is rep - 1 col N rows
         # 3rd row is wrong ans 1 col N rows
-        # +shapka for every entity
+        # insert shapka for every entity (initially its only in the begining
 
         for i in page_list_hist:
             table = []
@@ -1086,6 +1092,12 @@ def hist(request, page='None'):
             tables_list.append(table)
         # remove first item from tables_list
         del tables_list[0]
+
+        clr_but = True
+
+        paging = {'page': page,
+                  'pages': [x for x in range(1, max_page + 1)],
+                  }
 
         ans_page = {'tab_list': tables_list, 'clr_but': clr_but, 'paging': paging}
 
@@ -1150,12 +1162,104 @@ def compare_reports(pk, favor_ans):
             favor_ans_res[idx + 1] = elem
 
         return favor_ans_res
-
-    except:
+    except Exception as e:
+        print("compare reports error: ", e)
         return favor_ans
 
 
-def make_report(lessons, list_hist, rep_hist, wrong_ans_hist):
+def print_report_row(key):
+    a = key['a']
+    b = key['b']
+    c = key['c']
+    d = key['d']
+    str_fav_ans = ''
+    divsign = u'\u00F7'
+    oper_list = ['X', '+', '-', divsign, '=', '/=']
+    oper = oper_list[c - 1]
+    if not isinstance(a, int):
+        a_inte = ''
+        if a.get('inte'):
+            a_inte = a['inte']
+        drob_a = f"{a_inte} {a['chis']}/{a['znam']}"
+
+        if oper == '=' or oper == '/=':
+            str_fav_ans = (f"""{drob_a} {oper} {d} сек""")
+        # a,b drob
+        else:
+            b_inte = ''
+            if b.get('inte'):
+                b_inte = b['inte']
+            drob_b = f"{b_inte} {b['chis']}/{b['znam']}"
+
+            str_fav_ans = f""" {drob_a} {oper} {drob_b} занял {d} сек"""
+    else:
+        # a,b integer
+        if c == 1:
+            str_fav_ans = f' {a} X {b} (={a * b}) занял {d} секунд'
+        if c == 2:
+            str_fav_ans = f' {a} + {b} (={a + b}) занял {d} секунд'
+        if c == 3:
+            str_fav_ans = f' {a} - {b} (={a - b}) занял {d} секунд'
+        if c == 4:
+            divsign = u'\u00F7'
+            str_fav_ans = f' {a} {divsign} {b} (={int(a / b)}) занял {d} секунд'
+
+    diff = key.get('e')
+    if diff:
+        if diff > 0:
+            str_fav_ans += f', разница c последним уроком => + {abs(diff)} сек :('
+        else:
+            str_fav_ans += f', разница c последним уроком => - {abs(diff)} сек :)'
+    return str_fav_ans
+
+
+def print_wrong_report_row(key):
+    a = key['a']
+    b = key['b']
+    c = key['c']
+    d = key.get('diff')
+    ans = key.get('ans')
+
+    str_fav_ans = ''
+    divsign = u'\u00F7'
+    oper_list = ['X', '+', '-', divsign, '=', '=']
+    oper = oper_list[c - 1]
+    if not isinstance(a, int):
+        # ans_inte = ''
+        # if ans.get('inte') != None:
+        #    ans_inte = ans['inte']
+        drob_ans = f" {ans}"  # //{ans_inte} {ans['chis']}/{ans['znam']}"
+
+        a_inte = ''
+        if a.get('inte'):
+            a_inte = a['inte']
+        drob_a = f"{a_inte} {a['chis']}/{a['znam']}"
+
+        if oper == '=' or oper == '/=':
+            str_fav_ans = f"""{drob_a} {oper} {drob_ans} (занял {d} сек)"""
+        # a,b drob
+        else:
+            b_inte = ''
+            if b.get('inte'):
+                b_inte = b['inte']
+            drob_b = f"{b_inte} {b['chis']}/{b['znam']}"
+            str_fav_ans = f""" {drob_a} {oper} {drob_b} {drob_ans} (занял {d} сек)"""
+    else:
+        # a,b integer
+        if c == 1:
+            str_fav_ans = f' {a} X {b} (={a * b}) {ans} (занял {d} секунд)'
+        if c == 2:
+            str_fav_ans = f' {a} + {b} (={a + b}) {ans} (занял {d} секунд)'
+        if c == 3:
+            str_fav_ans = f' {a} - {b} (={a - b}) {ans} (занял {d} секунд)'
+        if c == 4:
+            divsign = u'\u00F7'
+            str_fav_ans = f' {a} {divsign} {b} (={int(a / b)}) {ans} (занял {d} секунд)'
+
+    return str_fav_ans
+
+
+def make_report(lessons, lesson_id, n, list_hist, rep_hist, wrong_ans_hist):
     # print(list_txt)
 
     # make headers of the table history
@@ -1181,7 +1285,7 @@ def make_report(lessons, list_hist, rep_hist, wrong_ans_hist):
     wrong_ans_row.append(f' Отчет: история неверных ответов ')
     wrong_ans_hist.append(wrong_ans_row)
 
-    for i in lessons:
+    for i in lessons[lesson_id-1:lesson_id-1+n]:
         list_hist_row = []
         # add id lesson
         list_hist_row.append(f'{i.id}')
@@ -1236,105 +1340,52 @@ def make_report(lessons, list_hist, rep_hist, wrong_ans_hist):
             saved_str = bytes_str.decode()
             # saved_report_favor_ans = json.loads(saved_str)
             saved_report.file_rep.close()
-            # load dict report as d
+            # load dict report as d from saved str
             d = json.loads(saved_str)
             saved_report.file_rep.close()
             # use ordereddict to sort report by filed 'd' = time desc direction
             saved_report_favor_ans = OrderedDict(sorted(d.items(), key=lambda t: t[1]['d'], reverse=True))
-
             # insert id into each row of report
             # add report rows
-            divsign = u'\u00F7'
-            oper_list = ['X', '+', '-', divsign, '=']
 
             for id, key in saved_report_favor_ans.items():
                 rep_hist_row = [f'{i.id}']
-                a = key['a']
-                b = key['b']
-                c = key['c']
-                d = key['d']
+                str_fav_ans = print_report_row(key)
+                # if key.get('c'):
+                rep_hist_row.append(str_fav_ans)
+                rep_hist.append(rep_hist_row)  # one answer per one row
 
-                oper = oper_list[c - 1]
-                if not isinstance(a, int):
-                    if oper == '=':
-                        str_fav_ans = (f""" {a['chis']}/{a['znam']} (преобразование) {d} сек""")
-                    # a,b drob
-                    else:
-                        str_fav_ans = (f""" {a['chis']}/{a['znam']} {oper} {b['chis']}/{b['znam']} занял {d} сек""")
-                else:
-                    # a,b integer
-                    if c == 1:
-                        str_fav_ans = (f' {a} X {b} (={a * b}) занял {d} секунд')
-                    if c == 2:
-                        str_fav_ans = (f' {a} + {b} (={a + b}) занял {d} секунд')
-                    if c == 3:
-                        str_fav_ans = (f' {a} - {b} (={a - b}) занял {d} секунд')
-                    if c == 4:
-                        divsign = u'\u00F7'
-                        str_fav_ans = (f' {a} {divsign} {b} (={int(a / b)}) занял {d} секунд')
-
-                diff = key.get('e')
-                if diff:
-                    if diff > 0:
-                        str_fav_ans += f', разница c последним уроком => + {abs(diff)} сек :('
-                    else:
-                        str_fav_ans += f', разница c последним уроком => - {abs(diff)} сек :)'
-
-                if c:
-                    rep_hist_row.append(str_fav_ans)
-                    rep_hist.append(rep_hist_row)  # one answer per one row
-
-
-        except:
+        except Exception as e:
             rep_hist_row = []
             rep_hist_row.append(f'{i.id}')
-            rep_hist_row.append(f' report - нет данных')
+            rep_hist_row.append(f' report - нет данных error: {e}')
             rep_hist.append(rep_hist_row)
 
         # wrong ans hist
         try:
-            wrong_ans = json.loads(i.wrong_ans, object_pairs_hook=OrderedDict)
+            if i.wrong_ans != '':
+                wrong_ans = json.loads(i.wrong_ans, object_pairs_hook=OrderedDict)
 
-            divsign = u'\u00F7'
-            oper_list = ['X', '+', '-', divsign, '=']
+                for key in wrong_ans:
+                    wrong_ans_row = []
+                    wrong_ans_row.append(f'{i.id}')
 
-            for key in wrong_ans:
+                    str_fav_ans = print_wrong_report_row(key)
+
+                    wrong_ans_row.append(str_fav_ans)
+                    wrong_ans_hist.append(wrong_ans_row)  # one answer per one row
+            else:
                 wrong_ans_row = []
                 wrong_ans_row.append(f'{i.id}')
-                a = key['a']
-                b = key['b']
-                c = key['c']
-                d = key['diff']
-                ans = key['ans']
+                wrong_ans_row.append(f' неверных ответов не обнаружено ')
+                wrong_ans_hist.append(wrong_ans_row)
 
-                oper = oper_list[c - 1]
-                if not isinstance(a, int):
-                    if oper == '=':
-                        str_fav_ans = (f""" {a['chis']}/{a['znam']} (преобразование) = {ans} занял {d} сек""")
-                    else:
-                        # a,b drob
-                        str_fav_ans = (
-                            f""" {a['chis']}/{a['znam']} {oper} {b['chis']}/{b['znam']} = {ans} занял {d} сек""")
-                else:
-                    # a,b integer
-                    if c == 1:
-                        str_fav_ans = (f' {a} X {b} = {ans} (={a * b}) занял {d} секунд')
-                    if c == 2:
-                        str_fav_ans = (f' {a} + {b} = {ans} (={a + b}) занял {d} секунд')
-                    if c == 3:
-                        str_fav_ans = (f' {a} - {b} = {ans} (={a - b}) занял {d} секунд')
-                    if c == 4:
-                        divsign = u'\u00F7'
-                        str_fav_ans = (f' {a} {divsign} {b} = {ans} (={int(a / b)}) занял {d} секунд')
 
-                wrong_ans_row.append(str_fav_ans)
-                wrong_ans_hist.append(wrong_ans_row)  # one answer per one row
-
-        except:
+        except Exception as e:
             # no items all correct!
             wrong_ans_row = []
             wrong_ans_row.append(f'{i.id}')
-            wrong_ans_row.append(f' неверных ответов не обнаружено ')
+            wrong_ans_row.append(f' неверных ответов не обнаружено error: {e}, {i.wrong_ans}')
             wrong_ans_hist.append(wrong_ans_row)
 
 

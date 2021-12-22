@@ -1,18 +1,37 @@
 DROBI_PLUS_SET = [
-    {'chis': 1, 'znam': 5},
-    {'chis': 1, 'znam': 4},
-    {'chis': 1, 'znam': 3},
-    {'chis': 2, 'znam': 3},
-    {'chis': 3, 'znam': 5},
-    {'chis': 1, 'znam': 2},
+    {'chis': 1, 'znam': 5, 'inte': 0},
+    {'chis': 1, 'znam': 4, 'inte': 0},
+    {'chis': 1, 'znam': 3, 'inte': 0},
+    {'chis': 1, 'znam': 2, 'inte': 0},
+    {'chis': 1, 'znam': 6, 'inte': 0},
+    {'chis': 2, 'znam': 5, 'inte': 0},
+    {'chis': 2, 'znam': 3, 'inte': 0},
+    {'chis': 3, 'znam': 5, 'inte': 0},
+    {'chis': 4, 'znam': 5, 'inte': 0},
 ]
 
 DROBI_MINUS_SET = [
-
+    {'chis': 1, 'znam': 5, 'inte': 0},
+    {'chis': 1, 'znam': 4, 'inte': 0},
+    {'chis': 1, 'znam': 3, 'inte': 0},
+    {'chis': 1, 'znam': 2, 'inte': 0},
+    {'chis': 1, 'znam': 6, 'inte': 0},
+    {'chis': 2, 'znam': 5, 'inte': 0},
+    {'chis': 2, 'znam': 3, 'inte': 0},
+    {'chis': 3, 'znam': 5, 'inte': 0},
+    {'chis': 4, 'znam': 5, 'inte': 0},
 ]
 
 DROBI_MULT_SET = [
-
+    {'chis': 1, 'znam': 5, 'inte': 0},
+    {'chis': 1, 'znam': 4, 'inte': 0},
+    {'chis': 1, 'znam': 3, 'inte': 0},
+    {'chis': 1, 'znam': 2, 'inte': 0},
+    {'chis': 1, 'znam': 6, 'inte': 0},
+    {'chis': 2, 'znam': 5, 'inte': 0},
+    {'chis': 2, 'znam': 3, 'inte': 0},
+    {'chis': 3, 'znam': 5, 'inte': 0},
+    {'chis': 4, 'znam': 5, 'inte': 0},
 ]
 
 
@@ -26,14 +45,13 @@ class Drob:
         def iter1():
             z = self.gcd(self.chis, self.znam)
             if self.chis > self.znam:
-
                 if z > 0:
                     self.inte += 1
                     self.chis = int((self.chis - self.znam) / z)
                     self.znam = int(self.znam / z)
                     iter1()
             else:
-                # todo сократить дробь
+                # на выходе, если получилось 1 2/2 то делаем 3
                 if self.chis == self.znam:
                     self.inte += 1
                     self.chis = 0
