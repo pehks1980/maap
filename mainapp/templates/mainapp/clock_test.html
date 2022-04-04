@@ -7,7 +7,7 @@
      const seconds = 0;
      const minutes = getRandomInt(59); // on clock
      const hours = randomInt(1,12); //
-     //difference for question
+     //difference for question // we get from beckend as diff parameter
      const diff_hours = {{diff | get_item:'hours'}};
      const diff_minutes = {{diff | get_item:'minutes'}};
      //correct reply with difference in question
@@ -26,11 +26,21 @@
             _addhour = 0;
          }
 
+     if ( (minutes + diff_minutes) < 0)
+        {
+            _cor_minutes = minutes + abs(diff_minutes);
+        }
+
      if ( (hours + diff_hours) > 12 )
         {
             _cor_hours = hours + diff_hours - 12 + _addhour;
         } else {
             _cor_hours = hours + diff_hours + _addhour;
+        }
+
+     if ( (hours + diff_hours) < 0 )
+        {
+            _cor_hours = hours + diff_hours + 12;
         }
 
      const cor_minutes = _cor_minutes;
@@ -44,10 +54,7 @@
 
 window.onload = function() // дожидаемся загрузки страницы
 {
-
-
      initializeClock(0); // вызываем функцию запуск часов 0 - no change 1 - set clock to cor_minutes/hours
-
 
      //setClockTime(hours,minutes,seconds); // значение на цифеблат
 
