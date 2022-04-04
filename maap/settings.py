@@ -87,7 +87,7 @@ DATABASES = {
     # }
 
      'default': {
-         'NAME': 'maap',
+         'NAME': 'maap_test',
          'ENGINE': 'django.db.backends.postgresql',
          'USER': 'maap',
          'PASSWORD': 'maap',

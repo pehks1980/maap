@@ -307,19 +307,31 @@ def clockj(request, ans_correct=None, ans_amount=None):
     txt2 = f'cколько времени на часах ?'
 
     # shuffle for special question with difference
-    flag = False
-    spec_quest_ratio = 30
-    op = random.randint(1, 100)
+    #flag = False
+    #spec_quest_ratio = 30
+    # get sected 1 - before 2 exact 3 after
+    op = random.randint(1, 3)
 
-    if op > spec_quest_ratio:
-        flag = True
+    #if op > spec_quest_ratio:
+    #    flag = True
 
-    diff = {'hours': 0,
-            'minutes': 0
-            }
-
-    if flag:
-        mins = [0, 5, 10]
+    #exact
+    if op == 2:
+        diff = {'hours': 0,
+                'minutes': 0
+                }
+    #before
+    if op == 1:
+        mins = [0, 5, 10, 15, 25, 30]
+        diff = {'hours': random.randint(1, 2),
+                'minutes': random.choice(mins)
+                }
+        txt2 = f'cколько времени на часах БЫЛО {diff["hours"]} час и {diff["minutes"]} мин НАЗАД??'
+        diff['hours'] = -abs(diff['hours'])
+        diff['minutes'] = -abs(diff['minutes'])
+    #after
+    if op == 3:
+        mins = [0, 5, 10, 15, 25, 30]
         diff = {'hours': random.randint(1, 2),
                 'minutes': random.choice(mins)
                 }
