@@ -18,18 +18,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'e2nsv_7ja12&g=x5amt(ojd4b5o8&oi8g#3kpfk#xnnav490)4'
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = ['*']
+from .local_settings import *
 
 # Application definition
 
 INSTALLED_APPS = [
-    #'django.contrib.admin',
+    # 'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -62,7 +56,7 @@ TEMPLATE_DIR = os.path.join(BASE_DIR, "templates")
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [TEMPLATE_DIR,],
+        'DIRS': [TEMPLATE_DIR, ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -76,27 +70,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'maap.wsgi.application'
-
-# Database
-# https://docs.djangoproject.com/en/3.0/ref/settings/#databases
-
-DATABASES = {
-    #'default': {
-    #     'ENGINE': 'django.db.backends.sqlite3',
-    #     'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    # }
-
-     'default': {
-         'NAME': 'maap_test',
-         'ENGINE': 'django.db.backends.postgresql',
-         'USER': 'maap',
-         'PASSWORD': 'maap',
-         'HOST': '192.168.1.204'
-     }
-
-
-
-}
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
@@ -149,22 +122,22 @@ LOGIN_URL = '/auth/login/'
 
 DEFAULT_FILE_STORAGE = 'db_file_storage.storage.DatabaseFileStorage'
 
-#additional path settings for gunicorn when deployment
+# additional path settings for gunicorn when deployment
 import sys
+
 sys.path.append('/home/user/django/maap/mainapp')
 sys.path.append('/home/user/django')
-#print (sys.path)
+# print (sys.path)
 
-#app settings
-NX = 12 #models.PositiveIntegerField(verbose_name='nx', default=12)
-NY = 10 #models.PositiveIntegerField(verbose_name='ny', default=10)
+# app settings
+NX = 12  # models.PositiveIntegerField(verbose_name='nx', default=12)
+NY = 10  # models.PositiveIntegerField(verbose_name='ny', default=10)
 
-AX = 100 #models.PositiveIntegerField(verbose_name='ax', default=100)
-SX = 100 #models.PositiveIntegerField(verbose_name='sx', default=100)
+AX = 100  # models.PositiveIntegerField(verbose_name='ax', default=100)
+SX = 100  # models.PositiveIntegerField(verbose_name='sx', default=100)
 
-TWO_DIGIT  = 1 #two_digit = models.PositiveIntegerField(verbose_name='two_digit', default=1)
-NO_MINUS = 1 #no_minus = models.PositiveIntegerField(verbose_name='no_minus', default=1)
-NO_DEC_MUL = 1 #no_dec_mul = models.PositiveIntegerField(verbose_name='no_dec_mul', default=1)
-HIST_DEPTH = 10 #hist_depth = models.PositiveIntegerField(verbose_name='hist_depth', default=5)
-FAVOR_THRESOLD_TIME = 15 #favor_thresold_time = models.PositiveIntegerField(verbose_name='hist_depth', default=15)
-
+TWO_DIGIT = 1  # two_digit = models.PositiveIntegerField(verbose_name='two_digit', default=1)
+NO_MINUS = 1  # no_minus = models.PositiveIntegerField(verbose_name='no_minus', default=1)
+NO_DEC_MUL = 1  # no_dec_mul = models.PositiveIntegerField(verbose_name='no_dec_mul', default=1)
+HIST_DEPTH = 10  # hist_depth = models.PositiveIntegerField(verbose_name='hist_depth', default=5)
+FAVOR_THRESOLD_TIME = 15  # favor_thresold_time = models.PositiveIntegerField(verbose_name='hist_depth', default=15)
