@@ -61,7 +61,7 @@ class Drob:
 
         # call inline func recursively
         iter1()
-
+    # denormalize drob
     def denormalize(self):
         if self.inte > 0:
             self.chis = self.inte * self.znam + self.chis
