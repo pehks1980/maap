@@ -44,6 +44,7 @@ def set_app_mode(list_mode):
     divn = 0
     stolbik = 0
     drob = 0
+    expr = 0
 
     for i in list_mode:
         if int(i) == 1:
@@ -58,8 +59,10 @@ def set_app_mode(list_mode):
             stolbik = 1
         if int(i) == 6:
             drob = 1
+        if int(i) == 7:
+            expr = 1
 
-    return mult, addi, subt, divn, stolbik, drob
+    return mult, addi, subt, divn, stolbik, drob, expr
 
 
 def get_app_mode_desc(lesson):
@@ -75,8 +78,9 @@ def get_app_mode_desc(lesson):
     divn_cnt = lesson.divn_cnt
     stolb_cnt = lesson.stolb_cnt
     drob_cnt = lesson.drob_cnt
+    expr_cnt = lesson.expr_cnt
 
-    a = b = c = d = e = f = ''
+    a = b = c = d = e = f = g = ''
 
     for i in mode:
         if i == '1':
@@ -104,8 +108,12 @@ def get_app_mode_desc(lesson):
             f = f' др.'
             if drob_cnt:
                 f += f'={drob_cnt}'
+        if i == '7':
+            g = f' выр.'
+            if expr_cnt:
+                g += f'={expr_cnt}'
 
-    return f'{a}{b}{c}{d}{e}{f}'
+    return f'{a}{b}{c}{d}{e}{f}{g}'
 
 
 def printMatrix(s, hl, a, b):
@@ -164,6 +172,7 @@ def get_ops(same_znam, set_choice, DROBI_PLUS_SET):
         b = random.choice(DROBI_PLUS_SET)
     return a, b
 
+
 def eval_quest(nx, ny, ax, two_digit, no_minus, sx, no_dec_mul, hist, hist_depth, app_mode):
     """
     choice the next question from random, take into account previous answers hist
@@ -187,8 +196,8 @@ def eval_quest(nx, ny, ax, two_digit, no_minus, sx, no_dec_mul, hist, hist_depth
     range_diff = 7
 
     stolbik = False
-
     drob = False
+    expr = False
 
     while True:
         already_in_hist = False
@@ -197,8 +206,9 @@ def eval_quest(nx, ny, ax, two_digit, no_minus, sx, no_dec_mul, hist, hist_depth
             while True:
                 stolbik = False
                 drob = False
+                expr = False
 
-                code = random.randint(1, 6)
+                code = random.randint(1, 7)
                 if (app_mode['mult'] == 1) and (code == 1):
                     break
                 if (app_mode['addi'] == 1) and (code == 2):
@@ -210,6 +220,8 @@ def eval_quest(nx, ny, ax, two_digit, no_minus, sx, no_dec_mul, hist, hist_depth
                 if (app_mode['stolbik'] == 1) and (code == 5):
                     break
                 if (app_mode['drob'] == 1) and (code == 6):
+                    break
+                if (app_mode['expr'] == 1) and (code == 7):
                     break
 
         # mul a,b 2..10 2..12 mult table 10X12
@@ -345,7 +357,7 @@ def eval_quest(nx, ny, ax, two_digit, no_minus, sx, no_dec_mul, hist, hist_depth
             oper_set = (2, 3, 5, 6)
             oper = random.choice(oper_set)
 
-            #oper = 1
+            # oper = 1
             # drobi!!
 
             # we get code == 6 oper = operation
@@ -360,7 +372,7 @@ def eval_quest(nx, ny, ax, two_digit, no_minus, sx, no_dec_mul, hist, hist_depth
             if oper == 3:
                 a, b = get_ops(same_znam, set_choice, DROBI_MINUS_SET)
                 # check and exchange ops to avoid negative results in primer (for simplicity)
-                if a['chis']/a['znam'] < b['chis']/b['znam']:
+                if a['chis'] / a['znam'] < b['chis'] / b['znam']:
                     a, b = b, a
             # /
             if oper == 4:
@@ -403,6 +415,110 @@ def eval_quest(nx, ny, ax, two_digit, no_minus, sx, no_dec_mul, hist, hist_depth
             # in case of drob = true code is operation +-/*=
             code = oper
 
+        # expr
+        if code == 7:
+            expr = True
+            # 34 + ( 239 - 606 : 6 ) * 4 - 393 : 3 =
+            # ex = a [ -+] br_rez [*:] c [+-] d [*:] e
+            # b = a1 op1[-+] b1 op2[*:] c1
+            expr_rezult = 0
+            expr_brackets_rezult = 0
+            expr_brackets_rezult_str = '( '
+            # make up and compute brackets expression
+
+            a1 = random.randint(69, 149)
+            expr_brackets_rezult_str += str(a1)
+
+            op2 = random.choice(['*', ':'])
+            if op2 == '*':
+                c1 = random.randint(2, 5)
+                b1 = random.randint(2, 25)
+                expr_brackets_rezult = c1 * b1
+
+            if op2 == ':':
+                c1 = random.randint(2, 8)
+                # for chosen divider find integer rest with
+                while True:
+                    b1 = random.randint(99, 299)
+                    if b1 % c1 == 0:
+                        break
+                expr_brackets_rezult = b1 / c1
+            expr_brackets_rezult_str_1 = str(b1) + " " + op2 + " " + str(c1)
+            op1 = random.choice(['-', '+'])
+            if op1 == '-':
+                expr_brackets_rezult = int(a1 - expr_brackets_rezult)
+            if op1 == '+':
+                expr_brackets_rezult = int(a1 + expr_brackets_rezult)
+            expr_brackets_rezult_str += " " + op1 + " "+ expr_brackets_rezult_str_1 + " )"
+
+            # do same as per outer expr
+            # 34 + ( 239 - 606 : 6 ) * 4 - 393 : 3 =
+            # ex = a op1[ -+] br_rez op2[ *] c op3[ +-] d op4[ *:] e
+            expr_rezult = 0
+            expr_rezult_op4_str = ' '
+            op4 = random.choice(['','*',":"])
+            if op4 == '*':
+                d = random.randint(2, 6)
+                e = random.randint(2, 39)
+                expr_rezult_op4 = d * e
+                expr_rezult_op4_str = " " + str(d) + " " + op4 + " " + str(e) + " "
+
+            if op4 == ':':
+                e = random.randint(2, 8)
+                # for chosen divider find integer rest with
+                while True:
+                    d = random.randint(99, 399)
+                    if d % e == 0:
+                        break
+                expr_rezult_op4 = d / e
+                expr_rezult_op4_str = " " + str(d) + " " + op4 + " " + str(e) + " "
+            if op4 == '':
+                expr_rezult_op4 = 0
+                expr_rezult_op4_str = ''
+
+
+            op2 = random.choice(['', '*'])
+            if op2 == '*':
+                c = random.randint(2, 5)
+                expr_rezult_op2 = expr_brackets_rezult * c
+                expr_rezult_op2_str = expr_brackets_rezult_str + " " + op2 + " " + str(c) + " "
+            if op2 == '':
+                expr_rezult_op2 = expr_brackets_rezult
+                expr_rezult_op2_str = expr_brackets_rezult_str + " "
+
+
+            op1 = random.choice(['', '-', '+'])
+            if op1 == '-':
+                a = random.randint(199, 499)
+                expr_rezult = a - expr_rezult_op2
+                expr_rezult_str = str(a) + " " + op1 + " " + expr_rezult_op2_str
+
+            if op1 == '+':
+                a = random.randint(49, 109)
+                expr_rezult = a + expr_rezult_op2
+                expr_rezult_str = str(a) + " " + op1 + " " + expr_rezult_op2_str
+
+            if op1 == '':
+                expr_rezult_str = expr_rezult_op2_str
+                expr_rezult = expr_rezult_op2
+
+            op3 = random.choice(['-', '+'])
+            if op3 == '-' and op4 != '':
+                expr_rezult = expr_rezult - expr_rezult_op4
+                expr_rezult_str = expr_rezult_str + " " + op3 + " " + expr_rezult_op4_str
+
+            if op3 == '+' and op4 != '':
+                expr_rezult = expr_rezult + expr_rezult_op4
+                expr_rezult_str = expr_rezult_str + " " + op3 + " " + expr_rezult_op4_str
+
+
+            #at the end we got
+            # expr_rezult - result of calculating expression
+            # expr_rezult_str - expression string
+            # we put a = expr_rezult
+            #        b = expr_rezult_str
+            a = str(int(expr_rezult))
+            b = expr_rezult_str
         if not already_in_hist:
             break
 
@@ -424,7 +540,7 @@ def eval_quest(nx, ny, ax, two_digit, no_minus, sx, no_dec_mul, hist, hist_depth
     #     hist.popleft()
 
     # stolbik t - if operation is stolbik (because code is replaced with +-*)
-    return a, b, code, stolbik, drob, hist
+    return a, b, code, stolbik, drob, expr, hist
 
 
 # check_ans_drob - check if answer is drob
@@ -496,6 +612,12 @@ def check_ans_drob(ans, a, b, code):
         b_int = b['inte']
     if res['inte'] != 0:
         res_int = res['inte']
+    #case of 0
+    if d1.chis == 0 and d1.inte == 0:
+        res_int = 0
+        res['chis'] = ''
+        res['znam'] = ''
+
     if oper == '=' or oper == '!':
         drob1 = f'''
                             <div class="primer">
@@ -692,7 +814,7 @@ def finish_lesson(lesson, f_time, favor_ans, wrong_ans, favor_thresold_time):
         reply.append(f' неправильные примеры: {len(wrong_ans)}')
 
         divsign = u'\u00F7'
-        oper_list = ['X', '+', '-', divsign, '=', '/=']
+        oper_list = ['X', '+', '-', divsign, '=', '/=','#']
 
         for i in wrong_ans:
             a = i['a']
@@ -707,7 +829,7 @@ def finish_lesson(lesson, f_time, favor_ans, wrong_ans, favor_thresold_time):
                 # a,b drob
                 if oper == '=' or oper == '/=':
                     reply.append(f""" {a['inte']} {a['chis']}/{a['znam']} = {ans} занял {d} сек""")
-                else:
+                elif oper != '#':
                     if a['inte'] == 0:
                         drob_a = f"{a['chis']}/{a['znam']}"
                     else:
@@ -718,6 +840,9 @@ def finish_lesson(lesson, f_time, favor_ans, wrong_ans, favor_thresold_time):
                         drob_b = f"{b['inte']} {b['chis']}/{b['znam']}"
 
                     reply.append(f""" {drob_a} {oper} {drob_b} = {ans} занял {d} сек""")
+                else:
+                    # expression operation
+                    reply.append(f""" выр: {b} = {ans} (={a}) занял {d} сек""")
             else:
                 # a,b integer
                 if oper == '*':
