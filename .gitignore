@@ -4,4 +4,4 @@ db.sqlite3
 __pycache__/
 mainapp/migrations/
 authapp/migrations/
-local_settings.py
+maap/local_settings.py

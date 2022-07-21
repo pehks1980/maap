@@ -141,3 +141,8 @@ NO_MINUS = 1  # no_minus = models.PositiveIntegerField(verbose_name='no_minus', 
 NO_DEC_MUL = 1  # no_dec_mul = models.PositiveIntegerField(verbose_name='no_dec_mul', default=1)
 HIST_DEPTH = 10  # hist_depth = models.PositiveIntegerField(verbose_name='hist_depth', default=5)
 FAVOR_THRESOLD_TIME = 15  # favor_thresold_time = models.PositiveIntegerField(verbose_name='hist_depth', default=15)
+
+#list of all sets of operations
+divsign = u'\u00F7'
+OPER_LIST = ['X', '+', '-', divsign, '=', '/=', '#']
+OPER_LIST1 = ['X', '+', '-', '/', '=', '!', '#']

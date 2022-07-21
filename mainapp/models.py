@@ -60,6 +60,10 @@ class MaapLesson(models.Model):
     b1_drob = models.CharField(verbose_name='b1_drob', max_length=64, blank=True)
     is_drob = models.BooleanField(verbose_name='is_drob', default=False)
 
+    a1_expr = models.CharField(verbose_name='a1_expr', max_length=64, blank=True)
+    b1_expr = models.CharField(verbose_name='b1_expr', max_length=128, blank=True)
+    is_expr = models.BooleanField(verbose_name='is_expr', default=False)
+
     # last ans time in seconds
     ans_sum = models.PositiveIntegerField(verbose_name='last_ans_time', default=0)
     # avg ans time for the lesson
@@ -71,6 +75,7 @@ class MaapLesson(models.Model):
     divn = models.PositiveIntegerField(verbose_name='divn', default=1)
     stolbik = models.PositiveIntegerField(verbose_name='stolbik', default=1)
     drob = models.PositiveIntegerField(verbose_name='drob', default=1)
+    expr = models.PositiveIntegerField(verbose_name='expr', default=1)
     # counter operations for the lesson
     mult_cnt = models.PositiveIntegerField(verbose_name='mult_cnt', default=0)
     addi_cnt = models.PositiveIntegerField(verbose_name='addi_cnt', default=0)
@@ -78,6 +83,7 @@ class MaapLesson(models.Model):
     divn_cnt = models.PositiveIntegerField(verbose_name='divn_cnt', default=0)
     drob_cnt = models.PositiveIntegerField(verbose_name='drob_cnt', default=0)
     stolb_cnt = models.PositiveIntegerField(verbose_name='stolb_cnt', default=0)
+    expr_cnt = models.PositiveIntegerField(verbose_name='expr_cnt', default=0)
 
     def __str__(self):
         return self.user_id

@@ -14,7 +14,7 @@ from django.template.loader import render_to_string
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from maap.settings import NX, NY, AX, SX, TWO_DIGIT, NO_MINUS, \
-    NO_DEC_MUL, HIST_DEPTH, FAVOR_THRESOLD_TIME
+    NO_DEC_MUL, HIST_DEPTH, FAVOR_THRESOLD_TIME, OPER_LIST, OPER_LIST1
 
 from authapp.models import MaapUserProfile
 from .cron import cron_notify
@@ -47,7 +47,8 @@ def main(request):
             # make up lesson log
             lesson = MaapLesson(user=request.user)
             # reset app
-            (lesson.mult, lesson.addi, lesson.subt, lesson.divn, lesson.stolbik, lesson.drob) = set_app_mode(ans)
+            lesson.mult, lesson.addi, lesson.subt, lesson.divn, lesson.stolbik, \
+            lesson.drob, lesson.expr = set_app_mode(ans)
 
             lesson.mode = ' '.join(ans)
             # print(lesson.pk)
@@ -435,6 +436,12 @@ def clock_ajax(request):
 
 @csrf_exempt
 def mathemj(request, pk):
+    """
+    Ф-ия в режиме диалога сетапит вопрос из колоды в случ. порядке
+    GET - вывод вопроса
+    POST1 - проверка ответа(не для аджакс версии- сейчас работает аджакс - mathem_ajax)
+    POST2 - завершение урока
+    """
     title = 'Математика '
     print("matemj clicked.. db req..")
     txt0 = None
@@ -446,7 +453,7 @@ def mathemj(request, pk):
     print("matemj db request finished")
     code = 0
     txt2 = ''
-    # обработчик обрабватывает все реквесты страницы и GET и POST
+    # setup question
     if request.method == 'GET':
         print("question.next")
         form = Ans_Form()
@@ -459,13 +466,19 @@ def mathemj(request, pk):
             'divn': lesson.divn,
             'stolbik': lesson.stolbik,
             'drob': lesson.drob,
+            'expr': lesson.expr,
         }
 
-        a, b, code, stolbik, drob, hist1 = eval_quest(NX, NY, AX, TWO_DIGIT,
+        a, b, code, stolbik, drob, expr, hist1 = eval_quest(NX, NY, AX, TWO_DIGIT,
                                                       NO_MINUS, SX, NO_DEC_MUL, hist, HIST_DEPTH, app_mode)
         print(f"eval quest finish a= {a}, b={b} code = {code}")
         # update db
-        if drob:
+
+        if expr:
+            lesson.is_expr = True
+            lesson.a1_expr = json.dumps(a)
+            lesson.b1_expr = json.dumps(b)
+        elif drob:
             lesson.a1_drob = json.dumps(a)
             lesson.b1_drob = json.dumps(b)
             lesson.is_drob = True
@@ -493,8 +506,8 @@ def mathemj(request, pk):
         txt1 = f"вопрос {lesson.ans_amount} правильных: {lesson.ans_correct}"
 
         list_txt.append(txt1)
-        opers = ['X', '+', '-', '/', '=', '!']
-        oper = opers[code - 1]
+        #opers = ['X', '+', '-', '/', '=', '!', '#']
+        oper = OPER_LIST1[code - 1]
 
         # maket stolbika for +/-
 
@@ -641,6 +654,10 @@ def mathemj(request, pk):
             divsign = u'\u00F7'
             txt2 = f'cколько будет {a} {divsign} {b} =?'
             lesson.divn_cnt += 1
+        if code == 7:
+            txt2 = f'cколько будет {b} =?'
+            lesson.expr_cnt += 1
+
 
         list_txt.append(txt2)
 
@@ -649,14 +666,14 @@ def mathemj(request, pk):
         txt3 = ''  # f'a1={a}, b1={b}, c1={code}'
 
         qst = {'txt0': txt0, 'txt00': txt00, 'txt1': txt1, 'txt2': txt2, 'txt3': txt3,
-               'list_txt': list_txt, 'stolb1': stolb1, 'stolb2': stolb2, 'drob1': drob1}
+               'list_txt': list_txt, 'stolb1': stolb1, 'stolb2': stolb2, 'drob1': drob1, 'expr': expr}
 
         content = {'title': title, 'form': form, 'qst': qst, 'pk1': pk}
 
         return render(request, 'mainapp/mathem_aj.html', content)
 
     difference = 0
-    # if this is a POST request we need to process the form data
+    # in case answer pressed
     if request.method == 'POST':
         # process the data in form.cleaned_data as required
         # ...
@@ -685,6 +702,7 @@ def mathemj(request, pk):
 
             return HttpResponseRedirect(f'/mathemk/{lesson.pk}/{ans}/{diff}')
 
+    # in case of finish key pressed
     if request.method == 'POST':
         print('clickfinish')
         val = request.POST.get('tstamp1')
@@ -777,14 +795,21 @@ def mathem_ajax(request):
         else:
             ans = pk2_chr
 
-        a1 = lesson.a1
-        b1 = lesson.b1
         c1 = lesson.c1
 
         txt00 = ''
         check_res = 0
         drob_txt = ''
-        if lesson.is_drob:
+        if lesson.is_expr:
+            a1 = json.loads(lesson.a1_expr)
+            b1 = json.loads(lesson.b1_expr)
+            lesson.is_expr = False
+            if int(ans) == int(a1):
+                txt00 = f" ответ - правильный! {b1} = {a1}"
+                check_res = 1
+            else:
+                txt00 = f" ответ - не верный! {b1} = {a1}"
+        elif lesson.is_drob:
             a1 = json.loads(lesson.a1_drob)
             b1 = json.loads(lesson.b1_drob)
             drob_txt, check_res = check_ans_drob(ans, a1, b1, c1)
@@ -794,6 +819,9 @@ def mathem_ajax(request):
                 txt00 = f" ответ - не верный "
             lesson.is_drob = False
         else:
+            a1 = lesson.a1
+            b1 = lesson.b1
+
             txt00, check_res = check_ans(int(ans), a1, b1, c1)
 
         lesson.ans_amount = lesson.ans_amount + 1
@@ -1186,8 +1214,8 @@ def print_report_row(key):
     d = key['d']
     str_fav_ans = ''
     divsign = u'\u00F7'
-    oper_list = ['X', '+', '-', divsign, '=', '/=']
-    oper = oper_list[c - 1]
+
+    oper = OPER_LIST[c - 1]
     if not isinstance(a, int):
         a_inte = ''
         if a.get('inte'):
@@ -1234,28 +1262,31 @@ def print_wrong_report_row(key):
 
     str_fav_ans = ''
     divsign = u'\u00F7'
-    oper_list = ['X', '+', '-', divsign, '=', '=']
-    oper = oper_list[c - 1]
+    #oper_list = ['X', '+', '-', divsign, '=', '=', '#']
+    oper = OPER_LIST[c - 1]
     if not isinstance(a, int):
-        # ans_inte = ''
-        # if ans.get('inte') != None:
-        #    ans_inte = ans['inte']
-        drob_ans = f" {ans}"  # //{ans_inte} {ans['chis']}/{ans['znam']}"
-
-        a_inte = ''
-        if a.get('inte'):
-            a_inte = a['inte']
-        drob_a = f"{a_inte} {a['chis']}/{a['znam']}"
-
-        if oper == '=' or oper == '/=':
-            str_fav_ans = f"""{drob_a} {oper} {drob_ans} (занял {d} сек)"""
-        # a,b drob
+        if oper == '#':
+            str_fav_ans = f' выр: {b} = {a}  ( отв. = {ans} ) (занял {d} секунд)'
         else:
-            b_inte = ''
-            if b.get('inte'):
-                b_inte = b['inte']
-            drob_b = f"{b_inte} {b['chis']}/{b['znam']}"
-            str_fav_ans = f""" {drob_a} {oper} {drob_b} {drob_ans} (занял {d} сек)"""
+            # ans_inte = ''
+            # if ans.get('inte') != None:
+            #    ans_inte = ans['inte']
+            drob_ans = f" {ans}"  # //{ans_inte} {ans['chis']}/{ans['znam']}"
+
+            a_inte = ''
+            if a.get('inte'):
+                a_inte = a['inte']
+            drob_a = f"{a_inte} {a['chis']}/{a['znam']}"
+
+            if oper == '=' or oper == '/=':
+                str_fav_ans = f"""{drob_a} {oper} {drob_ans} (занял {d} сек)"""
+            # a,b drob
+            else:
+                b_inte = ''
+                if b.get('inte'):
+                    b_inte = b['inte']
+                drob_b = f"{b_inte} {b['chis']}/{b['znam']}"
+                str_fav_ans = f""" {drob_a} {oper} {drob_b} {drob_ans} (занял {d} сек)"""
     else:
         # a,b integer
         if c == 1:
