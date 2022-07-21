@@ -310,21 +310,24 @@ def eval_quest(nx, ny, ax, two_digit, no_minus, sx, no_dec_mul, hist, hist_depth
         # v stolbik
         if code == 5:
             stolbik = True
+            #     # chose 0 - + 1 - - 2 *
+            oper = random.randint(0, 2)
+
             # oper = ''
-            while True:
-                # chose 0 - + 1 - - 2 *
-                oper = random.randint(0, 2)
-                if (app_mode['mult'] == 1) and (oper == 2):
-                    break
-                if (app_mode['addi'] == 1) and (oper == 1):
-                    break
-                if (app_mode['subt'] == 1) and (oper == 0):
-                    break
-                if app_mode['divn'] == 1:
-                    break
-                if (app_mode['divn'] == 0) and (app_mode['mult'] == 0) and (app_mode['subt'] == 0) and (
-                        app_mode['addi'] == 0):
-                    break
+            # while True:
+            #     # chose 0 - + 1 - - 2 *
+            #     oper = random.randint(0, 2)
+            #     if (app_mode['mult'] == 1) and (oper == 2):
+            #         break
+            #     if (app_mode['addi'] == 1) and (oper == 1):
+            #         break
+            #     if (app_mode['subt'] == 1) and (oper == 0):
+            #         break
+            #     if app_mode['divn'] == 1:
+            #         break
+            #     if (app_mode['divn'] == 0) and (app_mode['mult'] == 0) and (app_mode['subt'] == 0) and (
+            #             app_mode['addi'] == 0):
+            #         break
 
             # -
             if oper == 0:
