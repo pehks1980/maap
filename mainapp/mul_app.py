@@ -425,7 +425,6 @@ def eval_quest(nx, ny, ax, two_digit, no_minus, sx, no_dec_mul, hist, hist_depth
             # 34 + ( 239 - 606 : 6 ) * 4 - 393 : 3 =
             # ex = a [ -+] br_rez [*:] c [+-] d [*:] e
             # b = a1 op1[-+] b1 op2[*:] c1
-            expr_rezult = 0
             expr_brackets_rezult = 0
             expr_brackets_rezult_str = '( '
             # make up and compute brackets expression
@@ -557,6 +556,7 @@ def check_ans_drob(ans, a, b, code):
 
     # check calc sectio
     # oper = divsign
+
     # d1 = Drob(chis=2, znam=5, inte=0)
     # d2 = Drob(chis=4, znam=5, inte=0)
     # print('drob info', d1, d2, oper)
