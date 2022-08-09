@@ -558,6 +558,7 @@ def check_ans_drob(ans, a, b, code):
     # oper = divsign
 
     # d1 = Drob(chis=2, znam=5, inte=0)
+
     # d2 = Drob(chis=4, znam=5, inte=0)
     # print('drob info', d1, d2, oper)
 
