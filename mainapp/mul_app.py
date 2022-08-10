@@ -564,6 +564,7 @@ def check_ans_drob(ans, a, b, code):
     # print('drob info', d1, d2, oper)
 
     d1.denormalize()
+
     d2.denormalize()
     # print(d1, d2)
     # +
