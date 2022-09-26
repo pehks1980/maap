@@ -354,7 +354,7 @@ def eval_quest(nx, ny, ax, two_digit, no_minus, sx, no_dec_mul, hist, hist_depth
             # rule for generating a and b
             # in this case выбор будет рандомный либо с таким же знаменателм либо из таблицы
             same_znam = True
-            #set_choice = True
+            # set_choice = True
 
             # chose 1=* 2=+ 3=- 4=/(div) 5= denormalize 6 - ! normalize
             # селектор операций - разрешает возможность выбора какой либо операции
@@ -422,9 +422,10 @@ def eval_quest(nx, ny, ax, two_digit, no_minus, sx, no_dec_mul, hist, hist_depth
         # expr
         if code == 7:
             expr = True
+            brackets_only = True
             # 34 + ( 239 - 606 : 6 ) * 4 - 393 : 3 =
-            # ex = a [ -+] br_rez [*:] c [+-] d [*:] e
-            # b = a1 op1[-+] b1 op2[*:] c1
+            # ex = a [ -+] expr_brackets_rez [*:] c [+-] d [*:] e
+            # expr_brackets_rezult = a1 op1[-+] b1 op2[*:] c1
             expr_brackets_rezult = 0
             expr_brackets_rezult_str = '( '
             # make up and compute brackets expression
@@ -435,11 +436,11 @@ def eval_quest(nx, ny, ax, two_digit, no_minus, sx, no_dec_mul, hist, hist_depth
             op2 = random.choice(['*', ':'])
             if op2 == '*':
                 c1 = random.randint(2, 5)
-                b1 = random.randint(2, 25)
+                b1 = random.randint(2, 20)
                 expr_brackets_rezult = c1 * b1
 
             if op2 == ':':
-                c1 = random.randint(2, 8)
+                c1 = random.randint(3, 8)
                 # for chosen divider find integer rest with
                 while True:
                     b1 = random.randint(99, 199)
@@ -447,6 +448,7 @@ def eval_quest(nx, ny, ax, two_digit, no_minus, sx, no_dec_mul, hist, hist_depth
                         break
                 expr_brackets_rezult = b1 / c1
             expr_brackets_rezult_str_1 = str(b1) + " " + op2 + " " + str(c1)
+
             op1 = random.choice(['-', '+'])
             if op1 == '-':
                 expr_brackets_rezult = int(a1 - expr_brackets_rezult)
@@ -481,7 +483,10 @@ def eval_quest(nx, ny, ax, two_digit, no_minus, sx, no_dec_mul, hist, hist_depth
 
             op2 = random.choice(['', '*'])
             if op2 == '*':
-                c = random.randint(2, 5)
+                if expr_brackets_rezult > 200:
+                    c = random.randint(2, 3)
+                else:
+                    c = random.randint(3, 5)
                 expr_rezult_op2 = expr_brackets_rezult * c
                 expr_rezult_op2_str = expr_brackets_rezult_str + " " + op2 + " " + str(c) + " "
             if op2 == '':
@@ -517,8 +522,16 @@ def eval_quest(nx, ny, ax, two_digit, no_minus, sx, no_dec_mul, hist, hist_depth
             # expr_rezult_str - expression string
             # we put a = expr_rezult
             #        b = expr_rezult_str
-            a = str(int(expr_rezult))
-            b = expr_rezult_str
+            if brackets_only == True:
+                if random.randint(0, 1) == 1:
+                    a = str(int(expr_rezult_op2))
+                    b = expr_rezult_op2_str
+                else:
+                    a = str(int(expr_brackets_rezult))
+                    b = expr_brackets_rezult_str
+            else:
+                a = str(int(expr_rezult))
+                b = expr_rezult_str
         if not already_in_hist:
             break
 
@@ -545,7 +558,7 @@ def eval_quest(nx, ny, ax, two_digit, no_minus, sx, no_dec_mul, hist, hist_depth
 
 # check_ans_drob - check if answer is drob
 def check_ans_drob(ans, a, b, code):
-    #opers = ['X', '+', '-', divsign, '=', '!']
+    # opers = ['X', '+', '-', divsign, '=', '!']
     oper = OPER_LIST1[code - 1]
 
     # calculate answer
