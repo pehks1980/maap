@@ -1032,7 +1032,8 @@ def hist(request, page='None'):
     rep_hist = []
     wrong_ans_hist = []
     # try to find if its empty
-    ans_amount_gt = 10
+    #minimum amount of answer to listed in reports
+    ans_amount_gt = 6
     lessons = MaapLesson.objects.filter(user=request.user, ans_amount__gt=ans_amount_gt).order_by('id')
 
     list_hist_row = []
