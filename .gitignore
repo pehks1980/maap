@@ -5,3 +5,5 @@ __pycache__/
 mainapp/migrations/
 authapp/migrations/
 maap/local_settings.py
+#mainapp/mytoken.py
+cred_maap.py

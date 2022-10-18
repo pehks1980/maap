@@ -1,4 +1,5 @@
 # Create your views here.
+import base64
 import json
 import random
 from collections import OrderedDict
@@ -118,6 +119,7 @@ def checkCron(request):
     title = 'check cron'
     content = {'title': title, }
     return render(request, 'mainapp/lala.html', content)
+
 
 
 def uncheckEmail(request, email, id):

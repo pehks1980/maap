@@ -1,8 +1,17 @@
+import base64
 import smtplib, ssl
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
 from cred_maap import *
+
+
+def generate_oauth2_string(username, access_token, as_base64=False):
+    auth_string = 'user=%s\1auth=Bearer %s\1\1' % (username, access_token)
+    if as_base64:
+        auth_string = base64.b64encode(auth_string.encode('ascii')).decode('ascii')
+    return auth_string
+
 
 def send_my_mail(sender_email, receiver_email, user):
     # Send email here
@@ -20,11 +29,11 @@ def send_my_mail(sender_email, receiver_email, user):
     Hi, THIS IS MAAP e-mail notification!
     How are you? We need to start again! Костя """
 
-    #print(f"Shut the door{'s' if num_doors > 1 else ''}.")
+    # print(f"Shut the door{'s' if num_doors > 1 else ''}.")
     dct_choice = [
-        {'val': 1, 'msg' :'каждый день'},
-        {'val': 3, 'msg':'раз в 3 дня'},
-        {'val': 7, 'msg' :'раз в неделю'},
+        {'val': 1, 'msg': 'каждый день'},
+        {'val': 3, 'msg': 'раз в 3 дня'},
+        {'val': 7, 'msg': 'раз в неделю'},
     ]
     rem_period_char = list(filter(lambda x: x['val'] == rem_period, dct_choice))
 
@@ -52,18 +61,32 @@ def send_my_mail(sender_email, receiver_email, user):
     message.attach(part2)
 
     port = 465  # For SSL
-    #password = input("Type your password and press enter: ")
+    # password = input("Type your password and press enter: ")
 
-    mygmail_acct = GMAIL_ACCT
-    mygmail_password = GMAIL_PASSWD
-    # Create a secure SSL context
+    my_mail_acct = GMAIL_ACCT
+    my_mail_password = GMAIL_PASSWD
+
+    auth_string = generate_oauth2_string(my_mail_acct, ACC_TOKEN, as_base64=True)
     context = ssl.create_default_context()
+    #
+    with smtplib.SMTP_SSL("smtp.yandex.ru", port, context=context) as server:
+        # server = smtplib.SMTP('smtp.yandex.ru:587')
+        server.helo(client_id)
+        server.docmd('AUTH', 'XOAUTH2 ' + auth_string)
+        server.sendmail(sender_email, receiver_email, message.as_string())
 
-    with smtplib.SMTP_SSL("smtp.gmail.com", port, context=context) as server:
-        server.login(mygmail_acct, mygmail_password)
-        server.sendmail(sender_email,receiver_email,message.as_string())
+    # Create a secure SSL context
+    # context = ssl.create_default_context()
+    #
+    # with smtplib.SMTP_SSL("smtp.yandex.ru", port, context=context) as server:
+    #     #server.ehlo(CLIENT_ID)
+    #     #server.starttls()
+    #     server.login(my_mail_acct, my_mail_password)
+    #     server.docmd('AUTH', 'XOAUTH2 ' + auth_string)
+    #     server.sendmail(sender_email, receiver_email, message.as_string())
 
-def mail_notify(email_addr, user ):
-    print (f'sending mail to {user}, addr {email_addr}')
+
+def mail_notify(email_addr, user):
+    print(f'sending mail to {user}, addr {email_addr}')
     sender_email = SENDER_MAIL
-    send_my_mail(sender_email,email_addr,user)
+    send_my_mail(sender_email, email_addr, user)
