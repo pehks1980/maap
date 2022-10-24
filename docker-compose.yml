@@ -3,7 +3,10 @@ version: '3.8'
 services:
   maap:
     container_name: maap
-    build: .
+    build:
+      context: .
+      args:
+        GIT_COMMIT: $$(echo `git rev-parse HEAD`)
     command:
       - gunicorn maap.wsgi:application --bind 0.0.0.0:8000 --workers 3
     #command: python manage.py runserver 0.0.0.0:8000

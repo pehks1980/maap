@@ -1,6 +1,9 @@
 # pull official base image
 FROM python:3.9.6-alpine
 
+ARG GIT_COMMIT
+ENV GIT_COMMIT=$GIT_COMMIT
+
 # set work directory
 WORKDIR /usr/src/app
 
