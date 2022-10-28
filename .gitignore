@@ -6,4 +6,4 @@ mainapp/migrations/
 authapp/migrations/
 maap/local_settings.py
 #mainapp/mytoken.py
-cred_maap.py
+../maap_cred/cred_maap.py

@@ -3,7 +3,7 @@ import smtplib, ssl
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
-from cred_maap import *
+from maap_cred.cred_maap import *
 
 
 def generate_oauth2_string(username, access_token, as_base64=False):

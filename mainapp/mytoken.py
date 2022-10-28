@@ -3,7 +3,7 @@ import http.client as httplib
 
 # Идентификатор приложения
 from bottle import route, request, urlencode, run
-from cred_maap import client_id, client_secret
+from maap_cred.cred_maap import client_id, client_secret
 
 
 @route('/')
