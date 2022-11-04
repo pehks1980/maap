@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: django-maap-app
+  labels:
+    app: django
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: django-maap
+  template:
+    metadata:
+      labels:
+        app: django-maap
+    spec:
+      containers:
+        - image: pehks1980/repo2:maap_54
+          name: django-maap
+          ports:
+            - containerPort: 8000
+              name: gunicorn-maap

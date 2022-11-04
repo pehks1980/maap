@@ -3,7 +3,9 @@ import smtplib, ssl
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
-from maap_cred.cred_maap import *
+# removed 4.11.22
+# from maap_cred.cred_maap import *
+from maap.local_settings import MAIL_ACCT, MAIL_PASSWD, MAIL_ACC_TOKEN, CLIENT_ID, SENDER_MAIL, HOST_URL
 
 
 def generate_oauth2_string(username, access_token, as_base64=False):
@@ -63,15 +65,15 @@ def send_my_mail(sender_email, receiver_email, user):
     port = 465  # For SSL
     # password = input("Type your password and press enter: ")
 
-    my_mail_acct = GMAIL_ACCT
-    my_mail_password = GMAIL_PASSWD
+    my_mail_acct = MAIL_ACCT
+    my_mail_password = MAIL_PASSWD
 
-    auth_string = generate_oauth2_string(my_mail_acct, ACC_TOKEN, as_base64=True)
+    auth_string = generate_oauth2_string(my_mail_acct, MAIL_ACC_TOKEN, as_base64=True)
     context = ssl.create_default_context()
     #
     with smtplib.SMTP_SSL("smtp.yandex.ru", port, context=context) as server:
         # server = smtplib.SMTP('smtp.yandex.ru:587')
-        server.helo(client_id)
+        server.helo(CLIENT_ID)
         server.docmd('AUTH', 'XOAUTH2 ' + auth_string)
         server.sendmail(sender_email, receiver_email, message.as_string())
 

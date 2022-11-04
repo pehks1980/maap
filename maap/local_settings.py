@@ -17,6 +17,14 @@ ALLOWED_HOSTS = ['*']
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
+#as per cred_maap sendmail
+HOST_URL = os.environ.get("HOST_URL")
+SENDER_MAIL = os.environ.get("SENDER_MAIL")
+MAIL_ACCT = os.environ.get("MAIL_ACCT")
+MAIL_PASSWD = os.environ.get("MAIL_PASSWD")
+MAIL_ACC_TOKEN = os.environ.get("MAIL_ACC_TOKEN")
+CLIENT_ID = os.environ.get("MAIL_ACC_TOKEN")
+
 DATABASES = {
     #'default': {
     #     'ENGINE': 'django.db.backends.sqlite3',
