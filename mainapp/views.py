@@ -7,7 +7,7 @@ from datetime import datetime
 
 from django.contrib.auth.decorators import login_required
 from django.core.files.base import ContentFile
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render
@@ -119,7 +119,6 @@ def checkCron(request):
     title = 'check cron'
     content = {'title': title, }
     return render(request, 'mainapp/lala.html', content)
-
 
 
 def uncheckEmail(request, email, id):
@@ -310,20 +309,20 @@ def clockj(request, ans_correct=None, ans_amount=None):
     txt2 = f'cколько времени на часах ?'
 
     # shuffle for special question with difference
-    #flag = False
-    #spec_quest_ratio = 30
+    # flag = False
+    # spec_quest_ratio = 30
     # get sected 1 - before 2 exact 3 after
     op = random.randint(1, 3)
 
-    #if op > spec_quest_ratio:
+    # if op > spec_quest_ratio:
     #    flag = True
 
-    #exact
+    # exact
     if op == 2:
         diff = {'hours': 0,
                 'minutes': 0
                 }
-    #before
+    # before
     if op == 1:
         mins = [0, 5, 10, 15, 25, 30]
         diff = {'hours': random.randint(1, 2),
@@ -332,7 +331,7 @@ def clockj(request, ans_correct=None, ans_amount=None):
         txt2 = f'cколько времени на часах БЫЛО {diff["hours"]} час и {diff["minutes"]} мин НАЗАД??'
         diff['hours'] = -abs(diff['hours'])
         diff['minutes'] = -abs(diff['minutes'])
-    #after
+    # after
     if op == 3:
         mins = [0, 5, 10, 15, 25, 30]
         diff = {'hours': random.randint(1, 2),
@@ -472,7 +471,7 @@ def mathemj(request, pk):
         }
 
         a, b, code, stolbik, drob, expr, hist1 = eval_quest(NX, NY, AX, TWO_DIGIT,
-                                                      NO_MINUS, SX, NO_DEC_MUL, hist, HIST_DEPTH, app_mode)
+                                                            NO_MINUS, SX, NO_DEC_MUL, hist, HIST_DEPTH, app_mode)
         print(f"eval quest finish a= {a}, b={b} code = {code}")
         # update db
 
@@ -508,7 +507,7 @@ def mathemj(request, pk):
         txt1 = f"вопрос {lesson.ans_amount} правильных: {lesson.ans_correct}"
 
         list_txt.append(txt1)
-        #opers = ['X', '+', '-', '/', '=', '!', '#']
+        # opers = ['X', '+', '-', '/', '=', '!', '#']
         oper = OPER_LIST1[code - 1]
 
         # maket stolbika for +/-
@@ -659,7 +658,6 @@ def mathemj(request, pk):
         if code == 7:
             txt2 = f'cколько будет {b} =?'
             lesson.expr_cnt += 1
-
 
         list_txt.append(txt2)
 
@@ -1034,7 +1032,7 @@ def hist(request, page='None'):
     rep_hist = []
     wrong_ans_hist = []
     # try to find if its empty
-    #minimum amount of answer to listed in reports
+    # minimum amount of answer to listed in reports
     ans_amount_gt = 6
     lessons = MaapLesson.objects.filter(user=request.user, ans_amount__gt=ans_amount_gt).order_by('id')
 
@@ -1265,7 +1263,7 @@ def print_wrong_report_row(key):
 
     str_fav_ans = ''
     divsign = u'\u00F7'
-    #oper_list = ['X', '+', '-', divsign, '=', '=', '#']
+    # oper_list = ['X', '+', '-', divsign, '=', '=', '#']
     oper = OPER_LIST[c - 1]
     if not isinstance(a, int):
         if oper == '#':
@@ -1331,7 +1329,7 @@ def make_report(lessons, lesson_id, n, list_hist, rep_hist, wrong_ans_hist):
     wrong_ans_row.append(f' Отчет: история неверных ответов ')
     wrong_ans_hist.append(wrong_ans_row)
 
-    for i in lessons[lesson_id-1:lesson_id-1+n]:
+    for i in lessons[lesson_id - 1:lesson_id - 1 + n]:
         list_hist_row = []
         # add id lesson
         list_hist_row.append(f'{i.id}')
@@ -1498,3 +1496,9 @@ def finish(request, pk):
     content = {'title': title, 'ans': ans}
 
     return render(request, 'mainapp/finish.html', content)
+
+
+def checkHeartBeat(request):
+    if request.method == 'GET':
+        return HttpResponse(status=200)
+    return HttpResponse(status=200)
