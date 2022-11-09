@@ -1497,7 +1497,8 @@ def finish(request, pk):
 
     return render(request, 'mainapp/finish.html', content)
 
-
+# function which check availbility from kubernetes probe
+# :8000/__heartbeat__
 def checkHeartBeat(request):
     if request.method == 'GET':
         return HttpResponse(status=200)
