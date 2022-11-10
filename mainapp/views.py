@@ -1508,7 +1508,7 @@ def checkHeartBeat(request):
         if PROBE_TEST == 1:
             CURR = datetime.now()
             td = (CURR - START_DATE).seconds
-            if td > 180 and td < 200:
+            if td > 180 and td < 460:
                 print(f'st = {START_DATE}, curr = {CURR}, td = {td}, probe test {PROBE_TEST}, status=500')
                 sleep(5)
                 return HttpResponse(status=500)
