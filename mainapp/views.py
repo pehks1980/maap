@@ -18,6 +18,7 @@ from maap.settings import NX, NY, AX, SX, TWO_DIGIT, NO_MINUS, \
     NO_DEC_MUL, HIST_DEPTH, FAVOR_THRESOLD_TIME, OPER_LIST, OPER_LIST1
 
 from authapp.models import MaapUserProfile
+from maap.local_settings import PROBE_TEST
 from .cron import cron_notify
 from .forms import Ans_Form
 from .forms import AppModForm
@@ -1502,5 +1503,8 @@ def finish(request, pk):
 #
 def checkHeartBeat(request):
     if request.method == 'GET':
+        if PROBE_TEST == 1:
+            return HttpResponse(status=500)
+
         return HttpResponse(status=200)
     return HttpResponse(status=200)

@@ -24,6 +24,7 @@ MAIL_ACCT = os.environ.get("MAIL_ACCT")
 MAIL_PASSWD = os.environ.get("MAIL_PASSWD")
 MAIL_ACC_TOKEN = os.environ.get("MAIL_ACC_TOKEN")
 CLIENT_ID = os.environ.get("MAIL_ACC_TOKEN")
+PROBE_TEST = os.environ.get("PROBE_TEST")
 
 DATABASES = {
     #'default': {
