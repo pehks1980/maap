@@ -4,6 +4,7 @@ import json
 import random
 from collections import OrderedDict
 from datetime import datetime
+from time import sleep
 
 from django.contrib.auth.decorators import login_required
 from django.core.files.base import ContentFile
@@ -1503,7 +1504,9 @@ def finish(request, pk):
 #
 def checkHeartBeat(request):
     if request.method == 'GET':
+        print('status=500', 'Probetest=', PROBE_TEST)
         if PROBE_TEST == 1:
+            sleep(5)
             return HttpResponse(status=500)
 
         return HttpResponse(status=200)
