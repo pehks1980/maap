@@ -1,3 +1,4 @@
+import datetime
 import os
 from pathlib import Path
 
@@ -25,6 +26,7 @@ MAIL_PASSWD = os.environ.get("MAIL_PASSWD")
 MAIL_ACC_TOKEN = os.environ.get("MAIL_ACC_TOKEN")
 CLIENT_ID = os.environ.get("MAIL_ACC_TOKEN")
 PROBE_TEST = int(os.environ.get("PROBE_TEST"))
+START_DATE = datetime.datetime.now()
 
 DATABASES = {
     #'default': {
