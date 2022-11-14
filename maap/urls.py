@@ -51,8 +51,8 @@ urlpatterns = [
     path('clockj/ajax1/',mainapp.clock_ajax1),
 
     path('checkcron/', mainapp.checkCron, name='checkcron'),
+    # kube feature
     path('__heartbeat__', mainapp.checkHeartBeat, name='checkheartbeat'),
-
 
     re_path(r'^uncheck/(?P<email>.+)/(?P<id>.+)/$', mainapp.uncheckEmail, name='uncheck'),
 
