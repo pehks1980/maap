@@ -27,6 +27,14 @@ MAIL_ACC_TOKEN = os.environ.get("MAIL_ACC_TOKEN")
 CLIENT_ID = os.environ.get("MAIL_ACC_TOKEN")
 PROBE_TEST = int(os.environ.get("PROBE_TEST"))
 START_DATE = datetime.datetime.now()
+GIT_COMMIT = os.environ.get("GIT_COMMIT")
+print("========== START =============== GIT_COMMIT: ", GIT_COMMIT, " ============ START =============")
+myenv = dict(sorted(os.environ.items()))
+for name, value in myenv.items():
+    if name.find('PASS') != -1 or name.find('SECRET') != -1:
+        print("{0}: {1}".format(name, '*********'))
+    else:
+        print("{0}: {1}".format(name, value))
 
 DATABASES = {
     #'default': {

@@ -1,4 +1,5 @@
-#python script to update image container name for the service
+# python script to update image container name for the service
+# can be done with sed simply
 import ruamel.yaml
 import argparse
 
