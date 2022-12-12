@@ -7,3 +7,4 @@ authapp/migrations/
 maap/local_settings.py
 #mainapp/mytoken.py
 ../maap_cred/cred_maap.py
+.DS_Store
