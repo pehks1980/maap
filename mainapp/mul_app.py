@@ -422,7 +422,9 @@ def eval_quest(nx, ny, ax, two_digit, no_minus, sx, no_dec_mul, hist, hist_depth
         # expr
         if code == 7:
             expr = True
-            brackets_only = True
+            #50 chance
+            br_toss = random.randint(0, 100)
+            brackets_only = True if br_toss > 40 else False
             # 34 + ( 239 - 606 : 6 ) * 4 - 393 : 3 =
             # ex = a [ -+] expr_brackets_rez [*:] c [+-] d [*:] e
             # expr_brackets_rezult = a1 op1[-+] b1 op2[*:] c1
@@ -430,7 +432,7 @@ def eval_quest(nx, ny, ax, two_digit, no_minus, sx, no_dec_mul, hist, hist_depth
             expr_brackets_rezult_str = '( '
             # make up and compute brackets expression
 
-            a1 = random.randint(69, 149)
+            a1 = random.randint(39, 99)
             expr_brackets_rezult_str += str(a1)
 
             op2 = random.choice(['*', ':'])
@@ -443,7 +445,7 @@ def eval_quest(nx, ny, ax, two_digit, no_minus, sx, no_dec_mul, hist, hist_depth
                 c1 = random.randint(3, 8)
                 # for chosen divider find integer rest with
                 while True:
-                    b1 = random.randint(99, 199)
+                    b1 = random.randint(59, 109)
                     if b1 % c1 == 0:
                         break
                 expr_brackets_rezult = b1 / c1
@@ -522,6 +524,7 @@ def eval_quest(nx, ny, ax, two_digit, no_minus, sx, no_dec_mul, hist, hist_depth
             # expr_rezult_str - expression string
             # we put a = expr_rezult
             #        b = expr_rezult_str
+
             if brackets_only == True:
                 if random.randint(0, 1) == 1:
                     a = str(int(expr_rezult_op2))
