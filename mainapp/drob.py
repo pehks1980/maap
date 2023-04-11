@@ -36,10 +36,10 @@ DROBI_MULT_SET = [
 
 
 class Drob:
-    def __init__(self, chis, znam, inte=0):
-        self.chis = chis
-        self.znam = znam
-        self.inte = inte
+    def __init__(self, drob):
+        self.chis = drob['chis']
+        self.znam = drob['znam']
+        self.inte = drob['inte']
 
     def normalize(self):
         def iter1():
@@ -93,6 +93,15 @@ class Drob:
         self.chis = x // z
         self.znam = y // z
 
+    def comp(self,chis, znam):
+        self.denormalize()
+        x = self.chis * znam - chis * self.znam
+        if x > 0:
+            return 1
+        if x == 0:
+            return 0
+        if x < 0:
+            return -1
     def __str__(self):
         return f'{self.inte} {self.chis}/{self.znam}'
 

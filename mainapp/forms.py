@@ -11,6 +11,7 @@ class AppModForm(forms.Form):
         (5, 'Примеры столбиком'),
         (6, 'Примеры с дробями'),
         (7, 'Примеры с выражениями (скобки)'),
+        (8, 'Примеры с дробными выражениями (скобки)'),
     )
 
     app_mode = forms.MultipleChoiceField(
@@ -19,7 +20,7 @@ class AppModForm(forms.Form):
         widget=forms.CheckboxSelectMultiple(attrs={'checked': False}),
         choices=APP_MODE_CHOICES,
         #checked items
-        initial=[6, 7] #[5, 6, 7]
+        initial=[6, 7, 8] #[5, 6, 7]
     )
 
     def __init__(self, *args, **kwargs):

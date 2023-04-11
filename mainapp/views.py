@@ -51,7 +51,7 @@ def main(request):
             lesson = MaapLesson(user=request.user)
             # reset app
             lesson.mult, lesson.addi, lesson.subt, lesson.divn, lesson.stolbik, \
-            lesson.drob, lesson.expr = set_app_mode(ans)
+            lesson.drob, lesson.expr, lesson.drobexpr = set_app_mode(ans)
 
             lesson.mode = ' '.join(ans)
             # print(lesson.pk)
@@ -470,12 +470,20 @@ def mathemj(request, pk):
             'stolbik': lesson.stolbik,
             'drob': lesson.drob,
             'expr': lesson.expr,
+            'drobexpr': lesson.drobexpr,
         }
 
-        a, b, code, stolbik, drob, expr, hist1 = eval_quest(NX, NY, AX, TWO_DIGIT,
+        elem, stolbik, drob, expr, drobexpr, hist1 = eval_quest(NX, NY, AX, TWO_DIGIT,
                                                             NO_MINUS, SX, NO_DEC_MUL, hist, HIST_DEPTH, app_mode)
-        print(f"eval quest finish a= {a}, b={b} code = {code}")
+        print(f"eval quest finish a= {elem['a']}, b={elem['b']} code = {elem['c']}")
         # update db
+        a = elem['a']
+        b = elem['b']
+        #additional parameter in case of drob expression
+        #a - calculated answer, b - question expression=?, bb1 - correct answer expression
+        bb1 = elem.get('b1')
+        bb2 = elem.get('b2')
+        code = elem['c']
 
         if expr:
             lesson.is_expr = True
@@ -485,6 +493,12 @@ def mathemj(request, pk):
             lesson.a1_drob = json.dumps(a)
             lesson.b1_drob = json.dumps(b)
             lesson.is_drob = True
+        elif drobexpr:
+            lesson.is_drobexpr = True
+            lesson.a1_drobexpr = json.dumps(a)
+            lesson.b1_drobexpr = json.dumps(b)
+            lesson.bb1_drobexpr = json.dumps(bb1)
+            lesson.bb2_drobexpr = json.dumps(bb2)
         else:
             lesson.a1 = a
             lesson.b1 = b
@@ -574,8 +588,12 @@ def mathemj(request, pk):
             lesson.stolb_cnt += 1
 
         drob1 = ''
-        if drob:
+        if drobexpr:
+            lesson.drobexpr_cnt += 1
+            drob1 = b
+            a = b = code = 0
 
+        if drob:
             # a_int = a.get('inte')
             # if a_int == None:
             #     a_int = ''
@@ -820,6 +838,45 @@ def mathem_ajax(request):
             else:
                 txt00 = f" ответ - не верный "
             lesson.is_drob = False
+        elif lesson.is_drobexpr:
+            #a1 calculated answer, bb1 drob expression with answer
+            #bb2 drob expression in text form for report (gets to b1)
+            a1 = json.loads(lesson.a1_drobexpr)
+            b1 = json.loads(lesson.bb2_drobexpr)
+            bb1 = json.loads(lesson.bb1_drobexpr)
+            drob_txt = bb1
+
+            ans = ans.strip()
+            ans = ans.split()
+            a1 = a1.strip()
+            a1 = a1.split()
+
+            #case when answer is only inte without drob
+            #or only drob chast
+            if len(a1) == 1 and len(ans) == 1:
+                if a1[0] == ans[0]:
+                    check_res = 1
+            else:
+                #case when inte = 0
+                if a1[0] == '0':
+                    #check second part only
+                    if a1[1] == ans[0]:
+                        check_res = 1
+                else:
+                    #case 1 0/0
+                    if a1[1] == '0/0':
+                        #remove a1 from list
+                        a1.pop()
+                    if len(a1) == len(ans):
+                        #check whole drob inte and drob parts
+                        if a1[0] == ans[0] and a1[1] == ans[1]:
+                            check_res = 1
+
+            if check_res == 1:
+                txt00 = f" ответ - правильный "
+            else:
+                txt00 = f" ответ - не верный "
+            lesson.is_drobexpr = False
         else:
             a1 = lesson.a1
             b1 = lesson.b1
@@ -1268,14 +1325,19 @@ def print_wrong_report_row(key):
     # oper_list = ['X', '+', '-', divsign, '=', '=', '#']
     oper = OPER_LIST[c - 1]
     if not isinstance(a, int):
-        if oper == '#':
+        if c == 8:
+            if a[0] == '0':
+                a.pop(0)
+            elif a[1] == '0/0':
+                    a.pop()
+            str_fav_ans = f" др.выр: {b} {' '.join(a)}  ( отв. = {' '.join(ans)} ) (занял {d} секунд)"
+        elif oper == '#':
             str_fav_ans = f' выр: {b} = {a}  ( отв. = {ans} ) (занял {d} секунд)'
         else:
             # ans_inte = ''
             # if ans.get('inte') != None:
             #    ans_inte = ans['inte']
             drob_ans = f" {ans}"  # //{ans_inte} {ans['chis']}/{ans['znam']}"
-
             a_inte = ''
             if a.get('inte'):
                 a_inte = a['inte']

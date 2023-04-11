@@ -46,6 +46,7 @@ def set_app_mode(list_mode):
     stolbik = 0
     drob = 0
     expr = 0
+    drobexpr = 0
 
     for i in list_mode:
         if int(i) == 1:
@@ -62,8 +63,10 @@ def set_app_mode(list_mode):
             drob = 1
         if int(i) == 7:
             expr = 1
+        if int(i) == 8:
+            drobexpr = 1
 
-    return mult, addi, subt, divn, stolbik, drob, expr
+    return mult, addi, subt, divn, stolbik, drob, expr, drobexpr
 
 
 def get_app_mode_desc(lesson):
@@ -80,8 +83,9 @@ def get_app_mode_desc(lesson):
     stolb_cnt = lesson.stolb_cnt
     drob_cnt = lesson.drob_cnt
     expr_cnt = lesson.expr_cnt
+    drobexpr_cnt = lesson.drobexpr_cnt
 
-    a = b = c = d = e = f = g = ''
+    a = b = c = d = e = f = g = h = ''
 
     for i in mode:
         if i == '1':
@@ -113,8 +117,12 @@ def get_app_mode_desc(lesson):
             g = f' выр.'
             if expr_cnt:
                 g += f'={expr_cnt}'
+        if i == '8':
+            h = f' др. выр.'
+            if drobexpr_cnt:
+                h += f'={drobexpr_cnt}'
 
-    return f'{a}{b}{c}{d}{e}{f}{g}'
+    return f'{a}{b}{c}{d}{e}{f}{g}{h}'
 
 
 def printMatrix(s, hl, a, b):
@@ -150,7 +158,7 @@ def printMatrix(s, hl, a, b):
     # print(result)
     return result
 
-
+# Gets a, b drob operands
 def get_ops(same_znam, DROBI_PLUS_SET):
     # если оба включены то, генерим с
     sub_choice = random.randint(0, 1)
@@ -168,7 +176,7 @@ def get_ops(same_znam, DROBI_PLUS_SET):
              'inte': 0
              }
     else:
-        # выьрка операндов из таблицы
+        # выборка операндов из таблицы
         a = random.choice(DROBI_PLUS_SET)
         b = random.choice(DROBI_PLUS_SET)
     return a, b
@@ -199,6 +207,7 @@ def eval_quest(nx, ny, ax, two_digit, no_minus, sx, no_dec_mul, hist, hist_depth
     stolbik = False
     drob = False
     expr = False
+    drobexpr = False
 
     while True:
         already_in_hist = False
@@ -208,8 +217,9 @@ def eval_quest(nx, ny, ax, two_digit, no_minus, sx, no_dec_mul, hist, hist_depth
                 stolbik = False
                 drob = False
                 expr = False
+                drobexpr = False
 
-                code = random.randint(1, 7)
+                code = random.randint(1, 8)
                 if (app_mode['mult'] == 1) and (code == 1):
                     break
                 if (app_mode['addi'] == 1) and (code == 2):
@@ -223,6 +233,8 @@ def eval_quest(nx, ny, ax, two_digit, no_minus, sx, no_dec_mul, hist, hist_depth
                 if (app_mode['drob'] == 1) and (code == 6):
                     break
                 if (app_mode['expr'] == 1) and (code == 7):
+                    break
+                if (app_mode['drobexpr'] == 1) and (code == 8):
                     break
 
         # mul a,b 2..10 2..12 mult table 10X12
@@ -299,14 +311,6 @@ def eval_quest(nx, ny, ax, two_digit, no_minus, sx, no_dec_mul, hist, hist_depth
                 b1 = ops[1]
                 a = a1 * b1
                 b = random.choice(ops)
-
-        # check if we go these already
-        for _, key in hist.items():
-            ha = key['a']
-            hb = key['b']
-            hcode = key['c']
-            if a == ha and b == hb and code == hcode:
-                already_in_hist = True
 
         # v stolbik
         if code == 5:
@@ -397,7 +401,7 @@ def eval_quest(nx, ny, ax, two_digit, no_minus, sx, no_dec_mul, hist, hist_depth
                      'znam': znam,
                      'inte': random.randint(1, 4)
                      }
-                d1 = Drob(chis=a['chis'], znam=a['znam'], inte=a['inte'])
+                d1 = Drob(a)
                 print(d1)
                 if oper == 5:
                     # denormalize drob ie 12 / 5 = 2 2/5
@@ -535,13 +539,140 @@ def eval_quest(nx, ny, ax, two_digit, no_minus, sx, no_dec_mul, hist, hist_depth
             else:
                 a = str(int(expr_rezult))
                 b = expr_rezult_str
+
+        # drob expr
+        if code == 8:
+            drobexpr = True
+
+            # expr_brackets_rezult = a1 op1[-+] b1 op2[*:] c1
+            drob_expr_brackets_rezult = 0
+    #        drob_expr_brackets_rezult_str = '( '
+            # make up and compute brackets expression
+
+            a1, b1 = get_ops(False,DROBI_PLUS_SET)
+            _, c1 = get_ops(False, DROBI_MULT_SET)
+
+            op2 = random.choice(['*', ':'])
+            d1 = Drob(b1)
+            d2 = Drob(c1)
+            d1.denormalize()
+            d2.denormalize()
+            if op2 == '*':
+                #d1 = B1 * C1
+                d1.mult(d2.chis,d2.znam)
+            else:
+                #d1 = B1 : C1
+                d1.divide(d2.chis,d2.znam)
+
+            op1 = '' #random.choice(['+', '-'])
+            d2 = Drob(a1)
+            d2.denormalize()
+
+            if d2.comp(d1.chis,d2.znam) == 1:
+                #d2 > d1 -
+                # d2 = d2 - d1
+                op1 = '-'
+                d2.subst(d1.chis, d1.znam)
+            else:
+                op1 = '+'
+                #d2 = d1 + d2
+                d2.add(d1.chis, d1.znam)
+
+            #d1 - first sub\div
+            #d2 - whole bracket result
+            d2.normalize()
+
+            drobexpr_brackets_str = f'''
+                                <div class="primer">
+                                
+                                    <div class="oper">
+                                        <span>(</span>
+                                    </div>
+                                    
+                                    <p class="sup">{' ' if a1['inte'] == 0 else a1['inte']}
+                                        <div class="frac">
+                                            <span>{a1['chis']}</span>
+                                            <span class="symbol">/</span>
+                                            <span class="bottom">{a1['znam']}</span>
+                                        </div>
+                                    </p>
+
+                                    <div class="oper">
+                                        <span>{op1}</span>
+                                    </div>
+
+                                    <p class="sup">{' ' if b1['inte'] == 0 else b1['inte']}
+                                        <div class="frac">
+                                            <span>{b1['chis']}</span>
+                                            <span class="symbol">/</span>
+                                            <span class="bottom">{b1['znam']}</span>
+                                        </div>
+                                    </p>
+                                    
+                                    <div class="oper">
+                                        <span>{op2}</span>
+                                    </div>
+                                    
+                                    <p class="sup">{' ' if c1['inte'] == 0 else c1['inte']}
+                                        <div class="frac">
+                                            <span>{c1['chis']}</span>
+                                            <span class="symbol">/</span>
+                                            <span class="bottom">{c1['znam']}</span>
+                                        </div>
+                                    </p>
+                                    
+                                    <div class="oper">
+                                        <span>)</span>
+                                    </div>
+                                    
+                                    <div class="oper">
+                                        <span>=</span>
+                                    </div>
+                                '''
+
+            drobexpr_question ='''    
+                                <div class="oper">
+                                        <span>?</span>
+                                    </div>
+                                    
+                                </div>
+                                '''
+            drobexpr_result_str = f'''
+                                    <p class="sup">{' ' if d2.inte == 0 else d2.inte }
+                                        <div class="frac">
+                                            <span>{d2.chis}</span>
+                                            <span class="symbol">/</span>
+                                            <span class="bottom">{d2.znam}</span>
+                                        </div>
+                                    </p>
+                                </div>
+                                '''
+            b2 = f" ({'' if a1['inte'] == 0 else a1['inte']} {a1['chis']}/{a1['znam']} {op1}" \
+                 f"{'' if b1['inte'] == 0 else b1['inte']} {b1['chis']}/{b1['znam']} {op2}" \
+                 f"{'' if c1['inte'] == 0 else c1['inte']} {c1['chis']}/{c1['znam']})="
+            a = str(d2)
+            b = drobexpr_brackets_str + drobexpr_question
+            b1 = drobexpr_brackets_str + drobexpr_result_str
+
+        # check if we go these already
+        for _, key in hist.items():
+            ha = key['a']
+            hb = key['b']
+            hcode = key['c']
+            if a == ha and b == hb and code == hcode:
+                already_in_hist = True
+
         if not already_in_hist:
             break
-
+    elem = {}
     # add new primer to
     elem = {'a': a,
             'b': b,
             'c': code}  # a,b,op,diff_time
+    if code == 8:
+        # add b1 in case drobexpr
+        elem['b1'] = b1
+        elem['b2'] = b2
     # make new index
     idx = 0
     for i in hist.keys():
@@ -556,7 +687,7 @@ def eval_quest(nx, ny, ax, two_digit, no_minus, sx, no_dec_mul, hist, hist_depth
     #     hist.popleft()
 
     # stolbik t - if operation is stolbik (because code is replaced with +-*)
-    return a, b, code, stolbik, drob, expr, hist
+    return elem, stolbik, drob, expr, drobexpr, hist
 
 
 # check_ans_drob - check if answer is drob
@@ -566,8 +697,8 @@ def check_ans_drob(ans, a, b, code):
 
     # calculate answer
 
-    d1 = Drob(chis=a['chis'], znam=a['znam'], inte=a['inte'])
-    d2 = Drob(chis=b['chis'], znam=b['znam'], inte=b['inte'])
+    d1 = Drob(a)
+    d2 = Drob(b)
     divsign = u'\u00F7'
 
     # check calc sectio
@@ -831,7 +962,7 @@ def finish_lesson(lesson, f_time, favor_ans, wrong_ans, favor_thresold_time):
         reply.append(f' неправильные примеры: {len(wrong_ans)}')
 
         divsign = u'\u00F7'
-        oper_list = ['X', '+', '-', divsign, '=', '/=', '#']
+        oper_list = OPER_LIST1 #['X', '+', '-', divsign, '=', '/=', '#']
 
         for i in wrong_ans:
             a = i['a']
@@ -843,23 +974,32 @@ def finish_lesson(lesson, f_time, favor_ans, wrong_ans, favor_thresold_time):
             oper = oper_list[c - 1]
 
             if not isinstance(a, int):
-                # a,b drob
-                if oper == '=' or oper == '/=':
-                    reply.append(f""" {a['inte']} {a['chis']}/{a['znam']} = {ans} занял {d} сек""")
-                elif oper != '#':
-                    if a['inte'] == 0:
-                        drob_a = f"{a['chis']}/{a['znam']}"
-                    else:
-                        drob_a = f"{a['inte']} {a['chis']}/{a['znam']}"
-                    if b['inte'] == 0:
-                        drob_b = f"{b['chis']}/{b['znam']}"
-                    else:
-                        drob_b = f"{b['inte']} {b['chis']}/{b['znam']}"
-
-                    reply.append(f""" {drob_a} {oper} {drob_b} = {ans} занял {d} сек""")
+                if oper == "др.выр":
+                    if a[1] == '0/0':
+                        a.pop()
+                    if a[0] == '0':
+                        a.pop(0)
+                    reply.append(f""" др. выр:{b}{' '.join(ans)} (={' '.join(a)}) занял {d} сек""")
                 else:
-                    # expression operation
-                    reply.append(f""" выр: {b} = {ans} (={a}) занял {d} сек""")
+                    # a,b drob
+                    if oper == '=' or oper == '/=':
+                        reply.append(f""" {a['inte']} {a['chis']}/{a['znam']} = {ans} занял {d} сек""")
+                    elif oper != '#':
+                        if a['inte'] == 0:
+                            drob_a = f"{a['chis']}/{a['znam']}"
+                        else:
+                            drob_a = f"{a['inte']} {a['chis']}/{a['znam']}"
+                        if b['inte'] == 0:
+                            drob_b = f"{b['chis']}/{b['znam']}"
+                        else:
+                            drob_b = f"{b['inte']} {b['chis']}/{b['znam']}"
+
+                        reply.append(f""" {drob_a} {oper} {drob_b} = {ans} занял {d} сек""")
+                    else:
+                        if oper == '#':
+                            # expression operation
+                            reply.append(f""" выр: {b} = {ans} (={a}) занял {d} сек""")
+
             else:
                 # a,b integer
                 if oper == '*':
