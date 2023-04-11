@@ -9,11 +9,11 @@ BASE_DIR1 = Path(__file__).resolve().parent.parent
 #SECRET_KEY = '12345'
 
 SECRET_KEY = os.environ.get("SECRET_KEY")
-import subprocess
 
+env_vars = {'MY_VAR': 'value'}
 if SECRET_KEY == None:
     #load dev.env file in case no environment for debug purposes
-    env_vars = {'MY_VAR': 'value'}
+
     with open(".env.dev") as f:
         for line in f:
             if line[0] != '#':
