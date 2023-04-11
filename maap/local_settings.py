@@ -35,7 +35,7 @@ ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS')
 if ALLOWED_HOSTS == None:
     ALLOWED_HOSTS = env_vars.get('ALLOWED_HOSTS')
 
-#ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(" ")
+ALLOWED_HOSTS = ['*'] #os.environ.get("DJANGO_ALLOWED_HOSTS").split(" ")
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
