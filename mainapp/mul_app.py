@@ -2,6 +2,7 @@
 mul_app модуль для вычислений примеров
 """
 import random
+import re
 
 from maap.settings import OPER_LIST1
 from .drob import *
@@ -732,25 +733,27 @@ def check_ans_drob(ans, a, b, code):
     # = на преобразование ничего не делаем. (ответ уже нормализован)
     if oper == '=':
         pass
-    # ! обратное преобразование (normlize)
+    # ! обратное преобразование (normalize)
     if oper == '!':
         d1.denormalize()
+
     d1_int = d1.inte
     if d1.inte == 0:
         d1_int = ''
 
     res = {
-        'chis': d1.chis,
-        'znam': d1.znam,
-        'inte': d1_int
+        'chis': str(d1.chis),
+        'znam': str(d1.znam),
+        'inte': str(d1.inte) if d1.inte != 0 else ''
     }
     if d1.chis == 0:
         res = {
             'chis': '',
             'znam': '',
-            'inte': d1_int
+            'inte': str(d1.inte),
         }
 
+    #first operand a
     a_int = ''
     b_int = ''
     res_int = ''
@@ -765,6 +768,7 @@ def check_ans_drob(ans, a, b, code):
         res_int = 0
         res['chis'] = ''
         res['znam'] = ''
+        res['inte'] = ''
 
     if oper == '=' or oper == '!':
         drob1 = f'''
@@ -781,7 +785,7 @@ def check_ans_drob(ans, a, b, code):
                                     <span>=</span>
                                 </div>
 
-                                <p class="sup">{res_int}
+                                <p class="sup">{res['inte']}
                                     <div class="frac">
                                         <span>{res['chis']}</span>
                                         <span class="symbol">/</span>
@@ -817,7 +821,7 @@ def check_ans_drob(ans, a, b, code):
                             <span>=</span>
                         </div>
     
-                        <p class="sup">{res_int}
+                        <p class="sup">{res['inte']}
                             <div class="frac">
                                 <span>{res['chis']}</span>
                                 <span class="symbol">/</span>
@@ -832,35 +836,29 @@ def check_ans_drob(ans, a, b, code):
     ans = ans.strip()
     # ans_int_list = ans.split(' ')
     # disasemble string and reassemble with
-    ans_int_list = ' '.join(ans.split()).split(' ')
-    # ans_int_list = list(filter(lambda x: x != '', ans))
-    ans_int = 0
-    ans_drob = []
-    if len(ans_int_list) == 1:
-        ans_drob = ans_int_list[0].split('/')
-        if len(ans_drob) == 1:
-            ans_int = int(ans_drob[0])
-        else:
-            ans_int = 0
-    elif len(ans_int_list) == 2:
-        ans_drob = ans_int_list[1].split('/')
-        ans_int = int(ans_int_list[0])
+    ans_list = re.split(' |/', ans)
+    ans_dr = {}
+    if len(ans_list) == 3:
+        ans_dr['inte'] = ans_list[0] if ans_list[0] else ''
+        ans_dr['chis'] = ans_list[1] if ans_list[1] else ''
+        ans_dr['znam'] = ans_list[2] if ans_list[2] else ''
+    elif len(ans_list) == 2:
+        ans_dr['inte'] = ''
+        ans_dr['chis'] = ans_list[0] if ans_list[0] else ''
+        ans_dr['znam'] = ans_list[1] if ans_list[1] else ''
+    elif len(ans_list) == 1:
+        ans_dr['inte'] = ans_list[0] if ans_list[0] else ''
+        ans_dr['chis'] = ''
+        ans_dr['znam'] = ''
+    else:
+        ans_dr['inte'] = ''
+        ans_dr['chis'] = ''
+        ans_dr['znam'] = ''
 
-    print(f'result={d1}, user answer=(int) {ans_int} , (drob)={ans_drob}')
-    try:
-        ans_drob = list(map(int, ans_drob))
-    except:
-        return drob1, 0
+    print(f'result={res}, user answer={ans_dr} , (res drob)={d1}')
 
     # check if answer is correct
-    answer_correct = 0
-
-    if d1.inte == ans_int:
-        if d1.chis == 0:
-            answer_correct = 1
-        elif len(ans_drob) == 2:
-            if (d1.znam == ans_drob[1]) and (d1.chis == ans_drob[0]):
-                answer_correct = 1
+    answer_correct = 1 if (res == ans_dr) else 0
 
     return drob1, answer_correct
 
