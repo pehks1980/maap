@@ -768,7 +768,7 @@ def check_ans_drob(ans, a, b, code):
         res_int = 0
         res['chis'] = ''
         res['znam'] = ''
-        res['inte'] = ''
+        res['inte'] = '0'
 
     if oper == '=' or oper == '!':
         drob1 = f'''
