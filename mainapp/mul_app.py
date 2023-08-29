@@ -763,7 +763,7 @@ def check_ans_drob(ans, a, b, code):
         b_int = b['inte']
     if res['inte'] != 0:
         res_int = res['inte']
-    # case of 0
+    # case of 0 
     if d1.chis == 0 and d1.inte == 0:
         res_int = 0
         res['chis'] = ''
