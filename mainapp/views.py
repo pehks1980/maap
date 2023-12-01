@@ -31,7 +31,7 @@ from .drob import Drob
 
 @login_required
 def main(request):
-    title = 'главная maap v 1.0'
+    title = 'главная maap v1.0.1'
 
     # last change
     if request.method == 'POST':
@@ -50,7 +50,7 @@ def main(request):
             # make up lesson log
             lesson = MaapLesson(user=request.user)
             # reset app
-            lesson.mult, lesson.addi, lesson.subt, lesson.divn, lesson.stolbik, \
+            lesson.mult, lesson.addi, lesson.subt, lesson.divn, lesson.stolbik, lesson.div_stolbik,\
             lesson.drob, lesson.expr, lesson.drobexpr = set_app_mode(ans)
 
             lesson.mode = ' '.join(ans)
@@ -468,6 +468,7 @@ def mathemj(request, pk):
             'subt': lesson.subt,
             'divn': lesson.divn,
             'stolbik': lesson.stolbik,
+            'div_stolbik' : lesson.div_stolbik,
             'drob': lesson.drob,
             'expr': lesson.expr,
             'drobexpr': lesson.drobexpr,
@@ -475,7 +476,7 @@ def mathemj(request, pk):
 
         elem, stolbik, drob, expr, drobexpr, hist1 = eval_quest(NX, NY, AX, TWO_DIGIT,
                                                             NO_MINUS, SX, NO_DEC_MUL, hist, HIST_DEPTH, app_mode)
-        print(f"eval quest finish a= {elem['a']}, b={elem['b']} code = {elem['c']}")
+        print(f"eval quest finish a= {elem['a']}, b={elem['b']} code = {elem['c']} drob={drob} expr={expr} drobexpr={drobexpr}")
         # update db
         a = elem['a']
         b = elem['b']
@@ -658,7 +659,9 @@ def mathemj(request, pk):
             a = b = code = 0
             lesson.drob_cnt += 1
 
-        # code 1 * 2 + 3 - 4 /
+
+
+        # code 1 * 2 + 3 - 4 / 6 div stolbik
         if code == 1:
             txt2 = f'cколько будет {a} X {b} =?'
             lesson.mult_cnt += 1
@@ -675,7 +678,67 @@ def mathemj(request, pk):
             divsign = u'\u00F7'
             txt2 = f'cколько будет {a} {divsign} {b} =?'
             lesson.divn_cnt += 1
-        if code == 7:
+
+        # div_stolbik make question
+        if code == 6:
+            stolb1 = f'''
+
+               <div class="primer">
+
+                   <div class="frac1">
+                           <span class="top12">{a}</span> 
+
+                           <span style="position: absolute;border-left: 4px solid black;height: 27px;margin: 0;text-align: left;right: 112px;"></span>
+
+                           <span class="middle2">{b}</span>
+
+                           <div class="ap-otp-inputs3" data-length="2">
+                                   <input class="ap-otp-input" type="tel" maxlength="1" data-index="0">
+                                   <input class="ap-otp-input" type="tel" maxlength="1" data-index="1">
+                                   <div class="ap-otp-inputs14" data-length="4">
+                                           <input class="ap-otp-input" type="tel" maxlength="1" data-index="0">
+                                           <input class="ap-otp-input" type="tel" maxlength="1" data-index="1">
+                                           <input class="ap-otp-input" type="tel" maxlength="1" data-index="2">
+                                   </div>
+                           </div>
+
+                           <div class="ap-otp-inputs2" data-length="4">
+                                   <input class="ap-otp-input" type="tel" maxlength="1" data-index="0">
+                                   <input class="ap-otp-input" type="tel" maxlength="1" data-index="1"> 
+                                   <input class="ap-otp-input" type="tel" maxlength="1" data-index="2">
+                                   <input class="ap-otp-input" type="tel" maxlength="1" data-index="3">
+                           </div>
+
+                           <div class="ap-otp-inputs8" data-length="4">
+                                   <input class="ap-otp-input" type="tel" maxlength="1" data-index="0">
+                                   <input class="ap-otp-input" type="tel" maxlength="1" data-index="1">
+                                   <input class="ap-otp-input" type="tel" maxlength="1" data-index="2">
+                                   <input class="ap-otp-input" type="tel" maxlength="1" data-index="2">
+                           </div>
+
+                           <div class="ap-otp-inputs2" data-length="5">
+                                   <input class="ap-otp-input" type="tel" maxlength="1" data-index="0">
+                                   <input class="ap-otp-input" type="tel" maxlength="1" data-index="1">
+                                   <input class="ap-otp-input" type="tel" maxlength="1" data-index="2">
+                                   <input class="ap-otp-input" type="tel" maxlength="1" data-index="3">
+                                   <input class="ap-otp-input" type="tel" maxlength="1" data-index="4">
+                           </div>
+                           <div class="ap-otp-inputs8" data-length="5">
+                                   <input class="ap-otp-input" type="tel" maxlength="1" data-index="0">
+                                   <input class="ap-otp-input" type="tel" maxlength="1" data-index="1">
+                                   <input class="ap-otp-input" type="tel" maxlength="1" data-index="2">
+                                   <input class="ap-otp-input" type="tel" maxlength="1" data-index="3">
+                                   <input class="ap-otp-input" type="tel" maxlength="1" data-index="4">
+                           </div>
+                   </div>
+
+
+           </div>
+
+               '''
+            lesson.div_stolb_cnt += 1
+
+        if code == 8:
             txt2 = f'cколько будет {b} =?'
             lesson.expr_cnt += 1
 
@@ -881,7 +944,7 @@ def mathem_ajax(request):
             a1 = lesson.a1
             b1 = lesson.b1
 
-            txt00, check_res = check_ans(int(ans), a1, b1, c1)
+            txt00, check_res = check_ans(ans, a1, b1, c1)
 
         lesson.ans_amount = lesson.ans_amount + 1
 
@@ -949,7 +1012,7 @@ def mathem_ajax(request):
 
 # deprecated moved from mathem-mathemk to mathemj-mathem_ajax question-answer
 def mathemk(request, pk1, pk2, diff):
-    title = 'главная maap v 1.0/проверка'
+    title = 'главная maap /проверка'
 
     if request.method == 'POST':
         print('clicknext')

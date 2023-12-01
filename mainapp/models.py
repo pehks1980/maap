@@ -80,6 +80,7 @@ class MaapLesson(models.Model):
     subt = models.PositiveIntegerField(verbose_name='subt', default=1)
     divn = models.PositiveIntegerField(verbose_name='divn', default=1)
     stolbik = models.PositiveIntegerField(verbose_name='stolbik', default=1)
+    div_stolbik = models.PositiveIntegerField(verbose_name='div_stolbik', default=1)
     drob = models.PositiveIntegerField(verbose_name='drob', default=1)
     expr = models.PositiveIntegerField(verbose_name='expr', default=1)
     drobexpr = models.PositiveIntegerField(verbose_name='drobexpr', default=1)
@@ -90,6 +91,7 @@ class MaapLesson(models.Model):
     divn_cnt = models.PositiveIntegerField(verbose_name='divn_cnt', default=0)
     drob_cnt = models.PositiveIntegerField(verbose_name='drob_cnt', default=0)
     stolb_cnt = models.PositiveIntegerField(verbose_name='stolb_cnt', default=0)
+    div_stolb_cnt = models.PositiveIntegerField(verbose_name='div_stolb_cnt', default=0)
     expr_cnt = models.PositiveIntegerField(verbose_name='expr_cnt', default=0)
     drobexpr_cnt = models.PositiveIntegerField(verbose_name='drobexpr_cnt', default=0)
 

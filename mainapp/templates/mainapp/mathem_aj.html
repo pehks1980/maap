@@ -56,6 +56,13 @@ window.onload = function() // дожидаемся загрузки страни
                 //check if stolbik answer
                 let $inp = $(".ap-otp-input");
                 var stolbik = $inp.length == 0 ? false : true;
+                if  ( stolbik ) {
+                    // check if div_stolbik -if style ..inputs14(only in divstolbik
+                    // - make stolbik = false
+                    // so - answer is taken from usual text box not from OTP input
+                    let $inp1 = $(".ap-otp-inputs14");
+                    stolbik = $inp1.length == 0 ? true : false;
+                }
 
                 if ( stolbik ) {
                     const $inp = $(".ap-otp-input");

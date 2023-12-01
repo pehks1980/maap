@@ -178,16 +178,16 @@ tr:nth-child(even) {
 
 
 .slider {
-	height: 800px;
-	background-image: url(/staticfiles/img/slid.jpg);
-	background-repeat: no-repeat;
-    background-size: 1120px 800px;
-	padding-left: 90px;
-	padding-right: 211px;
-	padding-bottom: 100px;
-	position: relative;
-	border-style: solid;
-	border-color: #17a2b8;
+    height: 873px;
+    background-image: url(/staticfiles/img/slid.jpg);
+    background-repeat: no-repeat;
+    background-size: 1107px 871px;
+    padding-left: 38px;
+    padding-right: 211px;
+    /* padding-bottom: 100px; */
+    /* position: relative; */
+    border-style: solid;
+    /* border-color: #17a2b8; */
 }
 
 .logo {
@@ -283,7 +283,7 @@ tr:nth-child(even) {
 	clear: both;
 }
 .text-slider {
-	margin-top: 128px;
+	margin-top: 59px;
 	position: absolute;
 }
 
@@ -1330,11 +1330,13 @@ td:first-child {
         }
 
 
+
         .frac span {
             display: block;
             padding: 0.1em;
 
         }
+
 
         .frac span.bottom {
             border-top: thin solid black;
@@ -1348,6 +1350,20 @@ td:first-child {
             display: inline;
             padding: 0.1em;
         }
+
+.frac1 {
+    display: inline;
+    position: relative;
+    vertical-align: middle;
+    letter-spacing: 0.001em;
+    text-align: center;
+    margin: auto;
+}
+
+.frac1 span {
+            /* display: block; */
+           /* padding: 3px; */
+          }
 
         .oper {
             position: relative;
@@ -1386,6 +1402,16 @@ td:first-child {
             width: fit-content;
         }
 
+         .ap-otp-inputs8 {
+            width: fit-content;
+        }
+
+        .ap-otp-inputs3 {
+            margin-top: -1px;
+            /* border-top: solid black; */
+            width: fit-content;
+        }
+
         .ap-otp-input{
         border: 1px solid #ebebeb;
         border-radius: 3px;
@@ -1410,6 +1436,13 @@ td:first-child {
             left: 13px;
         }
 
+        .middle2 {
+            /* text-align: end; */
+            letter-spacing: 29px;
+            position: absolute;
+            left: 94px;
+        }
+
         .top1 {
             text-align: end;
             letter-spacing: 29px;
@@ -1417,12 +1450,36 @@ td:first-child {
             left: 13px;
         }
 
+        .top12 {
+            /* text-align: left; */
+            letter-spacing: 29px;
+            position: relative;
+            right: 47px;
+            height: 20px;
+            margin: 12px;
+            /* text-align: center; */
+            /* padding-left: 40px; */
+        }
+
         .ap-otp-inputs1 {
 
             width: fit-content;
         }
 
+        .ap-otp-inputs14 {
+            width: fit-content;
+            border-top: 4px solid black;
+            display: inline;
+            padding-top: 7px;
+        }
+
         .ap-otp-inputs-res {
 
+            width: fit-content;
+        }
+
+        .ap-otp-inputs2 {
+            border-top: 2px solid black;
+            padding-top: 1px;
             width: fit-content;
         }
