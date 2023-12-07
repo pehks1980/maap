@@ -144,5 +144,5 @@ FAVOR_THRESOLD_TIME = 15  # favor_thresold_time = models.PositiveIntegerField(ve
 
 #list of all sets of operations
 divsign = u'\u00F7'
-OPER_LIST = ['X', '+', '-', divsign, '=', '/=', '#', 'др.выр']
-OPER_LIST1 = ['X', '+', '-', divsign, '=', '!', '#', 'др.выр']
+OPER_LIST = ['X', '+', '-', divsign, '=', divsign, '/=', '#', 'др.выр']
+OPER_LIST1 = ['X', '+', '-', divsign, '=', divsign, '!', '#', 'др.выр']

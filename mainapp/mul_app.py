@@ -42,16 +42,36 @@ def set_app_mode(list_mode):
     """
     mult = addi = subt = divn = stolbik = div_stolbik = drob = expr = drobexpr = 0
 
+    # for i in list_mode:
+    #     mult = 1 if int(i) == 1 else 0
+    #     addi = 1 if int(i) == 2 else 0
+    #     subt = 1 if int(i) == 3 else 0
+    #     divn = 1 if int(i) == 4 else 0
+    #     stolbik = 1 if int(i) == 5 else 0
+    #     div_stolbik = 1 if int(i) == 6 else 0
+    #     drob = 1 if int(i) == 7 else 0
+    #     expr = 1 if int(i) == 8 else 0
+    #     drobexpr = 1 if int(i) == 9 else 0
+
     for i in list_mode:
-        mult = 1 if int(i) == 1 else 0
-        addi = 1 if int(i) == 2 else 0
-        subt = 1 if int(i) == 3 else 0
-        divn = 1 if int(i) == 4 else 0
-        stolbik = 1 if int(i) == 5 else 0
-        div_stolbik = 1 if int(i) == 6 else 0
-        drob = 1 if int(i) == 7 else 0
-        expr = 1 if int(i) == 8 else 0
-        drobexpr = 1 if int(i) == 9 else 0
+        if int(i) == 1:
+            mult = 1
+        if int(i) == 2:
+            addi = 1
+        if int(i) == 3:
+            subt = 1
+        if int(i) == 4:
+            divn = 1
+        if int(i) == 5:
+            stolbik = 1
+        if int(i) == 6:
+            div_stolbik = 1
+        if int(i) == 7:
+            drob = 1
+        if int(i) == 8:
+            expr = 1
+        if int(i) == 9:
+            drobexpr = 1
 
     return mult, addi, subt, divn, stolbik, div_stolbik, drob, expr, drobexpr
 
@@ -155,7 +175,7 @@ def get_ops(same_znam, DROBI_PLUS_SET):
     # если оба включены то, генерим с
     sub_choice = random.randint(0, 1)
     # генерит операнды с одним знаменателем
-    if same_znam is True and sub_choice == 1:
+    if same_znam and sub_choice == 1:
         znam = random.randint(3, 25)
         chis_a = random.randint(1, int(znam / 2) + 1)
         chis_b = random.randint(1, int(znam / 2))

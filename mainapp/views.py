@@ -524,7 +524,7 @@ def mathemj(request, pk):
         txt1 = f"вопрос {lesson.ans_amount} правильных: {lesson.ans_correct}"
 
         list_txt.append(txt1)
-        # opers = ['X', '+', '-', '/', '=', '!', '#']
+        # opers = ['X', '+', '-', '/', '=', '/', '!', '#']
         oper = OPER_LIST1[code - 1]
 
         # maket stolbika for +/-
@@ -680,7 +680,7 @@ def mathemj(request, pk):
             lesson.divn_cnt += 1
 
         # div_stolbik make question
-        if code == 6:
+        if code == 6 and not stolbik:
             stolb1 = f'''
 
                <div class="primer">
@@ -1155,7 +1155,7 @@ def hist(request, page='None'):
     wrong_ans_hist = []
     # try to find if its empty
     # minimum amount of answer to listed in reports
-    ans_amount_gt = 6
+    ans_amount_gt = 5
     lessons = MaapLesson.objects.filter(user=request.user, ans_amount__gt=ans_amount_gt).order_by('id')
 
     list_hist_row = []
@@ -1329,7 +1329,7 @@ def compare_reports(pk, favor_ans):
         print("compare reports error: ", e)
         return favor_ans
 
-
+# unpack saved answer and "decode it:
 def print_report_row(key):
     a = key['a']
     b = key['b']
@@ -1357,15 +1357,14 @@ def print_report_row(key):
             str_fav_ans = f""" {drob_a} {oper} {drob_b} занял {d} сек"""
     else:
         # a,b integer
-        if c == 1:
+        if oper == 'X':
             str_fav_ans = f' {a} X {b} (={a * b}) занял {d} секунд'
-        if c == 2:
+        if oper == '+':
             str_fav_ans = f' {a} + {b} (={a + b}) занял {d} секунд'
-        if c == 3:
+        if oper == '-':
             str_fav_ans = f' {a} - {b} (={a - b}) занял {d} секунд'
-        if c == 4:
-            divsign = u'\u00F7'
-            str_fav_ans = f' {a} {divsign} {b} (={int(a / b)}) занял {d} секунд'
+        if oper == divsign:
+            str_fav_ans = f' {a} {divsign} {b} (={float(a / b)}) занял {d} секунд'
 
     diff = key.get('e')
     if diff:
