@@ -370,14 +370,14 @@ def eval_quest(nx, ny, ax, two_digit, no_minus, sx, no_dec_mul, hist, hist_depth
         if code == 6:
 
             while True:
-                a = random.randint(9, 99)
-                b = random.randint(7, 39)
+                a = random.randint(50, 199)
+                b = random.randint(50, 99)
                 # filter out common operands
                 if a % 10 == 0 or b % 10 == 0 or a == b or b == 25:
                     continue
                 fl_res = float (a / b)
                 fl_mant = fl_res
-                # make 0.xxx format to make shure exact amount of digits has the result
+                # make 0.xxx format to make sure exact amount of digits has the result
                 if fl_mant > 1:
                     while fl_mant > 1:
                         fl_mant = fl_mant / 10
@@ -385,10 +385,10 @@ def eval_quest(nx, ny, ax, two_digit, no_minus, sx, no_dec_mul, hist, hist_depth
                     while fl_mant < 0.9:
                         fl_mant = fl_mant * 10
                     fl_mant = fl_mant / 10
-                #filter out results which may be int, or too long i.e. result more is like 2.34 or so
-                if (fl_mant * 10000) % 10 == 0.0:
+                #filter out results which may be int, or too long i.e. result more is like 2.344 or so
+                if (fl_mant * 100000) % 10 == 0.0:
                     if (int(fl_res) - fl_res) != 0:
-                        if (fl_mant * 1000) % 10 != 0.0:
+                        if (fl_mant * 10000) % 10 != 0.0:
                             if fl_res > 1.0:
                                 break
 

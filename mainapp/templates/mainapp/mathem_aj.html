@@ -31,6 +31,39 @@ window.onload = function() // дожидаемся загрузки страни
 
     });
 
+    //handle otp div stolbik movements class - .ap-otp-input1
+    const $inp1 = $(".ap-otp-input1");
+
+    $inp1.on({
+
+        input(ev) { // Handle typing
+        const i = $inp1.index(this);
+
+        if (this.value) $inp1.eq(i + 1).focus();
+        },
+
+        keydown(ev) { // Handle Deleting
+        const i = $inp1.index(this);
+        const maxi = $inp1.length - 1;
+
+        if (ev.key === "Backspace" && i) {
+            $inp1.eq(i - 1).focus();
+        }
+        else if (ev.key === "Backspace" && i == 0) {
+            $inp1.eq(maxi).focus();
+        }
+        else if (ev.key === "ArrowLeft") {
+            //ArrowLeft
+            $inp1.eq(i - 1).focus();
+        }
+        else if (ev.key === "ArrowRight") {
+            //ArrowRight
+            $inp1.eq(i + 1).focus();
+        }
+
+        }
+    });
+
 
    //  initializeTimer(); // вызываем функцию инициализации таймера
 

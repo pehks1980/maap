@@ -683,52 +683,78 @@ def mathemj(request, pk):
         if code == 6 and not stolbik:
             stolb1 = f'''
 
-               <div class="primer">
+               <div class="primer1">
 
                    <div class="frac1">
                            <span class="top12">{a}</span> 
-
-                           <span style="position: absolute;border-left: 4px solid black;height: 27px;margin: 0;text-align: left;right: 112px;"></span>
+                           
+                            <span style="position: absolute;border-left: 4px solid black;height: 28px;margin: 0;text-align: left;right: 155px;"></span>
+    
 
                            <span class="middle2">{b}</span>
 
-                           <div class="ap-otp-inputs3" data-length="2">
-                                   <input class="ap-otp-input" type="tel" maxlength="1" data-index="0">
-                                   <input class="ap-otp-input" type="tel" maxlength="1" data-index="1">
+                           <div class="ap-otp-inputs3" data-length="3">
+                                   <input class="ap-otp-input1" type="tel" maxlength="1" data-index="0" >
+                                   <input class="ap-otp-input1" type="tel" maxlength="1" data-index="1" >
+                                   <input class="ap-otp-input1" type="tel" maxlength="1" data-index="2" >
                                    <div class="ap-otp-inputs14" data-length="4">
-                                           <input class="ap-otp-input" type="tel" maxlength="1" data-index="0">
-                                           <input class="ap-otp-input" type="tel" maxlength="1" data-index="1">
-                                           <input class="ap-otp-input" type="tel" maxlength="1" data-index="2">
+                                           <input class="ap-otp-input1" type="tel" maxlength="1" data-index="0">
+                                           <input class="ap-otp-input1" type="tel" maxlength="1" data-index="1">
+                                           <input class="ap-otp-input1" type="tel" maxlength="1" data-index="2">
+                                           <input class="ap-otp-input1" type="tel" maxlength="1" data-index="3">
                                    </div>
                            </div>
 
-                           <div class="ap-otp-inputs2" data-length="4">
-                                   <input class="ap-otp-input" type="tel" maxlength="1" data-index="0">
-                                   <input class="ap-otp-input" type="tel" maxlength="1" data-index="1"> 
-                                   <input class="ap-otp-input" type="tel" maxlength="1" data-index="2">
-                                   <input class="ap-otp-input" type="tel" maxlength="1" data-index="3">
-                           </div>
-
-                           <div class="ap-otp-inputs8" data-length="4">
-                                   <input class="ap-otp-input" type="tel" maxlength="1" data-index="0">
-                                   <input class="ap-otp-input" type="tel" maxlength="1" data-index="1">
-                                   <input class="ap-otp-input" type="tel" maxlength="1" data-index="2">
-                                   <input class="ap-otp-input" type="tel" maxlength="1" data-index="2">
-                           </div>
-
                            <div class="ap-otp-inputs2" data-length="5">
-                                   <input class="ap-otp-input" type="tel" maxlength="1" data-index="0">
-                                   <input class="ap-otp-input" type="tel" maxlength="1" data-index="1">
-                                   <input class="ap-otp-input" type="tel" maxlength="1" data-index="2">
-                                   <input class="ap-otp-input" type="tel" maxlength="1" data-index="3">
-                                   <input class="ap-otp-input" type="tel" maxlength="1" data-index="4">
+                                   <input class="ap-otp-input1" type="tel" maxlength="1" data-index="0">
+                                   <input class="ap-otp-input1" type="tel" maxlength="1" data-index="1"> 
+                                   <input class="ap-otp-input1" type="tel" maxlength="1" data-index="2">
+                                   <input class="ap-otp-input1" type="tel" maxlength="1" data-index="3">
+                                   <input class="ap-otp-input1" type="tel" maxlength="1" data-index="4">
                            </div>
+
                            <div class="ap-otp-inputs8" data-length="5">
-                                   <input class="ap-otp-input" type="tel" maxlength="1" data-index="0">
-                                   <input class="ap-otp-input" type="tel" maxlength="1" data-index="1">
-                                   <input class="ap-otp-input" type="tel" maxlength="1" data-index="2">
-                                   <input class="ap-otp-input" type="tel" maxlength="1" data-index="3">
-                                   <input class="ap-otp-input" type="tel" maxlength="1" data-index="4">
+                                   <input class="ap-otp-input1" type="tel" maxlength="1" data-index="0">
+                                   <input class="ap-otp-input1" type="tel" maxlength="1" data-index="1">
+                                   <input class="ap-otp-input1" type="tel" maxlength="1" data-index="2">
+                                   <input class="ap-otp-input1" type="tel" maxlength="1" data-index="3">
+                                   <input class="ap-otp-input1" type="tel" maxlength="1" data-index="4">
+                           </div>
+
+                           <div class="ap-otp-inputs2" data-length="6">
+                                   <input class="ap-otp-input1" type="tel" maxlength="1" data-index="0">
+                                   <input class="ap-otp-input1" type="tel" maxlength="1" data-index="1">
+                                   <input class="ap-otp-input1" type="tel" maxlength="1" data-index="2">
+                                   <input class="ap-otp-input1" type="tel" maxlength="1" data-index="3">
+                                   <input class="ap-otp-input1" type="tel" maxlength="1" data-index="4">
+                                   <input class="ap-otp-input1" type="tel" maxlength="1" data-index="5">
+                           </div>
+                           <div class="ap-otp-inputs8" data-length="6">
+                                   <input class="ap-otp-input1" type="tel" maxlength="1" data-index="0">
+                                   <input class="ap-otp-input1" type="tel" maxlength="1" data-index="1">
+                                   <input class="ap-otp-input1" type="tel" maxlength="1" data-index="2">
+                                   <input class="ap-otp-input1" type="tel" maxlength="1" data-index="3">
+                                   <input class="ap-otp-input1" type="tel" maxlength="1" data-index="4">
+                                   <input class="ap-otp-input1" type="tel" maxlength="1" data-index="5">
+                           </div>
+                           
+                           <div class="ap-otp-inputs2" data-length="7">
+                                   <input class="ap-otp-input1" type="tel" maxlength="1" data-index="0">
+                                   <input class="ap-otp-input1" type="tel" maxlength="1" data-index="1">
+                                   <input class="ap-otp-input1" type="tel" maxlength="1" data-index="2">
+                                   <input class="ap-otp-input1" type="tel" maxlength="1" data-index="3">
+                                   <input class="ap-otp-input1" type="tel" maxlength="1" data-index="4">
+                                   <input class="ap-otp-input1" type="tel" maxlength="1" data-index="5">
+                                   <input class="ap-otp-input1" type="tel" maxlength="1" data-index="6">
+                           </div>
+                           <div class="ap-otp-inputs8" data-length="7">
+                                   <input class="ap-otp-input1" type="tel" maxlength="1" data-index="0">
+                                   <input class="ap-otp-input1" type="tel" maxlength="1" data-index="1">
+                                   <input class="ap-otp-input1" type="tel" maxlength="1" data-index="2">
+                                   <input class="ap-otp-input1" type="tel" maxlength="1" data-index="3">
+                                   <input class="ap-otp-input1" type="tel" maxlength="1" data-index="4">
+                                   <input class="ap-otp-input1" type="tel" maxlength="1" data-index="5">
+                                   <input class="ap-otp-input1" type="tel" maxlength="1" data-index="6">
                            </div>
                    </div>
 
