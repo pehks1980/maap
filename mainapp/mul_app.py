@@ -879,6 +879,8 @@ def check_ans_drob(ans, a, b, code):
     # ans_int_list = ans.split(' ')
     # disasemble string and reassemble with
     ans_list = re.split(' |/', ans)
+    #remove not needed "" elemens ie  ans='1 2 / 3' = [1,2,3] (chars)
+    ans_list = list(filter(lambda x: x != "", ans_list))
     ans_dr = {}
     if len(ans_list) == 3:
         ans_dr['inte'] = ans_list[0] if ans_list[0] else ''
