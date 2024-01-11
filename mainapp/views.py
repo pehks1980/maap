@@ -2,6 +2,7 @@
 import base64
 import json
 import random
+import re
 from collections import OrderedDict
 from datetime import datetime
 from time import sleep
@@ -50,8 +51,8 @@ def main(request):
             # make up lesson log
             lesson = MaapLesson(user=request.user)
             # reset app
-            lesson.mult, lesson.addi, lesson.subt, lesson.divn, lesson.stolbik, lesson.div_stolbik,\
-            lesson.drob, lesson.expr, lesson.drobexpr = set_app_mode(ans)
+            lesson.mult, lesson.addi, lesson.subt, lesson.divn, lesson.stolbik, lesson.div_stolbik, \
+                lesson.drob, lesson.expr, lesson.drobexpr = set_app_mode(ans)
 
             lesson.mode = ' '.join(ans)
             # print(lesson.pk)
@@ -468,20 +469,24 @@ def mathemj(request, pk):
             'subt': lesson.subt,
             'divn': lesson.divn,
             'stolbik': lesson.stolbik,
-            'div_stolbik' : lesson.div_stolbik,
+            'div_stolbik': lesson.div_stolbik,
             'drob': lesson.drob,
             'expr': lesson.expr,
             'drobexpr': lesson.drobexpr,
         }
 
         elem, stolbik, drob, expr, drobexpr, hist1 = eval_quest(NX, NY, AX, TWO_DIGIT,
-                                                            NO_MINUS, SX, NO_DEC_MUL, hist, HIST_DEPTH, app_mode)
-        print(f"eval quest finish a= {elem['a']}, b={elem['b']} code = {elem['c']} drob={drob} expr={expr} drobexpr={drobexpr}")
+                                                                NO_MINUS, SX, NO_DEC_MUL, hist, HIST_DEPTH, app_mode)
+        if not drobexpr:
+            print(f"eval quest finish a= {elem['a']}, b={elem['b']} code = {elem['c']} drob={drob} expr={expr} drobexpr={drobexpr}")
+        else:
+            print(f"eval quest finish a= {elem['a']}, b= html code = {elem['c']} drob={drob} expr={expr} drobexpr={drobexpr}")
+
         # update db
         a = elem['a']
         b = elem['b']
-        #additional parameter in case of drob expression
-        #a - calculated answer, b - question expression=?, bb1 - correct answer expression
+        # additional parameter in case of drob expression
+        # a - calculated answer, b - question expression=?, bb1 - correct answer expression
         bb1 = elem.get('b1')
         bb2 = elem.get('b2')
         code = elem['c']
@@ -658,8 +663,6 @@ def mathemj(request, pk):
                 '''
             a = b = code = 0
             lesson.drob_cnt += 1
-
-
 
         # code 1 * 2 + 3 - 4 / 6 div stolbik
         if code == 1:
@@ -928,38 +931,41 @@ def mathem_ajax(request):
                 txt00 = f" ответ - не верный "
             lesson.is_drob = False
         elif lesson.is_drobexpr:
-            #a1 calculated answer, bb1 drob expression with answer
-            #bb2 drob expression in text form for report (gets to b1)
+            # a1 calculated answer, bb1 drob expression with answer
+            # bb2 drob expression in text form for report (gets to b1)
             a1 = json.loads(lesson.a1_drobexpr)
             b1 = json.loads(lesson.bb2_drobexpr)
             bb1 = json.loads(lesson.bb1_drobexpr)
             drob_txt = bb1
 
             ans = ans.strip()
-            ans = ans.split()
-            a1 = a1.strip()
-            a1 = a1.split()
+            #make 3 elements of the drob its easier to check
+            ans = re.split(' |/', ans)
+            # remove not needed "" elemens ie  ans='1 2 / 3' = [1,2,3] (chars)
+            ans = list(filter(lambda x: x != "", ans))
 
-            #case when answer is only inte without drob
-            #or only drob chast
-            if len(a1) == 1 and len(ans) == 1:
-                if a1[0] == ans[0]:
+            a1 = a1.strip()
+            a1 = re.split(' |/', a1)
+
+            #a1 = ['1','0','0']
+
+            # case when inte = 0
+            if a1[0] == '0' and len(ans) == 2 and a1[1] == ans[0] and a1[2] == ans[1]:
                     check_res = 1
             else:
-                #case when inte = 0
-                if a1[0] == '0':
-                    #check second part only
-                    if a1[1] == ans[0]:
+                # case 1 0/0
+                if a1[1] == '0' and a1[2] == '0':
+                    # remove a1 a2 from list
+                    a1.pop()
+                    a1.pop()
+                if len(a1) == 2 and len(a1) == len(ans):
+                    # check whole drob inte and drob parts
+                    if a1[0] == ans[0] and a1[1] == ans[1]:
                         check_res = 1
-                else:
-                    #case 1 0/0
-                    if a1[1] == '0/0':
-                        #remove a1 from list
-                        a1.pop()
-                    if len(a1) == len(ans):
-                        #check whole drob inte and drob parts
-                        if a1[0] == ans[0] and a1[1] == ans[1]:
-                            check_res = 1
+                if len(a1) == 1 and len(a1) == len(ans):
+                    # check whole drob inte and drob parts
+                    if a1[0] == ans[0]:
+                        check_res = 1
 
             if check_res == 1:
                 txt00 = f" ответ - правильный "
@@ -1355,6 +1361,7 @@ def compare_reports(pk, favor_ans):
         print("compare reports error: ", e)
         return favor_ans
 
+
 # unpack saved answer and "decode it:
 def print_report_row(key):
     a = key['a']
@@ -1417,7 +1424,7 @@ def print_wrong_report_row(key):
             if a[0] == '0':
                 a.pop(0)
             elif a[1] == '0/0':
-                    a.pop()
+                a.pop()
             str_fav_ans = f" др.выр: {b} {' '.join(a)}  ( отв. = {' '.join(ans)} ) (занял {d} секунд)"
         elif oper == '#':
             str_fav_ans = f' выр: {b} = {a}  ( отв. = {ans} ) (занял {d} секунд)'
@@ -1648,6 +1655,7 @@ def finish(request, pk):
     content = {'title': title, 'ans': ans}
 
     return render(request, 'mainapp/finish.html', content)
+
 
 # function which check availbility from kubernetes probe
 # :8000/__heartbeat__
