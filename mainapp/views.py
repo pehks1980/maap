@@ -966,7 +966,7 @@ def mathem_ajax(request):
                     # check whole drob inte and drob parts
                     if a1[0] == ans[0]:
                         check_res = 1
-
+            print(f'result={a1}, user answer={ans}')
             if check_res == 1:
                 txt00 = f" ответ - правильный "
             else:
