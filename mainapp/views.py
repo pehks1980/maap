@@ -1371,6 +1371,10 @@ def print_report_row(key):
     str_fav_ans = ''
     divsign = u'\u00F7'
 
+    #check for zero
+    if c == 0:
+        return str_fav_ans
+
     oper = OPER_LIST[c - 1]
     if not isinstance(a, int):
         a_inte = ''
@@ -1418,6 +1422,10 @@ def print_wrong_report_row(key):
     str_fav_ans = ''
     divsign = u'\u00F7'
     # oper_list = ['X', '+', '-', divsign, '=', '=', '#']
+    # return if c zero
+    if c == 0:
+        return str_fav_ans
+
     oper = OPER_LIST[c - 1]
     if not isinstance(a, int):
         if c == 8:
@@ -1458,6 +1466,9 @@ def print_wrong_report_row(key):
         if c == 4:
             divsign = u'\u00F7'
             str_fav_ans = f' {a} {divsign} {b} (={int(a / b)}) {ans} (занял {d} секунд)'
+        if c == 6:
+            divsign = u'\u00F7'
+            str_fav_ans = f' {a} {divsign} {b} (={a/b}) {ans} (занял {d} секунд)'
 
     return str_fav_ans
 
