@@ -40,14 +40,18 @@ def set_app_mode(list_mode):
     :param list_mode:
     :return:
     """
-    mult = 0
-    addi = 0
-    subt = 0
-    divn = 0
-    stolbik = 0
-    drob = 0
-    expr = 0
-    drobexpr = 0
+    mult = addi = subt = divn = stolbik = div_stolbik = drob = expr = drobexpr = 0
+
+    # for i in list_mode:
+    #     mult = 1 if int(i) == 1 else 0
+    #     addi = 1 if int(i) == 2 else 0
+    #     subt = 1 if int(i) == 3 else 0
+    #     divn = 1 if int(i) == 4 else 0
+    #     stolbik = 1 if int(i) == 5 else 0
+    #     div_stolbik = 1 if int(i) == 6 else 0
+    #     drob = 1 if int(i) == 7 else 0
+    #     expr = 1 if int(i) == 8 else 0
+    #     drobexpr = 1 if int(i) == 9 else 0
 
     for i in list_mode:
         if int(i) == 1:
@@ -61,13 +65,15 @@ def set_app_mode(list_mode):
         if int(i) == 5:
             stolbik = 1
         if int(i) == 6:
-            drob = 1
+            div_stolbik = 1
         if int(i) == 7:
-            expr = 1
+            drob = 1
         if int(i) == 8:
+            expr = 1
+        if int(i) == 9:
             drobexpr = 1
 
-    return mult, addi, subt, divn, stolbik, drob, expr, drobexpr
+    return mult, addi, subt, divn, stolbik, div_stolbik, drob, expr, drobexpr
 
 
 def get_app_mode_desc(lesson):
@@ -82,11 +88,12 @@ def get_app_mode_desc(lesson):
     subt_cnt = lesson.subt_cnt
     divn_cnt = lesson.divn_cnt
     stolb_cnt = lesson.stolb_cnt
+    div_stolb_cnt = lesson.div_stolb_cnt
     drob_cnt = lesson.drob_cnt
     expr_cnt = lesson.expr_cnt
     drobexpr_cnt = lesson.drobexpr_cnt
 
-    a = b = c = d = e = f = g = h = ''
+    a = b = c = d = e = f = g = h = j = ''
 
     for i in mode:
         if i == '1':
@@ -111,19 +118,23 @@ def get_app_mode_desc(lesson):
             if stolb_cnt:
                 e += f'={stolb_cnt}'
         if i == '6':
-            f = f' др.'
-            if drob_cnt:
-                f += f'={drob_cnt}'
+            f = f' д.ст.'
+            if stolb_cnt:
+                f += f'={div_stolb_cnt}'
         if i == '7':
-            g = f' выр.'
-            if expr_cnt:
-                g += f'={expr_cnt}'
+            g = f' др.'
+            if drob_cnt:
+                g += f'={drob_cnt}'
         if i == '8':
-            h = f' др. выр.'
+            h = f' выр.'
+            if expr_cnt:
+                h += f'={expr_cnt}'
+        if i == '9':
+            j = f' др. выр.'
             if drobexpr_cnt:
-                h += f'={drobexpr_cnt}'
+                j += f'={drobexpr_cnt}'
 
-    return f'{a}{b}{c}{d}{e}{f}{g}{h}'
+    return f'{a}{b}{c}{d}{e}{f}{g}{h}{j}'
 
 
 def printMatrix(s, hl, a, b):
@@ -164,7 +175,7 @@ def get_ops(same_znam, DROBI_PLUS_SET):
     # если оба включены то, генерим с
     sub_choice = random.randint(0, 1)
     # генерит операнды с одним знаменателем
-    if same_znam is True and sub_choice == 1:
+    if same_znam and sub_choice == 1:
         znam = random.randint(3, 25)
         chis_a = random.randint(1, int(znam / 2) + 1)
         chis_b = random.randint(1, int(znam / 2))
@@ -220,7 +231,7 @@ def eval_quest(nx, ny, ax, two_digit, no_minus, sx, no_dec_mul, hist, hist_depth
                 expr = False
                 drobexpr = False
 
-                code = random.randint(1, 8)
+                code = random.randint(1, 9)
                 if (app_mode['mult'] == 1) and (code == 1):
                     break
                 if (app_mode['addi'] == 1) and (code == 2):
@@ -231,11 +242,13 @@ def eval_quest(nx, ny, ax, two_digit, no_minus, sx, no_dec_mul, hist, hist_depth
                     break
                 if (app_mode['stolbik'] == 1) and (code == 5):
                     break
-                if (app_mode['drob'] == 1) and (code == 6):
+                if (app_mode['div_stolbik'] == 1) and (code == 6):
                     break
-                if (app_mode['expr'] == 1) and (code == 7):
+                if (app_mode['drob'] == 1) and (code == 7):
                     break
-                if (app_mode['drobexpr'] == 1) and (code == 8):
+                if (app_mode['expr'] == 1) and (code == 8):
+                    break
+                if (app_mode['drobexpr'] == 1) and (code == 9):
                     break
 
         # mul a,b 2..10 2..12 mult table 10X12
@@ -353,8 +366,36 @@ def eval_quest(nx, ny, ax, two_digit, no_minus, sx, no_dec_mul, hist, hist_depth
                 b = random.randint(10, 99)
                 code = 1
 
-        # drob
+        # div_stolbik
         if code == 6:
+
+            while True:
+                a = random.randint(50, 199)
+                b = random.randint(50, 99)
+                # filter out common operands
+                if a % 10 == 0 or b % 10 == 0 or a == b or b == 25:
+                    continue
+                fl_res = float (a / b)
+                fl_mant = fl_res
+                # make 0.xxx format to make sure exact amount of digits has the result
+                if fl_mant > 1:
+                    while fl_mant > 1:
+                        fl_mant = fl_mant / 10
+                else:
+                    while fl_mant < 0.9:
+                        fl_mant = fl_mant * 10
+                    fl_mant = fl_mant / 10
+                #filter out results which may be int, or too long i.e. result more is like 2.344 or so
+                if (fl_mant * 100000) % 10 == 0.0:
+                    if (int(fl_res) - fl_res) != 0:
+                        if (fl_mant * 10000) % 10 != 0.0:
+                            if fl_res > 1.0:
+                                break
+
+            print(f"div stolbik {a} {b} {fl_res} {fl_mant}")
+
+        # drob
+        if code == 7:
             drob = True
             # rule for generating a and b
             # in this case выбор будет рандомный либо с таким же знаменателм либо из таблицы
@@ -408,6 +449,7 @@ def eval_quest(nx, ny, ax, two_digit, no_minus, sx, no_dec_mul, hist, hist_depth
                     # denormalize drob ie 12 / 5 = 2 2/5
                     d1.denormalize()
                 if oper == 6:
+                    #normalized already
                     pass
 
                 a = {'chis': d1.chis,
@@ -425,7 +467,7 @@ def eval_quest(nx, ny, ax, two_digit, no_minus, sx, no_dec_mul, hist, hist_depth
             code = oper
 
         # expr
-        if code == 7:
+        if code == 8:
             expr = True
             #50 chance
             br_toss = random.randint(0, 100)
@@ -542,7 +584,7 @@ def eval_quest(nx, ny, ax, two_digit, no_minus, sx, no_dec_mul, hist, hist_depth
                 b = expr_rezult_str
 
         # drob expr
-        if code == 8:
+        if code == 9:
             drobexpr = True
 
             # expr_brackets_rezult = a1 op1[-+] b1 op2[*:] c1
@@ -665,12 +707,12 @@ def eval_quest(nx, ny, ax, two_digit, no_minus, sx, no_dec_mul, hist, hist_depth
 
         if not already_in_hist:
             break
-    elem = {}
+
     # add new primer to
     elem = {'a': a,
             'b': b,
             'c': code}  # a,b,op,diff_time
-    if code == 8:
+    if code == 9:
         # add b1 in case drobexpr
         elem['b1'] = b1
         elem['b2'] = b2
@@ -837,6 +879,8 @@ def check_ans_drob(ans, a, b, code):
     # ans_int_list = ans.split(' ')
     # disasemble string and reassemble with
     ans_list = re.split(' |/', ans)
+    #remove not needed "" elemens ie  ans='1 2 / 3' = [1,2,3] (chars)
+    ans_list = list(filter(lambda x: x != "", ans_list))
     ans_dr = {}
     if len(ans_list) == 3:
         ans_dr['inte'] = ans_list[0] if ans_list[0] else ''
@@ -876,7 +920,7 @@ def check_ans(ans, a1, b1, c1):
     b = b1
     code = c1
 
-    print(f'check ans= {a},{b},{code}')
+    print(f'check ans= {a},{b},{code}, ans={ans}')
     res = 0
 
     if code == 1:
@@ -887,6 +931,16 @@ def check_ans(ans, a1, b1, c1):
         res = a - b
     if code == 4:
         res = int(a / b)
+    # div_stolbik
+    if code == 6:
+        float_res = float(a / b)
+        #convert ans (string) to loat
+        float_ans = float(ans)
+        divsign = u'\u00F7'
+        if float_res == float_ans:
+            return f" ответ - правильный {a} {divsign} {b} = {ans}", 1
+        else:
+            return f" ответ - не верный  {a} {divsign} {b} = {str(float_res)}", 0
 
     # op ok do the business
     if res == int(ans):

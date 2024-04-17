@@ -31,6 +31,39 @@ window.onload = function() // дожидаемся загрузки страни
 
     });
 
+    //handle otp div stolbik movements class - .ap-otp-input1
+    const $inp1 = $(".ap-otp-input1");
+
+    $inp1.on({
+
+        input(ev) { // Handle typing
+        const i = $inp1.index(this);
+
+        if (this.value) $inp1.eq(i + 1).focus();
+        },
+
+        keydown(ev) { // Handle Deleting
+        const i = $inp1.index(this);
+        const maxi = $inp1.length - 1;
+
+        if (ev.key === "Backspace" && i) {
+            $inp1.eq(i - 1).focus();
+        }
+        else if (ev.key === "Backspace" && i == 0) {
+            $inp1.eq(maxi).focus();
+        }
+        else if (ev.key === "ArrowLeft") {
+            //ArrowLeft
+            $inp1.eq(i - 1).focus();
+        }
+        else if (ev.key === "ArrowRight") {
+            //ArrowRight
+            $inp1.eq(i + 1).focus();
+        }
+
+        }
+    });
+
 
    //  initializeTimer(); // вызываем функцию инициализации таймера
 
@@ -56,6 +89,13 @@ window.onload = function() // дожидаемся загрузки страни
                 //check if stolbik answer
                 let $inp = $(".ap-otp-input");
                 var stolbik = $inp.length == 0 ? false : true;
+                if  ( stolbik ) {
+                    // check if div_stolbik -if style ..inputs14(only in divstolbik
+                    // - make stolbik = false
+                    // so - answer is taken from usual text box not from OTP input
+                    let $inp1 = $(".ap-otp-inputs14");
+                    stolbik = $inp1.length == 0 ? true : false;
+                }
 
                 if ( stolbik ) {
                     const $inp = $(".ap-otp-input");

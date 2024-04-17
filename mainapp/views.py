@@ -2,6 +2,7 @@
 import base64
 import json
 import random
+import re
 from collections import OrderedDict
 from datetime import datetime
 from time import sleep
@@ -31,7 +32,7 @@ from .drob import Drob
 
 @login_required
 def main(request):
-    title = 'главная maap v 1.0'
+    title = 'главная maap v1.0.1'
 
     # last change
     if request.method == 'POST':
@@ -50,8 +51,8 @@ def main(request):
             # make up lesson log
             lesson = MaapLesson(user=request.user)
             # reset app
-            lesson.mult, lesson.addi, lesson.subt, lesson.divn, lesson.stolbik, \
-            lesson.drob, lesson.expr, lesson.drobexpr = set_app_mode(ans)
+            lesson.mult, lesson.addi, lesson.subt, lesson.divn, lesson.stolbik, lesson.div_stolbik, \
+                lesson.drob, lesson.expr, lesson.drobexpr = set_app_mode(ans)
 
             lesson.mode = ' '.join(ans)
             # print(lesson.pk)
@@ -468,19 +469,24 @@ def mathemj(request, pk):
             'subt': lesson.subt,
             'divn': lesson.divn,
             'stolbik': lesson.stolbik,
+            'div_stolbik': lesson.div_stolbik,
             'drob': lesson.drob,
             'expr': lesson.expr,
             'drobexpr': lesson.drobexpr,
         }
 
         elem, stolbik, drob, expr, drobexpr, hist1 = eval_quest(NX, NY, AX, TWO_DIGIT,
-                                                            NO_MINUS, SX, NO_DEC_MUL, hist, HIST_DEPTH, app_mode)
-        print(f"eval quest finish a= {elem['a']}, b={elem['b']} code = {elem['c']}")
+                                                                NO_MINUS, SX, NO_DEC_MUL, hist, HIST_DEPTH, app_mode)
+        if not drobexpr:
+            print(f"eval quest finish a= {elem['a']}, b={elem['b']} code = {elem['c']} drob={drob} expr={expr} drobexpr={drobexpr}")
+        else:
+            print(f"eval quest finish a= {elem['a']}, b= html code = {elem['c']} drob={drob} expr={expr} drobexpr={drobexpr}")
+
         # update db
         a = elem['a']
         b = elem['b']
-        #additional parameter in case of drob expression
-        #a - calculated answer, b - question expression=?, bb1 - correct answer expression
+        # additional parameter in case of drob expression
+        # a - calculated answer, b - question expression=?, bb1 - correct answer expression
         bb1 = elem.get('b1')
         bb2 = elem.get('b2')
         code = elem['c']
@@ -523,7 +529,7 @@ def mathemj(request, pk):
         txt1 = f"вопрос {lesson.ans_amount} правильных: {lesson.ans_correct}"
 
         list_txt.append(txt1)
-        # opers = ['X', '+', '-', '/', '=', '!', '#']
+        # opers = ['X', '+', '-', '/', '=', '/', '!', '#']
         oper = OPER_LIST1[code - 1]
 
         # maket stolbika for +/-
@@ -658,7 +664,7 @@ def mathemj(request, pk):
             a = b = code = 0
             lesson.drob_cnt += 1
 
-        # code 1 * 2 + 3 - 4 /
+        # code 1 * 2 + 3 - 4 / 6 div stolbik
         if code == 1:
             txt2 = f'cколько будет {a} X {b} =?'
             lesson.mult_cnt += 1
@@ -675,7 +681,93 @@ def mathemj(request, pk):
             divsign = u'\u00F7'
             txt2 = f'cколько будет {a} {divsign} {b} =?'
             lesson.divn_cnt += 1
-        if code == 7:
+
+        # div_stolbik make question
+        if code == 6 and not stolbik:
+            stolb1 = f'''
+
+               <div class="primer1">
+
+                   <div class="frac1">
+                           <span class="top12">{a}</span> 
+                           
+                            <span style="position: absolute;border-left: 4px solid black;height: 28px;margin: 0;text-align: left;right: 155px;"></span>
+    
+
+                           <span class="middle2">{b}</span>
+
+                           <div class="ap-otp-inputs3" data-length="3">
+                                   <input class="ap-otp-input1" type="tel" maxlength="1" data-index="0" >
+                                   <input class="ap-otp-input1" type="tel" maxlength="1" data-index="1" >
+                                   <input class="ap-otp-input1" type="tel" maxlength="1" data-index="2" >
+                                   <div class="ap-otp-inputs14" data-length="4">
+                                           <input class="ap-otp-input1" type="tel" maxlength="1" data-index="0">
+                                           <input class="ap-otp-input1" type="tel" maxlength="1" data-index="1">
+                                           <input class="ap-otp-input1" type="tel" maxlength="1" data-index="2">
+                                           <input class="ap-otp-input1" type="tel" maxlength="1" data-index="3">
+                                   </div>
+                           </div>
+
+                           <div class="ap-otp-inputs2" data-length="5">
+                                   <input class="ap-otp-input1" type="tel" maxlength="1" data-index="0">
+                                   <input class="ap-otp-input1" type="tel" maxlength="1" data-index="1"> 
+                                   <input class="ap-otp-input1" type="tel" maxlength="1" data-index="2">
+                                   <input class="ap-otp-input1" type="tel" maxlength="1" data-index="3">
+                                   <input class="ap-otp-input1" type="tel" maxlength="1" data-index="4">
+                           </div>
+
+                           <div class="ap-otp-inputs8" data-length="5">
+                                   <input class="ap-otp-input1" type="tel" maxlength="1" data-index="0">
+                                   <input class="ap-otp-input1" type="tel" maxlength="1" data-index="1">
+                                   <input class="ap-otp-input1" type="tel" maxlength="1" data-index="2">
+                                   <input class="ap-otp-input1" type="tel" maxlength="1" data-index="3">
+                                   <input class="ap-otp-input1" type="tel" maxlength="1" data-index="4">
+                           </div>
+
+                           <div class="ap-otp-inputs2" data-length="6">
+                                   <input class="ap-otp-input1" type="tel" maxlength="1" data-index="0">
+                                   <input class="ap-otp-input1" type="tel" maxlength="1" data-index="1">
+                                   <input class="ap-otp-input1" type="tel" maxlength="1" data-index="2">
+                                   <input class="ap-otp-input1" type="tel" maxlength="1" data-index="3">
+                                   <input class="ap-otp-input1" type="tel" maxlength="1" data-index="4">
+                                   <input class="ap-otp-input1" type="tel" maxlength="1" data-index="5">
+                           </div>
+                           <div class="ap-otp-inputs8" data-length="6">
+                                   <input class="ap-otp-input1" type="tel" maxlength="1" data-index="0">
+                                   <input class="ap-otp-input1" type="tel" maxlength="1" data-index="1">
+                                   <input class="ap-otp-input1" type="tel" maxlength="1" data-index="2">
+                                   <input class="ap-otp-input1" type="tel" maxlength="1" data-index="3">
+                                   <input class="ap-otp-input1" type="tel" maxlength="1" data-index="4">
+                                   <input class="ap-otp-input1" type="tel" maxlength="1" data-index="5">
+                           </div>
+                           
+                           <div class="ap-otp-inputs2" data-length="7">
+                                   <input class="ap-otp-input1" type="tel" maxlength="1" data-index="0">
+                                   <input class="ap-otp-input1" type="tel" maxlength="1" data-index="1">
+                                   <input class="ap-otp-input1" type="tel" maxlength="1" data-index="2">
+                                   <input class="ap-otp-input1" type="tel" maxlength="1" data-index="3">
+                                   <input class="ap-otp-input1" type="tel" maxlength="1" data-index="4">
+                                   <input class="ap-otp-input1" type="tel" maxlength="1" data-index="5">
+                                   <input class="ap-otp-input1" type="tel" maxlength="1" data-index="6">
+                           </div>
+                           <div class="ap-otp-inputs8" data-length="7">
+                                   <input class="ap-otp-input1" type="tel" maxlength="1" data-index="0">
+                                   <input class="ap-otp-input1" type="tel" maxlength="1" data-index="1">
+                                   <input class="ap-otp-input1" type="tel" maxlength="1" data-index="2">
+                                   <input class="ap-otp-input1" type="tel" maxlength="1" data-index="3">
+                                   <input class="ap-otp-input1" type="tel" maxlength="1" data-index="4">
+                                   <input class="ap-otp-input1" type="tel" maxlength="1" data-index="5">
+                                   <input class="ap-otp-input1" type="tel" maxlength="1" data-index="6">
+                           </div>
+                   </div>
+
+
+           </div>
+
+               '''
+            lesson.div_stolb_cnt += 1
+
+        if code == 8:
             txt2 = f'cколько будет {b} =?'
             lesson.expr_cnt += 1
 
@@ -839,39 +931,42 @@ def mathem_ajax(request):
                 txt00 = f" ответ - не верный "
             lesson.is_drob = False
         elif lesson.is_drobexpr:
-            #a1 calculated answer, bb1 drob expression with answer
-            #bb2 drob expression in text form for report (gets to b1)
+            # a1 calculated answer, bb1 drob expression with answer
+            # bb2 drob expression in text form for report (gets to b1)
             a1 = json.loads(lesson.a1_drobexpr)
             b1 = json.loads(lesson.bb2_drobexpr)
             bb1 = json.loads(lesson.bb1_drobexpr)
             drob_txt = bb1
 
             ans = ans.strip()
-            ans = ans.split()
-            a1 = a1.strip()
-            a1 = a1.split()
+            #make 3 elements of the drob its easier to check
+            ans = re.split(' |/', ans)
+            # remove not needed "" elemens ie  ans='1 2 / 3' = [1,2,3] (chars)
+            ans = list(filter(lambda x: x != "", ans))
 
-            #case when answer is only inte without drob
-            #or only drob chast
-            if len(a1) == 1 and len(ans) == 1:
-                if a1[0] == ans[0]:
+            a1 = a1.strip()
+            a1 = re.split(' |/', a1)
+
+            #a1 = ['1','0','0']
+
+            # case when inte = 0
+            if a1[0] == '0' and len(ans) == 2 and a1[1] == ans[0] and a1[2] == ans[1]:
                     check_res = 1
             else:
-                #case when inte = 0
-                if a1[0] == '0':
-                    #check second part only
-                    if a1[1] == ans[0]:
+                # case 1 0/0
+                if a1[1] == '0' and a1[2] == '0':
+                    # remove a1 a2 from list
+                    a1.pop()
+                    a1.pop()
+                if len(a1) == 2 and len(a1) == len(ans):
+                    # check whole drob inte and drob parts
+                    if a1[0] == ans[0] and a1[1] == ans[1]:
                         check_res = 1
-                else:
-                    #case 1 0/0
-                    if a1[1] == '0/0':
-                        #remove a1 from list
-                        a1.pop()
-                    if len(a1) == len(ans):
-                        #check whole drob inte and drob parts
-                        if a1[0] == ans[0] and a1[1] == ans[1]:
-                            check_res = 1
-
+                if len(a1) == 1 and len(a1) == len(ans):
+                    # check whole drob inte and drob parts
+                    if a1[0] == ans[0]:
+                        check_res = 1
+            print(f'result={a1}, user answer={ans}')
             if check_res == 1:
                 txt00 = f" ответ - правильный "
             else:
@@ -881,7 +976,7 @@ def mathem_ajax(request):
             a1 = lesson.a1
             b1 = lesson.b1
 
-            txt00, check_res = check_ans(int(ans), a1, b1, c1)
+            txt00, check_res = check_ans(ans, a1, b1, c1)
 
         lesson.ans_amount = lesson.ans_amount + 1
 
@@ -949,7 +1044,7 @@ def mathem_ajax(request):
 
 # deprecated moved from mathem-mathemk to mathemj-mathem_ajax question-answer
 def mathemk(request, pk1, pk2, diff):
-    title = 'главная maap v 1.0/проверка'
+    title = 'главная maap /проверка'
 
     if request.method == 'POST':
         print('clicknext')
@@ -1092,7 +1187,7 @@ def hist(request, page='None'):
     wrong_ans_hist = []
     # try to find if its empty
     # minimum amount of answer to listed in reports
-    ans_amount_gt = 6
+    ans_amount_gt = 5
     lessons = MaapLesson.objects.filter(user=request.user, ans_amount__gt=ans_amount_gt).order_by('id')
 
     list_hist_row = []
@@ -1267,6 +1362,7 @@ def compare_reports(pk, favor_ans):
         return favor_ans
 
 
+# unpack saved answer and "decode it:
 def print_report_row(key):
     a = key['a']
     b = key['b']
@@ -1274,6 +1370,10 @@ def print_report_row(key):
     d = key['d']
     str_fav_ans = ''
     divsign = u'\u00F7'
+
+    #check for zero
+    if c == 0:
+        return str_fav_ans
 
     oper = OPER_LIST[c - 1]
     if not isinstance(a, int):
@@ -1294,15 +1394,14 @@ def print_report_row(key):
             str_fav_ans = f""" {drob_a} {oper} {drob_b} занял {d} сек"""
     else:
         # a,b integer
-        if c == 1:
+        if oper == 'X':
             str_fav_ans = f' {a} X {b} (={a * b}) занял {d} секунд'
-        if c == 2:
+        if oper == '+':
             str_fav_ans = f' {a} + {b} (={a + b}) занял {d} секунд'
-        if c == 3:
+        if oper == '-':
             str_fav_ans = f' {a} - {b} (={a - b}) занял {d} секунд'
-        if c == 4:
-            divsign = u'\u00F7'
-            str_fav_ans = f' {a} {divsign} {b} (={int(a / b)}) занял {d} секунд'
+        if oper == divsign:
+            str_fav_ans = f' {a} {divsign} {b} (={float(a / b)}) занял {d} секунд'
 
     diff = key.get('e')
     if diff:
@@ -1323,13 +1422,17 @@ def print_wrong_report_row(key):
     str_fav_ans = ''
     divsign = u'\u00F7'
     # oper_list = ['X', '+', '-', divsign, '=', '=', '#']
+    # return if c zero
+    if c == 0:
+        return str_fav_ans
+
     oper = OPER_LIST[c - 1]
     if not isinstance(a, int):
         if c == 8:
             if a[0] == '0':
                 a.pop(0)
             elif a[1] == '0/0':
-                    a.pop()
+                a.pop()
             str_fav_ans = f" др.выр: {b} {' '.join(a)}  ( отв. = {' '.join(ans)} ) (занял {d} секунд)"
         elif oper == '#':
             str_fav_ans = f' выр: {b} = {a}  ( отв. = {ans} ) (занял {d} секунд)'
@@ -1363,6 +1466,9 @@ def print_wrong_report_row(key):
         if c == 4:
             divsign = u'\u00F7'
             str_fav_ans = f' {a} {divsign} {b} (={int(a / b)}) {ans} (занял {d} секунд)'
+        if c == 6:
+            divsign = u'\u00F7'
+            str_fav_ans = f' {a} {divsign} {b} (={a/b}) {ans} (занял {d} секунд)'
 
     return str_fav_ans
 
@@ -1560,6 +1666,7 @@ def finish(request, pk):
     content = {'title': title, 'ans': ans}
 
     return render(request, 'mainapp/finish.html', content)
+
 
 # function which check availbility from kubernetes probe
 # :8000/__heartbeat__

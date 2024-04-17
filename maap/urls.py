@@ -34,13 +34,13 @@ from django.conf.urls import include, url, re_path
 urlpatterns = [
     path('', mainapp.main, name='index'),
     path('', mainapp.main, name='main'),
-    path('mathem/<int:pk>/', mainapp.mathem, name='mathem'),#lesson_id
+    #path('mathem/<int:pk>/', mainapp.mathem, name='mathem'),#lesson_id
     #ajax ver of mathem
     path('mathemj/<int:pk>/', mainapp.mathemj, name='mathemj'),
     path('clockj/', mainapp.clockj, name='clockj'),
     path('clockj/<int:ans_correct>/<int:ans_amount>/', mainapp.clockj, name='clockj'),
 
-    path('mathemk/<int:pk1>/<int:pk2>/<int:diff>/', mainapp.mathemk, name='mathemk'),
+    #path('mathemk/<int:pk1>/<int:pk2>/<int:diff>/', mainapp.mathemk, name='mathemk'),
     path('finish/<int:pk>/', mainapp.finish, name='finish'),
     path('clear-hist/', mainapp.clear_hist, name='clear_hist'),
     path('clear-hist-5/', mainapp.clear_hist_5, name='clear_hist_5'),
