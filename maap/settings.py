@@ -122,6 +122,8 @@ LOGIN_URL = '/auth/login/'
 
 DEFAULT_FILE_STORAGE = 'db_file_storage.storage.DatabaseFileStorage'
 
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+
 # additional path settings for gunicorn when deployment
 import sys
 
