@@ -1205,7 +1205,7 @@ def hist(request, page='None'):
         # paginator self made
         n = 3  # reports per page
         # number of reports all
-        items_cnt = len(lessons) - 1
+        items_cnt = len(lessons) #- 1
         # max page
         max_page = int(items_cnt / n)
         # make new page for the rest new page
@@ -1220,7 +1220,7 @@ def hist(request, page='None'):
             page = int(page)
 
         # calc start lesson on this page
-        lesson_id = n * page - 1
+        lesson_id = n * page - 2
         # get from db only what we need for this page
         make_report(lessons, lesson_id, n, list_hist, rep_hist, wrong_ans_hist)
 
